@@ -40,6 +40,7 @@ add_library(googlemock ${GOOGLETEST_SOURCES})
 
 # --- Google test stuff
 
-add_executable(base_tests tests/base_tests.cpp)
-add_dependencies(base_tests googletest googlemock)
-target_link_libraries(base_tests googletest googlemock pthread)
+#add_executable(base_tests tests/base_tests.cpp)
+add_executable(monomial_test tests/monomial_test.cpp)
+add_dependencies(monomial_test googletest googlemock)
+target_link_libraries(monomial_test googletest googlemock pthread)

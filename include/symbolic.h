@@ -5,8 +5,9 @@
 #ifndef METADIFF_SYMBOLIC_INTEGERS_H
 #define METADIFF_SYMBOLIC_INTEGERS_H
 
+#include "symbolic_integers.h"
 
-namespace metadiff {
+namespace md {
     namespace symbolic {
 
         class NonIntegerDivision : public std::exception {
