@@ -7,7 +7,9 @@
 
 namespace md {
     namespace sym {
+        namespace polynomial {
 
+        }
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_POLYNOMIAL_H
