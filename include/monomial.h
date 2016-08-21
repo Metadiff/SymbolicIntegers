@@ -8,25 +8,6 @@
 
 namespace md {
     namespace sym {
-//        /**
-//         * A class which keeps track of the used variable ids and the floor/ceil for them
-//         */
-//        template<typename I>
-//        class VariableRegistry{
-//        private:
-//            static_assert(std::numeric_limits<I>::is_integer, "I can be only instantiated with integer types");
-//            static_assert(not std::numeric_limits<I>::is_signed, "I can be only instantiated with unsigned types");
-//        public:
-//#ifdef SYMBOLIC_INTEGERS_THREAD_SAFE
-//            volatile I total_ids;
-//#else
-//            I total_ids;
-//#endif
-//            std::vector<std::pair<I, std::pair<Monomial, Monomial>>> floor_registry;
-//            std::vector<std::pair<I, std::pair<Monomial, Monomial>>> ceil_registry;
-//            VariableRegistry(): total_ids(0) {};
-//        };
-
         /**
          * An instance of a single symbolic monomial
          */
