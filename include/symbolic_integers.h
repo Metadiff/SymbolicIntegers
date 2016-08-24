@@ -6,7 +6,6 @@
 #define METADIFF_SYMBOLIC_INTEGERS2_H
 
 #include "exceptions.h"
-#include "monomial.h"
-#include "polynomial.h"
+#include "templated.h"
 
 #endif //METADIFF_SYMBOLIC_INTEGERS2_H

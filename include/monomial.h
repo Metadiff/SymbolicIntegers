@@ -12,9 +12,10 @@ namespace md {
             /**
              * An instance of a single symbolic monomial
              */
-            template<typename I, typename P>
+            template<typename C, typename I, typename P>
             class Monomial {
             private:
+                static_assert(std::numeric_limits<C>::is_integer, "C can be only instantiated with integer types");
                 static_assert(std::numeric_limits<I>::is_integer, "I can be only instantiated with integer types");
                 static_assert(not std::numeric_limits<I>::is_signed, "I can be only instantiated with unsigned types");
                 static_assert(std::numeric_limits<P>::is_integer, "P can be only instantiated with unsigned types");
@@ -34,7 +35,7 @@ namespace md {
                             return floor_registry[i];
                         }
                     }
-                    return {0, {Monomial<I, P>(0), Monomial<I, P>(0)}};
+                    return {0, {Monomial<C, I, P>(0), Monomial<C, I, P>(0)}};
                 };
 
                 static std::pair<I, std::pair<Monomial, Monomial>> get_ceil(I id) {
@@ -43,21 +44,21 @@ namespace md {
                             return ceil_registry[i];
                         }
                     }
-                    return {0, {Monomial<I, P>(0), Monomial<I, P>(0)}};
+                    return {0, {Monomial<C, I, P>(0), Monomial<C, I, P>(0)}};
                 };
                 /** A power first argument is the id of the variable, the second is the actual power */
                 std::vector<std::pair<I, P>> powers;
                 /** The constant coefficient */
-                long long coefficient;
+                C coefficient;
 
                 Monomial() : coefficient(1) {
                     powers.push_back({total_ids, 1});
                     ++total_ids;
                 }
 
-                Monomial(const long long value) : coefficient(value) {}
+                Monomial(const C value) : coefficient(value) {}
 
-                Monomial(const Monomial<I, P> &monomial) {
+                Monomial(const Monomial<C, I, P> &monomial) {
                     powers = monomial.powers;
                     coefficient = monomial.coefficient;
                 }
@@ -73,19 +74,20 @@ namespace md {
                  * @param values
                  * @return The value of the monomial evaluated at the provided values.
                  */
-                long long eval(const std::vector<long long> &values) const {
-                    long long value = coefficient;
+                template<typename T>
+                T eval(const std::vector <T> &values) const {
+                    T value = coefficient;
                     for (auto i = 0; i < powers.size(); ++i) {
-                        long long cur_value;
+                        T cur_value;
                         auto floor = get_floor(powers[i].first);
                         auto ceil = get_ceil(powers[i].first);
                         if (floor.first != 0) {
-                            long long dividend = floor.second.first.eval(values);
-                            long long divisor = floor.second.second.eval(values);
+                            T dividend = floor.second.first.eval(values);
+                            T divisor = floor.second.second.eval(values);
                             cur_value = dividend / divisor;
                         } else if (ceil.first != 0) {
-                            long long dividend = ceil.second.first.eval(values);
-                            long long divisor = ceil.second.second.eval(values);
+                            T dividend = ceil.second.first.eval(values);
+                            T divisor = ceil.second.second.eval(values);
                             cur_value = 0;
                             if (dividend > divisor) {
                                 if (dividend % divisor == 0) {
@@ -101,12 +103,11 @@ namespace md {
                         }
                         value *= pow(cur_value, powers[i].second);
                     }
-//                    std::cout << "Value of " << to_string() << " = " << value << std::endl;
                     return value;
                 }
 
-                long long eval() const {
-                    return eval({});
+                C eval() const {
+                    return eval(std::vector < C > {});
                 }
 
                 /**
@@ -181,35 +182,23 @@ namespace md {
                     }
                     return result;
                 }
-
-//            /**
-//             * Returns a pre-specified variable based on the id. The usage of this method is discouraged
-//             * @param id
-//             * @return
-//             */
-//            static Monomial variable(I id){
-//                if(total_ids <= id){
-//                    total_ids = id + 1;
-//                }
-//                auto monomial = Monomial(1);
-//                monomial.powers.push_back({id, 1});
-//                return monomial;
-//            }
             };
 
-            template<typename I, typename P>
-            std::vector<std::pair<I, std::pair<Monomial<I, P>, Monomial<I, P>>>> Monomial<I, P>::floor_registry;
-            template<typename I, typename P>
-            std::vector<std::pair<I, std::pair<Monomial<I, P>, Monomial<I, P>>>> Monomial<I, P>::ceil_registry;
-            template<typename I, typename P>
+            template<typename C, typename I, typename P>
+            std::vector <std::pair<I, std::pair < Monomial<C, I, P>, Monomial<C, I, P>>>>
+            Monomial<C, I, P>::floor_registry;
+            template<typename C, typename I, typename P>
+            std::vector <std::pair<I, std::pair < Monomial<C, I, P>, Monomial<C, I, P>>>>
+            Monomial<C, I, P>::ceil_registry;
+            template<typename C, typename I, typename P>
 #ifdef SYMBOLIC_INTEGERS_THREAD_SAFE
             I Monomial<I,P>::total_ids = 0;
 #else
-            I Monomial<I, P>::total_ids = 0;
+            I Monomial<C, I, P>::total_ids = 0;
 #endif
 
-            template<typename I, typename P>
-            bool operator==(const Monomial<I, P> &lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P>
+            bool operator==(const Monomial<C, I, P> &lhs, const Monomial<C, I, P> &rhs) {
                 if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                     return false;
                 }
@@ -221,8 +210,8 @@ namespace md {
                 return true;
             }
 
-            template<typename I, typename P>
-            bool operator!=(const Monomial<I, P> &lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P>
+            bool operator!=(const Monomial<C, I, P> &lhs, const Monomial<C, I, P> &rhs) {
                 if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                     return true;
                 }
@@ -234,28 +223,28 @@ namespace md {
                 return false;
             }
 
-            template<typename I, typename P>
-            bool operator==(const Monomial<I, P> &lhs, const long long rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool operator==(const Monomial<C, I, P> &lhs, const T rhs) {
                 return lhs.is_constant() and (lhs.coefficient == rhs);
             }
 
-            template<typename I, typename P>
-            bool operator!=(const Monomial<I, P> &lhs, const long long int rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool operator!=(const Monomial<C, I, P> &lhs, const T rhs) {
                 return (not lhs.is_constant()) or (lhs.coefficient != rhs);
             }
 
-            template<typename I, typename P>
-            bool operator==(const long long lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool operator==(const T lhs, const Monomial<C, I, P> &rhs) {
                 return rhs.is_constant() and (rhs.coefficient == lhs);
             }
 
-            template<typename I, typename P>
-            bool operator!=(const long long lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool operator!=(const T lhs, const Monomial<C, I, P> &rhs) {
                 return (not rhs.is_constant()) or (rhs.coefficient != lhs);
             }
 
-            template<typename I, typename P>
-            bool up_to_coefficient(const Monomial<I, P> &lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P>
+            bool up_to_coefficient(const Monomial<C, I, P> &lhs, const Monomial<C, I, P> &rhs) {
                 if (lhs.powers.size() != rhs.powers.size()) {
                     return false;
                 }
@@ -267,13 +256,13 @@ namespace md {
                 return true;
             }
 
-            template<typename I, typename P>
-            bool up_to_coefficient(const long long lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool up_to_coefficient(const T lhs, const Monomial<C, I, P> &rhs) {
                 return rhs.is_constant();
             }
 
-            template<typename I, typename P>
-            bool up_to_coefficient(const Monomial<I, P> &lhs, const long long rhs) {
+            template<typename C, typename I, typename P, typename T>
+            bool up_to_coefficient(const Monomial<C, I, P> &lhs, const T rhs) {
                 return lhs.is_constant();
             }
 
@@ -288,8 +277,8 @@ namespace md {
              *
              * For instance a^2b^1 is "before" 100ab^300, since a^2 <-> a.
              */
-            template<typename I, typename P>
-            bool less_than_comparator(const Monomial<I, P> &monomial1, const Monomial<I, P> &monomial2) {
+            template<typename C, typename I, typename P>
+            bool less_than_comparator(const Monomial<C, I, P> &monomial1, const Monomial<C, I, P> &monomial2) {
                 auto max = monomial1.powers.size() > monomial2.powers.size() ? monomial2.powers.size()
                                                                              : monomial1.powers.size();
                 for (auto i = 0; i < max; ++i) {
@@ -312,21 +301,21 @@ namespace md {
                 }
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator+(const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> operator+(const Monomial<C, I, P> &rhs) {
                 return rhs;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator-(const Monomial<I, P> &rhs) {
-                auto result = Monomial<I, P>(rhs);
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> operator-(const Monomial<C, I, P> &rhs) {
+                auto result = Monomial<C, I, P>(rhs);
                 result.coefficient = -result.coefficient;
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator*(const Monomial<I, P> &lhs, const Monomial<I, P> &rhs) {
-                auto result = Monomial<I, P>(lhs.coefficient * rhs.coefficient);
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> operator*(const Monomial<C, I, P> &lhs, const Monomial<C, I, P> &rhs) {
+                auto result = Monomial<C, I, P>(lhs.coefficient * rhs.coefficient);
                 auto i1 = 0;
                 auto i2 = 0;
                 while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
@@ -354,23 +343,23 @@ namespace md {
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator*(const Monomial<I, P> &lhs, const long long rhs) {
-                auto result = Monomial<I, P>(lhs);
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> operator*(const Monomial<C, I, P> &lhs, const T rhs) {
+                auto result = Monomial<C, I, P>(lhs);
                 result.coefficient *= rhs;
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator*(const long long lhs, const Monomial<I, P> &rhs) {
-                auto result = Monomial<I, P>(rhs);
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> operator*(const T lhs, const Monomial<C, I, P> &rhs) {
+                auto result = Monomial<C, I, P>(rhs);
                 result.coefficient *= lhs;
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator/(const Monomial<I, P> &lhs, const Monomial<I, P> &rhs) {
-                auto result = Monomial<I, P>(1);
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> operator/(const Monomial<C, I, P> &lhs, const Monomial<C, I, P> &rhs) {
+                auto result = Monomial<C, I, P>(1);
                 if (lhs.coefficient % rhs.coefficient != 0) {
                     throw NonIntegerDivision();
                 }
@@ -405,22 +394,22 @@ namespace md {
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator/(const Monomial<I, P> &lhs, const long long rhs) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> operator/(const Monomial<C, I, P> &lhs, const T rhs) {
                 if (rhs == 0 or lhs.coefficient % rhs != 0) {
                     throw NonIntegerDivision();
                 }
-                auto result = Monomial<I, P>(lhs);
+                auto result = Monomial<C, I, P>(lhs);
                 result.coefficient /= rhs;
                 return result;
             }
 
-            template<typename I, typename P>
-            Monomial<I, P> operator/(const long long lhs, const Monomial<I, P> &rhs) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> operator/(const T lhs, const Monomial<C, I, P> &rhs) {
                 if ((not rhs.is_constant()) or rhs.coefficient == 0 or lhs % rhs.coefficient != 0) {
                     throw NonIntegerDivision();
                 }
-                return Monomial<I, P>(lhs / rhs.coefficient);
+                return Monomial<C, I, P>(lhs / rhs.coefficient);
             }
 
             /**
@@ -429,17 +418,18 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> floor(const Monomial<I, P> &dividend, const Monomial<I, P> &divisor) {
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> floor(const Monomial<C, I, P> &dividend, const Monomial<C, I, P> &divisor) {
                 if (dividend.is_constant() and divisor.is_constant()) {
-                    return Monomial<I, P>(dividend.eval() / divisor.eval());
+                    return Monomial<C, I, P>(dividend.eval() / divisor.eval());
                 } else {
                     try {
                         auto result = dividend / divisor;
                         return result;
                     } catch (...) {
-                        Monomial<I, P>::floor_registry.push_back({Monomial<I, P>::total_ids, {dividend, divisor}});
-                        return Monomial<I, P>();
+                        Monomial<C, I, P>::floor_registry.push_back(
+                                {Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                        return Monomial<C, I, P>();
                     }
                 }
             };
@@ -450,16 +440,16 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> floor(const Monomial<I, P> &dividend, const long long divisor) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> floor(const Monomial<C, I, P> &dividend, const T divisor) {
                 if (dividend.is_constant()) {
-                    return Monomial<I, P>(dividend.eval() / divisor);
+                    return Monomial<C, I, P>(dividend.eval() / divisor);
                 } else if (dividend.coefficient % divisor == 0) {
                     return dividend / divisor;
                 } else {
-                    Monomial<I, P>::floor_registry.push_back(
-                            {Monomial<I, P>::total_ids, {dividend, Monomial<I, P>(divisor)}});
-                    return Monomial<I, P>();
+                    Monomial<C, I, P>::floor_registry.push_back(
+                            {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+                    return Monomial<C, I, P>();
                 }
             };
 
@@ -469,27 +459,27 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> floor(const long long dividend, const Monomial<I, P> &divisor) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> floor(const T dividend, const Monomial<C, I, P> &divisor) {
                 if (divisor.is_constant()) {
-                    return Monomial<I, P>(dividend / divisor.eval());
+                    return Monomial<C, I, P>(dividend / divisor.eval());
                 } else {
-                    Monomial<I, P>::floor_registry.push_back(
-                            {Monomial<I, P>::total_ids, {dividend, Monomial<I, P>(divisor)}});
-                    return Monomial<I, P>();
+                    Monomial<C, I, P>::floor_registry.push_back(
+                            {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+                    return Monomial<C, I, P>();
                 }
             };
 
-            /**
-             * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-             * @param dividend
-             * @param divisor
-             * @return
-             */
-            template<typename I, typename P>
-            Monomial<I, P> floor(const long long dividend, const long long divisor) {
-                return Monomial<I, P>(dividend / divisor);
-            };
+//            /**
+//             * Makes a floor division, e.g. returns the integer representation of floor(a/b)
+//             * @param dividend
+//             * @param divisor
+//             * @return
+//             */
+//            template<typename C, typename I, typename P>
+//            Monomial<C, I, P> floor(const C dividend, const C divisor) {
+//                return Monomial<C, I, P>(dividend / divisor);
+//            };
 
             /**
              * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -497,12 +487,12 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> ceil(const Monomial<I, P> &dividend, const Monomial<I, P> &divisor) {
+            template<typename C, typename I, typename P>
+            Monomial<C, I, P> ceil(const Monomial<C, I, P> &dividend, const Monomial<C, I, P> &divisor) {
                 if (dividend.is_constant() and divisor.is_constant()) {
-                    auto dividend_value = dividend.eval();
-                    auto divisor_value = divisor.eval();
-                    long long value = 0;
+                    C dividend_value = dividend.eval();
+                    C divisor_value = divisor.eval();
+                    C value = 0;
                     if (dividend_value > divisor_value) {
                         if (dividend_value % divisor_value == 0) {
                             value = dividend_value / divisor_value;
@@ -510,14 +500,14 @@ namespace md {
                             value = dividend_value / divisor_value + 1;
                         }
                     }
-                    return Monomial<I, P>(value);
+                    return Monomial<C, I, P>(value);
                 } else {
                     try {
                         auto result = dividend / divisor;
                         return result;
                     } catch (...) {
-                        Monomial<I, P>::ceil_registry.push_back({Monomial<I, P>::total_ids, {dividend, divisor}});
-                        return Monomial<I, P>();
+                        Monomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                        return Monomial<C, I, P>();
                     }
                 }
             };
@@ -528,11 +518,11 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> ceil(const Monomial<I, P> &dividend, const long long divisor) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> ceil(const Monomial<C, I, P> &dividend, const T divisor) {
                 if (dividend.is_constant()) {
-                    auto dividend_value = dividend.eval();
-                    long long value = 0;
+                    C dividend_value = dividend.eval();
+                    C value = 0;
                     if (dividend_value > divisor) {
                         if (dividend_value % divisor == 0) {
                             value = dividend_value / divisor;
@@ -540,13 +530,13 @@ namespace md {
                             value = dividend_value / divisor + 1;
                         }
                     }
-                    return Monomial<I, P>(value);
+                    return Monomial<C, I, P>(value);
                 } else if (dividend.coefficient % divisor == 0) {
                     return dividend / divisor;
                 } else {
-                    Monomial<I, P>::ceil_registry.push_back(
-                            {Monomial<I, P>::total_ids, {dividend, Monomial<I, P>(divisor)}});
-                    return Monomial<I, P>();
+                    Monomial<C, I, P>::ceil_registry.push_back(
+                            {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+                    return Monomial<C, I, P>();
                 }
             };
 
@@ -556,11 +546,11 @@ namespace md {
              * @param divisor
              * @return
              */
-            template<typename I, typename P>
-            Monomial<I, P> ceil(const long long dividend, const Monomial<I, P> &divisor) {
+            template<typename C, typename I, typename P, typename T>
+            Monomial<C, I, P> ceil(const T dividend, const Monomial<C, I, P> &divisor) {
                 if (divisor.is_constant()) {
-                    auto divisor_value = divisor.eval();
-                    long long value = 0;
+                    C divisor_value = divisor.eval();
+                    C value = 0;
                     if (dividend > divisor_value) {
                         if (dividend % divisor_value == 0) {
                             value = dividend / divisor_value;
@@ -568,35 +558,16 @@ namespace md {
                             value = dividend / divisor_value + 1;
                         }
                     }
-                    return Monomial<I, P>(value);
+                    return Monomial<C, I, P>(value);
                 } else {
-                    Monomial<I, P>::ceil_registry.push_back(
-                            {Monomial<I, P>::total_ids, {dividend, Monomial<I, P>(divisor)}});
-                    return Monomial<I, P>();
+                    Monomial<C, I, P>::ceil_registry.push_back(
+                            {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+                    return Monomial<C, I, P>();
                 }
             };
 
-            /**
-             * Makes a floor division, e.g. returns the integer representation of ceil(a/b)
-             * @param dividend
-             * @param divisor
-             * @return
-             */
-            template<typename I, typename P>
-            Monomial<I, P> ceil(const long long dividend, const long long divisor) {
-                long long value = 0;
-                if (dividend > divisor) {
-                    if (dividend % divisor == 0) {
-                        value = dividend / divisor;
-                    } else {
-                        value = dividend / divisor + 1;
-                    }
-                }
-                return Monomial<I, P>(value);
-            };
-
-            template<typename I, typename P>
-            std::ostream &operator<<(std::ostream &f, const Monomial<I, P> &value) {
+            template<typename C, typename I, typename P>
+            std::ostream &operator<<(std::ostream &f, const Monomial<C, I, P> &value) {
                 f << value.to_string();
                 return f;
             }

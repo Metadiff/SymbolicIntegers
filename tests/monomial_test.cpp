@@ -6,20 +6,33 @@
 #include "gmock/gmock.h"
 #include "symbolic_integers.h"
 
+template<typename CC, typename II, typename PP>
+struct TypeDefinitions {
+    typedef CC C;
+    typedef II I;
+    typedef PP P;
+};
+
 template<typename>
 class MonomialTest : public testing::Test {
 };
 
-typedef testing::Types<unsigned short, unsigned int, unsigned long> Integers;
-using namespace md::sym::monomial;
+typedef TypeDefinitions<short, unsigned short, unsigned short> Short;
+typedef TypeDefinitions<int, unsigned int, unsigned int> Int;
+typedef TypeDefinitions<long, unsigned long, unsigned long> Long;
+typedef TypeDefinitions<long long, unsigned long long, unsigned long long> LongLong;
+typedef testing::Types<Short, Int, Long, LongLong> Integers;
+using namespace md::sym;
 
 TYPED_TEST_CASE(MonomialTest, Integers);
 
 TYPED_TEST(MonomialTest, Constructor) {
-    typedef Monomial<TypeParam, TypeParam> Monomial;
+    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
+    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
     Monomial::total_ids = 0;
-    Monomial::floor_registry.clear();
-    Monomial::ceil_registry.clear();
+    Polynomial::floor_registry.clear();
+    Polynomial::ceil_registry.clear();
 
     // Constant monomial 1
     auto one = Monomial(1);
@@ -31,7 +44,7 @@ TYPED_TEST(MonomialTest, Constructor) {
     auto a = Monomial();
     EXPECT_EQ(a.coefficient, 1);
     EXPECT_FALSE(a.is_constant());
-    EXPECT_THAT(a.powers, testing::ElementsAre(std::pair<TypeParam, TypeParam>{0, 1}));
+    EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{0, 1}));
 
     // From constant
     auto two = Monomial(2);
@@ -39,19 +52,21 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_TRUE(two.is_constant());
     EXPECT_EQ(two.powers.size(), 0);
 
-    two.powers.push_back(std::pair<TypeParam, TypeParam>{0, 2});
+    two.powers.push_back(entry_pair{0, 2});
     // From another
     auto two_x2 = Monomial(two);
     EXPECT_EQ(two_x2.coefficient, 2);
     EXPECT_FALSE(two_x2.is_constant());
-    EXPECT_THAT(two_x2.powers, testing::ElementsAre(std::pair<TypeParam, TypeParam>{0, 2}));
+    EXPECT_THAT(two_x2.powers, testing::ElementsAre(entry_pair{0, 2}));
 }
 
 TYPED_TEST(MonomialTest, Equality) {
-    typedef Monomial<TypeParam, TypeParam> Monomial;
+    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
+    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
     Monomial::total_ids = 0;
-    Monomial::floor_registry.clear();
-    Monomial::ceil_registry.clear();
+    Polynomial::floor_registry.clear();
+    Polynomial::ceil_registry.clear();
 
     // Equality with integers
     auto two = Monomial(2);
@@ -84,10 +99,12 @@ TYPED_TEST(MonomialTest, Equality) {
 
 
 TYPED_TEST(MonomialTest, Operators) {
-    typedef Monomial<TypeParam, TypeParam> Monomial;
+    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
+    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
     Monomial::total_ids = 0;
-    Monomial::floor_registry.clear();
-    Monomial::ceil_registry.clear();
+    Polynomial::floor_registry.clear();
+    Polynomial::ceil_registry.clear();
 
     auto x = Monomial();
     auto y = Monomial();
@@ -97,9 +114,9 @@ TYPED_TEST(MonomialTest, Operators) {
     // Verify inner structure (such as ordering)
     EXPECT_EQ(composite.coefficient, 2);
     EXPECT_FALSE(composite.is_constant());
-    EXPECT_THAT(composite.powers, testing::ElementsAre(std::pair<TypeParam, TypeParam>{x.powers[0].first, 1},
-                                                       std::pair<TypeParam, TypeParam>{y.powers[0].first, 1},
-                                                       std::pair<TypeParam, TypeParam>{z.powers[0].first, 1}));
+    EXPECT_THAT(composite.powers, testing::ElementsAre(entry_pair{x.powers[0].first, 1},
+                                                       entry_pair{y.powers[0].first, 1},
+                                                       entry_pair{z.powers[0].first, 1}));
 
     // Check equality between different forms
     EXPECT_EQ(composite / 2, x * y * z);
@@ -115,10 +132,12 @@ TYPED_TEST(MonomialTest, Operators) {
 }
 
 TYPED_TEST(MonomialTest, FloorCeil) {
-    typedef Monomial<TypeParam, TypeParam> Monomial;
+    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
+    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
     Monomial::total_ids = 0;
-    Monomial::floor_registry.clear();
-    Monomial::ceil_registry.clear();
+    Polynomial::floor_registry.clear();
+    Polynomial::ceil_registry.clear();
 
     auto x = Monomial();
     auto y = Monomial();
@@ -169,11 +188,14 @@ TYPED_TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(ceil_y2.powers[0].second, 1);
 }
 
+
 TYPED_TEST(MonomialTest, Eval) {
-    typedef Monomial<TypeParam, TypeParam> Monomial;
+    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
+    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
     Monomial::total_ids = 0;
-    Monomial::floor_registry.clear();
-    Monomial::ceil_registry.clear();
+    Polynomial::floor_registry.clear();
+    Polynomial::ceil_registry.clear();
 
     auto two = Monomial(2);
     auto five = Monomial(5);
