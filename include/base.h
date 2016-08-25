@@ -19,8 +19,21 @@ namespace md {
             static_assert(not std::numeric_limits<P>::is_signed, "P can be only instantiated with unsigned types");
         public:
             static I total_ids;
+            /**
+             * @param id
+             * @return
+             */
+            static Monomial specific_variable(I id){
+                auto result = Monomial(1);
+                if(total_ids <= id){
+                    total_ids = id + 1;
+                }
+                result.powers.push_back({id, 1});
+                return result;
+            }
+
             /** A power first argument is the id of the variable, the second is the actual power */
-            std::vector<std::pair<I, P>> powers;
+            std::vector <std::pair<I, P>> powers;
             /** The constant coefficient */
             C coefficient;
 
@@ -48,7 +61,7 @@ namespace md {
              * @return The value of the monomial evaluated at the provided values.
              */
             template<typename T>
-            T eval(const std::vector<T> &values) const;
+            T eval(const std::vector <T> &values) const;
 
             C eval() const {
                 return eval(std::vector < C > {});
@@ -71,10 +84,10 @@ namespace md {
         public:
             static Polynomial<C, I, P> zero;
             static Polynomial<C, I, P> one;
-            static std::vector<std::pair<I, std::pair<Polynomial, Polynomial>>> floor_registry;
-            static std::vector<std::pair<I, std::pair<Polynomial, Polynomial>>> ceil_registry;
+            static std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> floor_registry;
+            static std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> ceil_registry;
 
-            static std::pair<I, std::pair<Polynomial, Polynomial>> get_floor(I id) {
+            static std::pair <I, std::pair<Polynomial, Polynomial>> get_floor(I id) {
                 for (auto i = 0; i < floor_registry.size(); ++i) {
                     if (floor_registry[i].first == id) {
                         return floor_registry[i];
@@ -83,7 +96,7 @@ namespace md {
                 return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
             };
 
-            static std::pair<I, std::pair<Polynomial, Polynomial>> get_ceil(I id) {
+            static std::pair <I, std::pair<Polynomial, Polynomial>> get_ceil(I id) {
                 for (auto i = 0; i < ceil_registry.size(); ++i) {
                     if (ceil_registry[i].first == id) {
                         return ceil_registry[i];
@@ -91,11 +104,37 @@ namespace md {
                 }
                 return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
             };
+
+            /**
+             * Resets and erases all of the symbolic variables registry
+             */
+            static void reset_registry(){
+                Monomial<C, I, P>::total_ids = 0;
+                floor_registry.clear();
+                ceil_registry.clear();
+            }
+
+            /**
+             * Returns an unused symbolic integer
+             * @return
+             */
+            static Polynomial new_variable() {
+                return Polynomial(Monomial<C, I, P>());
+            }
+
+            /**
+             * Returns the symbolic integer representing the concrete id
+             * @return
+             */
+            static Polynomial specific_variable(I id){
+                return Polynomial(Monomial<C, I, P>::specific_variable(id));
+            }
+
             /**
              * The list of monoimals of the polynomial.
              * Note: The vector is always sorted according to less_then_comparator
              */
-            std::vector<Monomial<C, I, P>> monomials;
+            std::vector <Monomial<C, I, P>> monomials;
 
             Polynomial(const Polynomial<C, I, P> &polynomial) :
                     monomials(polynomial.monomials) {};
@@ -112,10 +151,6 @@ namespace md {
                 }
             }
 
-            static Polynomial new_variable() {
-                return Polynomial(Monomial<C, I, P>());
-            }
-
             bool is_constant() const {
                 switch (monomials.size()) {
                     case 0:
@@ -128,7 +163,7 @@ namespace md {
             }
 
             template<typename T>
-            T eval(const std::vector<T> &values) {
+            T eval(const std::vector <T> &values) const {
                 T value = 0;
                 for (auto i = 0; i < monomials.size(); ++i) {
                     value += monomials[i].eval(values);
@@ -157,9 +192,11 @@ namespace md {
         };
 
         template<typename C, typename I, typename P>
-        std::vector<std::pair<I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>>> Polynomial<C, I, P>::floor_registry;
+        std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>>
+        Polynomial<C, I, P>::floor_registry;
         template<typename C, typename I, typename P>
-        std::vector<std::pair<I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>>> Polynomial<C, I, P>::ceil_registry;
+        std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>>
+        Polynomial<C, I, P>::ceil_registry;
         template<typename C, typename I, typename P>
         Polynomial<C, I, P> Polynomial<C, I, P>::zero = Polynomial<C, I, P>(0);
         template<typename C, typename I, typename P>
@@ -167,7 +204,7 @@ namespace md {
 
         template<class C, class I, class P>
         template<class T>
-        T Monomial<C, I, P>::eval(const std::vector<T> &values) const {
+        T Monomial<C, I, P>::eval(const std::vector <T> &values) const {
             static_assert(std::numeric_limits<T>::is_integer, "T can be only integer type");
             T value = coefficient;
             for (auto i = 0; i < powers.size(); ++i) {

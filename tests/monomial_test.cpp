@@ -30,9 +30,7 @@ TYPED_TEST(MonomialTest, Constructor) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    Monomial::total_ids = 0;
-    Polynomial::floor_registry.clear();
-    Polynomial::ceil_registry.clear();
+    Polynomial::reset_registry();
 
     // Constant monomial 1
     auto one = Monomial(1);
@@ -52,8 +50,8 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_TRUE(two.is_constant());
     EXPECT_EQ(two.powers.size(), 0);
 
-    two.powers.push_back(entry_pair{0, 2});
     // From another
+    two.powers.push_back(entry_pair{0, 2});
     auto two_x2 = Monomial(two);
     EXPECT_EQ(two_x2.coefficient, 2);
     EXPECT_FALSE(two_x2.is_constant());
@@ -64,9 +62,7 @@ TYPED_TEST(MonomialTest, Equality) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    Monomial::total_ids = 0;
-    Polynomial::floor_registry.clear();
-    Polynomial::ceil_registry.clear();
+    Polynomial::reset_registry();
 
     // Equality with integers
     auto two = Monomial(2);
@@ -102,9 +98,7 @@ TYPED_TEST(MonomialTest, Operators) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    Monomial::total_ids = 0;
-    Polynomial::floor_registry.clear();
-    Polynomial::ceil_registry.clear();
+    Polynomial::reset_registry();
 
     auto x = Monomial();
     auto y = Monomial();
@@ -135,20 +129,44 @@ TYPED_TEST(MonomialTest, FloorCeil) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    Monomial::total_ids = 0;
-    Polynomial::floor_registry.clear();
-    Polynomial::ceil_registry.clear();
+    Polynomial::reset_registry();
 
     auto x = Monomial();
     auto y = Monomial();
     auto five = Monomial(5);
-    auto three = Monomial(3);
     auto two = Monomial(2);
     auto composite = five * x * x * y;
 
-    // Constant expressions
-    EXPECT_EQ(floor(five, two), two);
-    EXPECT_EQ(ceil(five, two), three);
+    // Testing numerical floor and ceil
+    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
+
+    // Constant operations
+    EXPECT_EQ(floor(five, 3), 1);
+    EXPECT_EQ(floor(3, five), 0);
+    EXPECT_EQ(floor(0, five), 0);
+    EXPECT_EQ(ceil(2, five), 1);
+    EXPECT_EQ(ceil(five, 2), 3);
+    EXPECT_EQ(ceil(0, five), 0);
+
 
     // Exact floor divisions
     EXPECT_EQ(floor(composite, x * x), five * y);
@@ -160,7 +178,7 @@ TYPED_TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(ceil(composite, 5), x * x * y);
 
     // Partial floor divisions
-    auto floor_3 = floor(composite, three);
+    auto floor_3 = floor(composite, 3);
     auto floor_x3 = floor(composite, x * x * x);
     auto floor_y2 = floor(composite, y * y);
     EXPECT_EQ(floor_3.coefficient, 1);
@@ -174,7 +192,7 @@ TYPED_TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(floor_y2.powers[0].second, 1);
 
     // Partial ceil divisions
-    auto ceil_3 = ceil(composite, three);
+    auto ceil_3 = ceil(composite, 3);
     auto ceil_x3 = ceil(composite, x * x * x);
     auto ceil_y2 = ceil(composite, y * y);
     EXPECT_EQ(ceil_3.coefficient, 1);
@@ -193,19 +211,18 @@ TYPED_TEST(MonomialTest, Eval) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    Monomial::total_ids = 0;
-    Polynomial::floor_registry.clear();
-    Polynomial::ceil_registry.clear();
+    Polynomial::reset_registry();
+    // Values
+    const typename TypeParam::C x_val = 3;
+    const typename TypeParam::C y_val = 5;
+    const typename TypeParam::C z_val = 7;
+    const std::vector<typename TypeParam::C> values{x_val, y_val, z_val};
 
     auto two = Monomial(2);
     auto five = Monomial(5);
     auto x = Monomial();
-    const long long x_val = 3;
     auto y = Monomial();
-    const long long y_val = 5;
     auto z = Monomial();
-    const long long z_val = 7;
-    std::vector<long long> values{x_val, y_val, z_val};
 
     // Simple
     EXPECT_EQ(two.eval(), 2);
@@ -226,9 +243,4 @@ TYPED_TEST(MonomialTest, Eval) {
     EXPECT_EQ(ceil(y * y * z, 7).eval(values), (y_val * y_val * z_val) / 7);
     EXPECT_EQ(floor(two * x * y * z, 1000).eval(values), 0);
     EXPECT_EQ(ceil(two * x * y * z, 1000).eval(values), 0);
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

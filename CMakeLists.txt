@@ -13,39 +13,32 @@ if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
 endif ()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+
+# --- Google test stuff
+set(GOOGLETEST_ROOT ${PROJECT_SOURCE_DIR}/external/googletest/googletest CACHE STRING "Google Test source root")
+set(GOOGLEMOCK_ROOT ${PROJECT_SOURCE_DIR}/external/googletest/googlemock CACHE STRING "Google Mock source root")
+
+include_directories(
+        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}
+        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/include
+        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}
+        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/include
+)
+
+set(GOOGLETEST_SOURCES
+        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/src/gtest-all.cc
+        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/src/gtest_main.cc
+        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock-all.cc
+        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock_main.cc
+        )
+
+foreach (_source ${GOOGLETEST_SOURCES})
+    set_source_files_properties(${_source} PROPERTIES GENERATED 1)
+endforeach ()
+
+add_library(googletest ${GOOGLETEST_SOURCES})
+add_library(googlemock ${GOOGLETEST_SOURCES})
+# --- Google test stuff
+
 add_subdirectory(tests)
-## --- Google test stuff
-#set(GOOGLETEST_ROOT external/googletest/googletest CACHE STRING "Google Test source root")
-#set(GOOGLEMOCK_ROOT external/googletest/googlemock CACHE STRING "Google Mock source root")
-#
-#include_directories(
-#        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}
-#        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/include
-#        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}
-#        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/include
-#)
-#
-#set(GOOGLETEST_SOURCES
-#        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/src/gtest-all.cc
-#        ${PROJECT_SOURCE_DIR}/${GOOGLETEST_ROOT}/src/gtest_main.cc
-#        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock-all.cc
-#        ${PROJECT_SOURCE_DIR}/${GOOGLEMOCK_ROOT}/src/gmock_main.cc
-#        )
-#
-#foreach (_source ${GOOGLETEST_SOURCES})
-#    set_source_files_properties(${_source} PROPERTIES GENERATED 1)
-#endforeach ()
-#
-#add_library(googletest ${GOOGLETEST_SOURCES})
-#add_library(googlemock ${GOOGLETEST_SOURCES})
-## --- Google test stuff
-#
-#set(test_sources tests/monomial_test.cpp)
-#
-##add_executable(base_tests tests/base_tests.cpp)
-#add_executable(monomial_test ${test_sources})
-#add_dependencies(monomial_test googletest googlemock)
-#target_link_libraries(monomial_test googletest googlemock pthread)
-#
-#enable_testing()
-#add_test(monomial_)
+

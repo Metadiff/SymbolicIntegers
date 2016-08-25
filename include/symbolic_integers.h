@@ -2,10 +2,14 @@
 // Created by alex on 21/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS2_H
-#define METADIFF_SYMBOLIC_INTEGERS2_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_H
+#define METADIFF_SYMBOLIC_INTEGERS_H
 
+#include <type_traits>
 #include "exceptions.h"
-#include "templated.h"
+#include "base.h"
+#include "monomial_ops.h"
+#include "polynomial_ops.h"
+#include "extra_ops.h"
 
-#endif //METADIFF_SYMBOLIC_INTEGERS2_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_H
