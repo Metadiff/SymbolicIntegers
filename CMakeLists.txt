@@ -6,15 +6,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
     set(CMAKE_CXX_FLAGS "-Wall -Werror=return-type -Wno-unknown-pragmas -Wno-sign-compare")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Woverloaded-virtual -Wwrite-strings -Wno-unused")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
     set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif ()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-add_subdirectory(external/googletest)
+# Add gmock only if it has not been added by a parental project
+#message(WARNING "${BUILD_GMOCK} *********x*****************************")
+#if ((NOT DEFINED BUILD_GMOCK) OR (NOT BUILD_GMOCK))
+#    message(WARNING "${BUILD_GMOCK} **************************************")
+    add_subdirectory(external/googletest)
+#    set(BUILD_GMOCK OFF)
+#    message(WARNING "${BUILD_GMOCK} *x*************************************")
+#endif()
+
+# Build tests
 add_subdirectory(tests)
 
 ## --- Google test stuff
@@ -42,4 +51,3 @@ add_subdirectory(tests)
 #add_library(googletest ${GOOGLETEST_SOURCES})
 #add_library(googlemock ${GOOGLETEST_SOURCES})
 ## --- Google test stuff
-

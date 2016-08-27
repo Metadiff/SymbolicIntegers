@@ -14,7 +14,13 @@ namespace md {
 
         class EvaluationFailure : public std::exception {
             virtual const char *what() const throw() {
-                return "Trying to evaluate a monomial/polynomial without providing the values for all variables";
+                return "Trying to evaluate a monomial/polynomial without providing the values for all needed";
+            }
+        };
+
+        class DivisionByZero : public std::exception {
+            virtual const char *what() const throw() {
+                return "Attempted division by zero";
             }
         };
     }

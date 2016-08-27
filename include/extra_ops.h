@@ -7,37 +7,6 @@
 
 namespace md {
     namespace sym {
-        template<typename T1, typename T2,
-                typename = std::enable_if<std::is_integral<T1>::value>,
-                typename = std::enable_if<std::is_integral<T2>::value>>
-        auto floor(T1 dividend, T2 divisor) -> decltype(dividend / divisor) {
-            if(divisor == 0){
-                throw NonIntegerDivision();
-            }
-            if((dividend >= 0 and divisor > 0)
-               or (dividend <= 0 and divisor < 0)
-                    or (dividend % divisor == 0)){
-                return (dividend / divisor);
-            }
-            return dividend / divisor - 1;
-        };
-
-        template<typename T1, typename T2,
-                typename = std::enable_if<std::is_integral<T1>::value>,
-                typename = std::enable_if<std::is_integral<T2>::value>>
-        auto ceil(T1 dividend, T2 divisor) -> decltype(dividend / divisor){
-            if(divisor == 0){
-                throw NonIntegerDivision();
-            }
-            if((dividend >= 0 and divisor < 0) or (dividend <= 0 and divisor > 0)){
-                return dividend / divisor;
-            }
-            if(dividend % divisor == 0){
-                return dividend / divisor;
-            }
-            return dividend / divisor + 1;
-        };
-
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
          * @param dividend
@@ -50,14 +19,12 @@ namespace md {
                 auto dividend_value = dividend.eval();
                 auto divisor_value = divisor.eval();
                 return Monomial<C, I, P>(floor(dividend_value, divisor_value));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Monomial<C, I, P>();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Monomial<C, I, P>();
             }
         };
 
@@ -70,14 +37,14 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Monomial <C, I, P> floor(const Monomial <C, I, P> &dividend, const T divisor) {
             if (dividend.is_constant()) {
-                return Monomial<C, I, P>(floor(dividend.eval(), C(divisor)));
-            } else if (dividend.coefficient % divisor == 0) {
-                return dividend / divisor;
-            } else {
-                Polynomial<C, I, P>::floor_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
-                return Monomial<C, I, P>();
+                return Monomial<C, I, P>(floor(dividend.eval(), divisor));
             }
+            if (dividend.coefficient % divisor == 0) {
+                return dividend / divisor;
+            }
+            Polynomial<C, I, P>::floor_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
+            return Monomial<C, I, P>();
         };
 
         /**
@@ -89,12 +56,11 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Monomial <C, I, P> floor(const T dividend, const Monomial <C, I, P> &divisor) {
             if (divisor.is_constant()) {
-                return Monomial<C, I, P>(floor(C(dividend), divisor.eval()));
-            } else {
-                Polynomial<C, I, P>::floor_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
-                return Monomial<C, I, P>();
+                return Monomial<C, I, P>(floor(dividend, divisor.eval()));
             }
+            Polynomial<C, I, P>::floor_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
+            return Monomial<C, I, P>();
         };
 
 
@@ -108,14 +74,12 @@ namespace md {
         Polynomial<C, I, P> floor(const Polynomial <C, I, P> &dividend, const Polynomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(dividend.eval() / divisor.eval());
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -129,14 +93,12 @@ namespace md {
         Polynomial<C, I, P> floor(const Polynomial <C, I, P> &dividend, const Monomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(floor(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -150,14 +112,12 @@ namespace md {
         Polynomial<C, I, P> floor(const Monomial <C, I, P> &dividend, const Polynomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(floor(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::floor_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -170,22 +130,20 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> floor(const Polynomial <C, I, P> &dividend, const T divisor) {
             if (dividend.is_constant()) {
-                return Polynomial<C, I, P>(floor(dividend.eval(), C(divisor)));
-            } else {
-                bool all_divisible = true;
-                for(auto i=0;i<dividend.monomials.size();++i){
-                    if(dividend.monomials[i].coefficient % divisor != 0){
-                        all_divisible = false;
-                    }
-                }
-                if(all_divisible){
-                    return dividend / divisor;
-                } else {
-                    Polynomial<C, I, P>::floor_registry.push_back(
-                            {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
-                    return Polynomial<C, I, P>::new_variable();
+                return Polynomial<C, I, P>(floor(dividend.eval(), divisor));
+            }
+            bool all_divisible = true;
+            for(auto i=0;i<dividend.monomials.size();++i){
+                if(dividend.monomials[i].coefficient % divisor != 0){
+                    all_divisible = false;
                 }
             }
+            if(all_divisible){
+                return dividend / divisor;
+            }
+            Polynomial<C, I, P>::floor_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
+            return Polynomial<C, I, P>::new_variable();
         };
 
         /**
@@ -197,12 +155,11 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> floor(const T dividend, const Polynomial <C, I, P> &divisor) {
             if (divisor.is_constant()) {
-                return Polynomial<C, I, P>(floor(C(dividend), divisor.eval()));
-            } else {
-                Polynomial<C, I, P>::floor_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
-                return Polynomial<C, I, P>::new_variable();
+                return Polynomial<C, I, P>(floor(dividend, divisor.eval()));
             }
+            Polynomial<C, I, P>::floor_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
+            return Polynomial<C, I, P>::new_variable();
         };
 
 
@@ -216,14 +173,12 @@ namespace md {
         Monomial <C, I, P> ceil(const Monomial <C, I, P> &dividend, const Monomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Monomial<C, I, P>(ceil(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Monomial<C, I, P>();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Monomial<C, I, P>();
             }
         };
 
@@ -236,14 +191,14 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Monomial <C, I, P> ceil(const Monomial <C, I, P> &dividend, const T divisor) {
             if (dividend.is_constant()) {
-                return Monomial<C, I, P>(ceil(dividend.eval(), C(divisor)));
-            } else if (dividend.coefficient % divisor == 0) {
-                return dividend / divisor;
-            } else {
-                Polynomial<C, I, P>::ceil_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
-                return Monomial<C, I, P>();
+                return Monomial<C, I, P>(ceil(dividend.eval(), divisor));
             }
+            if (dividend.coefficient % divisor == 0) {
+                return dividend / divisor;
+            }
+            Polynomial<C, I, P>::ceil_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+            return Monomial<C, I, P>();
         };
 
         /**
@@ -255,12 +210,11 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Monomial <C, I, P> ceil(const T dividend, const Monomial <C, I, P> &divisor) {
             if (divisor.is_constant()) {
-                return Monomial<C, I, P>(ceil(C(dividend), divisor.eval()));
-            } else {
-                Polynomial<C, I, P>::ceil_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
-                return Monomial<C, I, P>();
+                return Monomial<C, I, P>(ceil(dividend, divisor.eval()));
             }
+            Polynomial<C, I, P>::ceil_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Monomial<C, I, P>(divisor)}});
+            return Monomial<C, I, P>();
         };
 
         /**
@@ -273,14 +227,12 @@ namespace md {
         Polynomial <C, I, P> ceil(const Polynomial <C, I, P> &dividend, const Polynomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(ceil(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -294,14 +246,12 @@ namespace md {
         Polynomial <C, I, P> ceil(const Polynomial <C, I, P> &dividend, const Monomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(ceil(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -315,14 +265,12 @@ namespace md {
         Polynomial <C, I, P> ceil(const Monomial <C, I, P> &dividend, const Polynomial <C, I, P> &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
                 return Polynomial<C, I, P>(ceil(dividend.eval(), divisor.eval()));
-            } else {
-                try {
-                    auto result = dividend / divisor;
-                    return result;
-                } catch (...) {
-                    Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
-                    return Polynomial<C, I, P>::new_variable();
-                }
+            }
+            try {
+                return dividend / divisor;
+            } catch (...) {
+                Polynomial<C, I, P>::ceil_registry.push_back({Monomial<C, I, P>::total_ids, {dividend, divisor}});
+                return Polynomial<C, I, P>::new_variable();
             }
         };
 
@@ -335,22 +283,20 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> ceil(const Polynomial <C, I, P> &dividend, const T divisor) {
             if (dividend.is_constant()) {
-                return Polynomial<C, I, P>(ceil(dividend.eval(), C(divisor)));
-            } else {
-                bool all_divisible = true;
-                for(auto i=0;i<dividend.monomials.size();++i){
-                    if(dividend.monomials[i].coefficient % divisor != 0){
-                        all_divisible = false;
-                    }
-                }
-                if(all_divisible){
-                    return dividend / divisor;
-                } else {
-                    Polynomial<C, I, P>::floor_registry.push_back(
-                            {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
-                    return Polynomial<C, I, P>::new_variable();
+                return Polynomial<C, I, P>(ceil(dividend.eval(), divisor));
+            }
+            bool all_divisible = true;
+            for(auto i=0;i<dividend.monomials.size();++i){
+                if(dividend.monomials[i].coefficient % divisor != 0){
+                    all_divisible = false;
                 }
             }
+            if(all_divisible){
+                return dividend / divisor;
+            }
+            Polynomial<C, I, P>::floor_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
+            return Polynomial<C, I, P>::new_variable();
         };
 
         /**
@@ -362,12 +308,11 @@ namespace md {
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> ceil(const T dividend, const Polynomial <C, I, P> &divisor) {
             if (divisor.is_constant()) {
-                return Polynomial<C, I, P>(ceil(C(dividend), divisor.eval()));
-            } else {
-                Polynomial<C, I, P>::ceil_registry.push_back(
-                        {Monomial<C, I, P>::total_ids, {Polynomial<C, I, P>(dividend), divisor}});
-                return Polynomial<C, I, P>::new_variable();
+                return Polynomial<C, I, P>(ceil(dividend, divisor.eval()));
             }
+            Polynomial<C, I, P>::ceil_registry.push_back(
+                    {Monomial<C, I, P>::total_ids, {Polynomial<C, I, P>(dividend), divisor}});
+            return Polynomial<C, I, P>::new_variable();
         };
     }
 }

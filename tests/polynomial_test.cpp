@@ -301,3 +301,5 @@ TYPED_TEST(PolynomialTest, Eval) {
     EXPECT_EQ(ceil(product, x).eval(values), ceil(product.eval(values), x.eval(values)));
     EXPECT_EQ(ceil(product, y).eval(values), ceil(product.eval(values), y.eval(values)));
 }
+
+

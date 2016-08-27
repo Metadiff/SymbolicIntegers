@@ -123,6 +123,7 @@ TYPED_TEST(MonomialTest, Operators) {
     EXPECT_THROW(composite / (x * x), md::sym::NonIntegerDivision);
     EXPECT_THROW(composite / (y * y), md::sym::NonIntegerDivision);
     EXPECT_THROW(composite / (z * z), md::sym::NonIntegerDivision);
+    EXPECT_THROW(composite / 0, md::sym::DivisionByZero);
 }
 
 TYPED_TEST(MonomialTest, FloorCeil) {
@@ -211,6 +212,7 @@ TYPED_TEST(MonomialTest, Eval) {
     typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
     typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
     typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    typedef std::vector<std::pair<typename TypeParam::I, typename TypeParam::C>> value_vec;
     Polynomial::reset_registry();
     // Values
     const typename TypeParam::C x_val = 3;
@@ -224,23 +226,42 @@ TYPED_TEST(MonomialTest, Eval) {
     auto y = Monomial();
     auto z = Monomial();
 
-    // Simple
+    // Constant
     EXPECT_EQ(two.eval(), 2);
     EXPECT_EQ(five.eval(), 5);
+    // Simple
     EXPECT_EQ(x.eval(values), x_val);
     EXPECT_EQ(y.eval(values), y_val);
     EXPECT_EQ(z.eval(values), z_val);
+    // Using second type of eval
+    EXPECT_EQ(x.eval(value_vec{{0, x_val}}), x_val);
+    EXPECT_EQ(y.eval(value_vec{{1, y_val}}), y_val);
+    EXPECT_EQ(z.eval(value_vec{{2, z_val}}), z_val);
 
     // Complex
-    EXPECT_EQ((two * x * x * y).eval(values), 2 * x_val * x_val * y_val);
-    EXPECT_EQ((five * y * y * z).eval(values), 5 * y_val * y_val * z_val);
+    EXPECT_EQ((2 * x * x * y).eval(values), 2 * x_val * x_val * y_val);
+    EXPECT_EQ((5 * y * y * z).eval(values), 5 * y_val * y_val * z_val);
     EXPECT_EQ((3 * z * z * x).eval(values), 3 * z_val * z_val * x_val);
+    // Using second type of eval
+    EXPECT_EQ((2 * x * x * y).eval(value_vec{{1, y_val}, {0, x_val}}), 2 * x_val * x_val * y_val);
+    EXPECT_EQ((5 * y * y * z).eval(value_vec{{1, y_val}, {2, z_val}}), 5 * y_val * y_val * z_val);
+    EXPECT_EQ((3 * z * z * x).eval(value_vec{{2, z_val}, {0, x_val}}), 3 * z_val * z_val * x_val);
 
     // Floor and ceil division
-    EXPECT_EQ(floor(5 * x * x * y, 2).eval(values), (5 * x_val * x_val * y_val) / 2);
-    EXPECT_EQ(ceil(5 * x * x * y, 2).eval(values), (5 * x_val * x_val * y_val) / 2 + 1);
-    EXPECT_EQ(floor(y * y * z, 7).eval(values), (y_val * y_val * z_val) / 7);
-    EXPECT_EQ(ceil(y * y * z, 7).eval(values), (y_val * y_val * z_val) / 7);
-    EXPECT_EQ(floor(two * x * y * z, 1000).eval(values), 0);
-    EXPECT_EQ(ceil(two * x * y * z, 1000).eval(values), 0);
+    EXPECT_EQ(floor(5 * x * x * y, 2).eval(values), 112);
+    EXPECT_EQ(floor(y * y * z, 7).eval(values), 25);
+    EXPECT_EQ(floor(2 * x * y * z, 1000).eval(values), 0);
+    EXPECT_EQ(ceil(5 * x * x * y, 2).eval(values), 113);
+    EXPECT_EQ(ceil(y * y * z, 7).eval(values), 25);
+    EXPECT_EQ(ceil(2 * x * y * z, 1000).eval(values), 1);
+    // Using second type of eval
+    EXPECT_EQ(floor(5 * x * x * y, 2).eval(value_vec{{1, y_val}, {0, x_val}}), 112);
+    EXPECT_EQ(floor(y * y * z, 7).eval(value_vec{{1, y_val}, {2, z_val}}), 25);
+    EXPECT_EQ(floor(two * x * y * z, 1000).eval(value_vec{{1, y_val}, {2, z_val}, {0, x_val}}), 0);
+    EXPECT_EQ(ceil(5 * x * x * y, 2).eval(value_vec{{1, y_val}, {0, x_val}}), 113);
+    EXPECT_EQ(ceil(y * y * z, 7).eval(value_vec{{1, y_val}, {2, z_val}}), 25);
+    EXPECT_EQ(ceil(two * x * y * z, 1000).eval(value_vec{{1, y_val}, {2, z_val}, {0, x_val}}), 1);
+
+    // Exception for zero division on eval
+    EXPECT_THROW(floor(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), md::sym::DivisionByZero);
 }

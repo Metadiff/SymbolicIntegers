@@ -6,6 +6,37 @@
 #define METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_BASE_H
 namespace md {
     namespace sym {
+        template<typename T1, typename T2,
+                typename = std::enable_if<std::is_integral<T1>::value>,
+                typename = std::enable_if<std::is_integral<T2>::value>>
+        auto floor(T1 dividend, T2 divisor) -> decltype(dividend / divisor) {
+            if(divisor == 0){
+                throw DivisionByZero();
+            }
+            if((dividend >= 0 and divisor > 0)
+               or (dividend <= 0 and divisor < 0)
+               or (dividend % divisor == 0)){
+                return (dividend / divisor);
+            }
+            return dividend / divisor - 1;
+        };
+
+        template<typename T1, typename T2,
+                typename = std::enable_if<std::is_integral<T1>::value>,
+                typename = std::enable_if<std::is_integral<T2>::value>>
+        auto ceil(T1 dividend, T2 divisor) -> decltype(dividend / divisor){
+            if(divisor == 0){
+                throw DivisionByZero();
+            }
+            if((dividend >= 0 and divisor < 0) or (dividend <= 0 and divisor > 0)){
+                return dividend / divisor;
+            }
+            if(dividend % divisor == 0){
+                return dividend / divisor;
+            }
+            return dividend / divisor + 1;
+        };
+
         /**
          * An instance of a single symbolic monomial
          */
@@ -62,6 +93,13 @@ namespace md {
              */
             template<typename T>
             T eval(const std::vector <T> &values) const;
+
+            /**
+             * @param values
+             * @return The value of the monomial evaluated at the provided values.
+             */
+            template<typename T>
+            T eval(const std::vector <std::pair<I, T>> &values) const;
 
             C eval() const {
                 return eval(std::vector < C > {});
@@ -171,6 +209,15 @@ namespace md {
                 return value;
             }
 
+            template<typename T>
+            T eval(const std::vector <std::pair<I, T>> &values) const {
+                T value = 0;
+                for (auto i = 0; i < monomials.size(); ++i) {
+                    value += monomials[i].eval(values);
+                }
+                return value;
+            }
+
             C eval() const {
                 return eval(std::vector < C > {});
             }
@@ -189,6 +236,10 @@ namespace md {
                 }
                 return result;
             }
+
+            template<typename T>
+            static std::vector<std::pair<I, T>> deduce_values(
+                    const std::vector <std::pair<Polynomial<C, I, P>, T>> &implicit_values);
         };
 
         template<typename C, typename I, typename P>
@@ -202,30 +253,23 @@ namespace md {
         template<typename C, typename I, typename P>
         Polynomial<C, I, P> Polynomial<C, I, P>::one = Polynomial<C, I, P>(1);
 
-        template<class C, class I, class P>
-        template<class T>
+        template<typename C, typename I, typename P>
+        template<typename T>
         T Monomial<C, I, P>::eval(const std::vector <T> &values) const {
             static_assert(std::numeric_limits<T>::is_integer, "T can be only integer type");
             T value = coefficient;
             for (auto i = 0; i < powers.size(); ++i) {
                 T cur_value;
-                auto floor = Polynomial<C, I, P>::get_floor(powers[i].first);
-                auto ceil = Polynomial<C, I, P>::get_ceil(powers[i].first);
-                if (floor.first != 0) {
-                    T dividend = floor.second.first.eval(values);
-                    T divisor = floor.second.second.eval(values);
-                    cur_value = dividend / divisor;
-                } else if (ceil.first != 0) {
-                    T dividend = ceil.second.first.eval(values);
-                    T divisor = ceil.second.second.eval(values);
-                    cur_value = 0;
-                    if (dividend > divisor) {
-                        if (dividend % divisor == 0) {
-                            cur_value = dividend / divisor;
-                        } else {
-                            cur_value = dividend / divisor + 1;
-                        }
-                    }
+                auto floor_poly = Polynomial<C, I, P>::get_floor(powers[i].first);
+                auto ceil_poly = Polynomial<C, I, P>::get_ceil(powers[i].first);
+                if (floor_poly.first != 0) {
+                    T dividend = floor_poly.second.first.eval(values);
+                    T divisor = floor_poly.second.second.eval(values);
+                    cur_value = floor(dividend, divisor);
+                } else if (ceil_poly.first != 0) {
+                    T dividend = ceil_poly.second.first.eval(values);
+                    T divisor = ceil_poly.second.second.eval(values);
+                    cur_value = ceil(dividend, divisor);
                 } else if (values.size() <= powers[i].first) {
                     throw EvaluationFailure();
                 } else {
@@ -234,6 +278,108 @@ namespace md {
                 value *= pow(cur_value, powers[i].second);
             }
             return value;
+        }
+
+        template<typename C, typename I, typename P>
+        template<typename T>
+        T Monomial<C, I, P>::eval(const std::vector <std::pair<I, T>> &values) const {
+            static_assert(std::numeric_limits<T>::is_integer, "T can be only integer type");
+            T value = coefficient;
+            for (auto i = 0; i < powers.size(); ++i) {
+                T cur_value;
+                auto floor_poly = Polynomial<C, I, P>::get_floor(powers[i].first);
+                auto ceil_poly = Polynomial<C, I, P>::get_ceil(powers[i].first);
+                if (floor_poly.first != 0) {
+                    T dividend = floor_poly.second.first.eval(values);
+                    T divisor = floor_poly.second.second.eval(values);
+                    cur_value = floor(dividend, divisor);
+                } else if (ceil_poly.first != 0) {
+                    T dividend = ceil_poly.second.first.eval(values);
+                    T divisor = ceil_poly.second.second.eval(values);
+                    cur_value = ceil(dividend, divisor);
+                } else {
+                    bool found = false;
+                    for(auto j = 0; j < values.size(); ++j){
+                        if(values[j].first == powers[i].first){
+                            cur_value = values[j].second;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if(not found){
+                        throw EvaluationFailure();
+                    }
+                }
+                value *= pow(cur_value, powers[i].second);
+            }
+            return value;
+        }
+
+
+        template<typename C, typename I, typename P, typename T>
+        void reduce_polynomials(std::vector <std::pair<Polynomial<C, I, P>, T>> &polynomials, I id, T value){
+            for(auto i = 0; i < polynomials.size(); ++i){
+                for(auto j = 0; j < polynomials[i].first.monomials.size(); ++j){
+                    for(auto v = 0; v < polynomials[i].first.monomials[j].powers.size(); ++v){
+                        if(polynomials[i].first.monomials[j].powers[v].first == id){
+                            polynomials[i].first.monomials[j].coefficient *= pow(value, polynomials[i].first.monomials[j].powers[v].second);
+                            polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
+                            break;
+                        }
+                    }
+                }
+            }
+        };
+
+        template<typename C, typename I, typename P>
+        template<typename T>
+        std::vector<std::pair<I, T>> Polynomial<C, I, P>::deduce_values(
+                const std::vector <std::pair<Polynomial<C, I, P>, T>> &implicit_values){
+            // TODO implement value deduction
+            std::vector<std::pair<Polynomial<C, I, P>, T>> work = implicit_values;
+            std::vector<std::pair<I, T>> values;
+            for(auto i = 0; i < work.size(); ++i){
+                // Remove constant polynomials
+                if(work[i].first.is_constant()){
+                    if(work[i].first.eval() != work[i].second){
+                        std::cout << "1" << std::endl;
+                        throw EvaluationFailure();
+                    }
+                    work.erase(work.begin() + i);
+                    --i;
+                    continue;
+                }
+                // Eliminate constant monomials from the current one
+                for(auto j = 0; j < work[i].first.monomials.size(); ++j){
+                    if(work[i].first.monomials[j].is_constant()){
+                        work[i].second -= work[i].first.monomials[j].eval();
+                        work[i].first.monomials.erase(work[i].first.monomials.begin() + j);
+                        --j;
+                    }
+                }
+                if(work[i].first.monomials.size() == 1 and work[i].first.monomials[0].powers.size() == 1){
+                    // This means that the polynomial is of the form c * x^n and we can evaluate it
+                    C c = work[i].first.monomials[0].coefficient;
+                    I id = work[i].first.monomials[0].powers[0].first;
+                    P power = work[i].first.monomials[0].powers[0].second;
+                    T value = T(pow(work[i].second / c, 1.0 / power));
+                    if(pow(value, power) * c != work[i].second){
+                        throw EvaluationFailure();
+                    }
+                    // Add to the values
+                    values.push_back({id, value});
+                    // Remove current polynomial from list
+                    work.erase(work.begin() + i);
+                    // Reduce all other polynomials
+                    reduce_polynomials(work, id, value);
+                    // Start from begin again
+                    i = -1;
+                }
+            }
+            if(work.size() > 0){
+                throw EvaluationFailure();
+            }
+            return values;
         }
 
         template<typename C, typename I, typename P>

@@ -253,6 +253,9 @@ namespace md {
 
         template<typename C, typename I, typename P>
         Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+            if(rhs == 0){
+                throw DivisionByZero();
+            }
             auto result = Polynomial<C, I, P>(0);
             auto reminder = Polynomial<C, I, P>(lhs);
             Monomial<C, I, P> next_monomial;
@@ -270,6 +273,9 @@ namespace md {
 
         template<typename C, typename I, typename P>
         Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+            if(rhs == 0){
+                throw DivisionByZero();
+            }
             auto result = Polynomial<C, I, P>();
             for (auto i = 0; i < lhs.monomials.size(); i++) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
@@ -279,6 +285,9 @@ namespace md {
 
         template<typename C, typename I, typename P>
         Polynomial <C, I, P> operator/(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+            if(rhs == 0){
+                throw DivisionByZero();
+            }
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
@@ -289,6 +298,9 @@ namespace md {
 
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const T rhs) {
+            if(rhs == 0){
+                throw DivisionByZero();
+            }
             if (rhs == 0) {
                 throw NonIntegerDivision();
             }
@@ -301,6 +313,9 @@ namespace md {
 
         template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
         Polynomial <C, I, P> operator/(const T lhs, const Polynomial <C, I, P> rhs) {
+            if(rhs == 0){
+                throw DivisionByZero();
+            }
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
