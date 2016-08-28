@@ -327,6 +327,15 @@ namespace md {
                             break;
                         }
                     }
+                    // Check if the monomial is the up to a constant to some previous and combine if so
+                    for(auto k = 0; k < j; ++k){
+                        if(up_to_coefficient(polynomials[i].first.monomials[j], polynomials[i].first.monomials[k])){
+                            polynomials[i].first.monomials[k].coefficient += polynomials[i].first.monomials[j].coefficient;
+                            polynomials[i].first.monomials.erase(polynomials[i].first.monomials.begin()+j);
+                            --j;
+                            break;
+                        }
+                    }
                 }
             }
         };
@@ -335,14 +344,12 @@ namespace md {
         template<typename T>
         std::vector<std::pair<I, T>> Polynomial<C, I, P>::deduce_values(
                 const std::vector <std::pair<Polynomial<C, I, P>, T>> &implicit_values){
-            // TODO implement value deduction
             std::vector<std::pair<Polynomial<C, I, P>, T>> work = implicit_values;
             std::vector<std::pair<I, T>> values;
             for(auto i = 0; i < work.size(); ++i){
                 // Remove constant polynomials
                 if(work[i].first.is_constant()){
                     if(work[i].first.eval() != work[i].second){
-                        std::cout << "1" << std::endl;
                         throw EvaluationFailure();
                     }
                     work.erase(work.begin() + i);
