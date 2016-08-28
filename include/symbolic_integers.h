@@ -5,7 +5,10 @@
 #ifndef METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_H
 #define METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_H
 
-#include <type_traits>
+#include "string"
+#include "math.h"
+#include "limits"
+#include "vector"
 #include "exceptions.h"
 #include "base.h"
 #include "monomial_ops.h"

@@ -25,6 +25,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Build tests
 add_subdirectory(tests)
+add_executable(example examples/example.cpp)
 
 ## --- Google test stuff
 #set(GOOGLETEST_ROOT ${PROJECT_SOURCE_DIR}/external/googletest/googletest CACHE STRING "Google Test source root")
