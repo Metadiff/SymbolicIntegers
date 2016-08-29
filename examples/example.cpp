@@ -1,9 +1,9 @@
 #include "symbolic_integers.h"
 #include "iostream"
 
-typedef md::sym::Polynomial<long long, unsigned short, unsigned short> SymInt;
-typedef std::vector<std::pair<unsigned short, int>> VecValues;
-typedef std::vector<std::pair<SymInt, int>> ImplicitValues;
+typedef md::sym::Polynomial SymInt;
+typedef std::vector<std::pair<I, C>> VecValues;
+typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
     // Get just the individual symbolic variables

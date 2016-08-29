@@ -7,8 +7,7 @@
 
 namespace md {
     namespace sym {
-        template<typename C, typename I, typename P>
-        bool operator==(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator==(const Polynomial  &lhs, const Polynomial  &rhs) {
             if (lhs.monomials.size() != rhs.monomials.size()) {
                 return false;
             }
@@ -20,68 +19,56 @@ namespace md {
             return true;
         }
 
-        template<typename C, typename I, typename P>
-        bool operator!=(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator!=(const Polynomial  &lhs, const Polynomial  &rhs) {
             return not(lhs == rhs);
         }
 
-        template<typename C, typename I, typename P>
-        bool operator==(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+        bool operator==(const Polynomial  &lhs, const Monomial  &rhs) {
             return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
         }
 
-        template<typename C, typename I, typename P>
-        bool operator!=(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+        bool operator!=(const Polynomial  &lhs, const Monomial  &rhs) {
             return not(lhs == rhs);
         }
 
-        template<typename C, typename I, typename P>
-        bool operator==(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator==(const Monomial  &lhs, const Polynomial  &rhs) {
             return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
         }
 
-        template<typename C, typename I, typename P>
-        bool operator!=(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator!=(const Monomial  &lhs, const Polynomial  &rhs) {
             return not(lhs == rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator==(const Polynomial <C, I, P> &lhs, const T rhs) {
+        bool operator==(const Polynomial  &lhs, const C rhs) {
             return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator!=(const Polynomial <C, I, P> &lhs, const T rhs) {
+        bool operator!=(const Polynomial  &lhs, const C rhs) {
             return not(lhs == rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator==(const T lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator==(const C lhs, const Polynomial  &rhs) {
             return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator!=(const T lhs, const Polynomial <C, I, P> &rhs) {
+        bool operator!=(const C lhs, const Polynomial  &rhs) {
             return not(lhs == rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator+(const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator+(const Polynomial  &rhs) {
             return rhs;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator-(const Polynomial <C, I, P> &rhs) {
-            Polynomial<C, I, P> result = Polynomial<C, I, P>(rhs);
+        Polynomial  operator-(const Polynomial  &rhs) {
+            Polynomial result = Polynomial(rhs);
             for (auto i = 0; i < rhs.monomials.size(); ++i) {
                 result.monomials[i].coefficient = -result.monomials[i].coefficient;
             }
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator+(const Monomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
-            auto result = Polynomial<C, I, P>(0);
+        Polynomial  operator+(const Monomial  &lhs, const Monomial  &rhs) {
+            auto result = Polynomial(0);
             if (up_to_coefficient(lhs, rhs)) {
                 if (lhs.coefficient != -rhs.coefficient) {
                     result.monomials.push_back(lhs);
@@ -97,9 +84,8 @@ namespace md {
             return result;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator+(const Monomial <C, I, P> &lhs, const T rhs) {
-            auto result = Polynomial<C, I, P>(0);
+        Polynomial  operator+(const Monomial  &lhs, const C rhs) {
+            auto result = Polynomial(0);
             if (lhs.is_constant()) {
                 if (lhs.coefficient != -rhs) {
                     result.monomials.push_back(lhs);
@@ -107,19 +93,17 @@ namespace md {
                 }
             } else {
                 result.monomials.push_back(lhs);
-                result.monomials.push_back(Monomial<C, I, P>(rhs));
+                result.monomials.push_back(Monomial(rhs));
             }
             return result;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator+(const T lhs, const Monomial <C, I, P> &rhs) {
+        Polynomial  operator+(const C lhs, const Monomial  &rhs) {
             return rhs + lhs;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator+(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
-            auto result = Polynomial<C, I, P>(0);
+        Polynomial  operator+(const Polynomial  &lhs, const Polynomial  &rhs) {
+            auto result = Polynomial(0);
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.monomials.size() and i2 < rhs.monomials.size()) {
@@ -149,79 +133,65 @@ namespace md {
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator+(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
-            return lhs + Polynomial<C, I, P>(rhs);
+        Polynomial  operator+(const Polynomial  &lhs, const Monomial  &rhs) {
+            return lhs + Polynomial(rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator+(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator+(const Monomial  &lhs, const Polynomial  &rhs) {
             return rhs + lhs;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator+(const Polynomial <C, I, P> &lhs, const T rhs) {
-            return lhs + Polynomial<C, I, P>(rhs);
+        Polynomial  operator+(const Polynomial  &lhs, const C rhs) {
+            return lhs + Polynomial(rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator+(const T lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator+(const C lhs, const Polynomial  &rhs) {
             return rhs + lhs;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator-(const Monomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+        Polynomial  operator-(const Monomial  &lhs, const Monomial  &rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator-(const Monomial <C, I, P> &lhs, const T rhs) {
+        Polynomial  operator-(const Monomial  &lhs, const C rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator-(const T lhs, const Monomial <C, I, P> rhs) {
+        Polynomial  operator-(const C lhs, const Monomial  rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator-(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator-(const Polynomial  &lhs, const Polynomial  &rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator-(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+        Polynomial  operator-(const Polynomial  &lhs, const Monomial  &rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator-(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator-(const Monomial  &lhs, const Polynomial  &rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator-(const Polynomial <C, I, P> &lhs, const T rhs) {
+        Polynomial  operator-(const Polynomial  &lhs, const C rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator-(const T lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator-(const C lhs, const Polynomial  &rhs) {
             return lhs + (-rhs);
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator*(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
-            auto result = Polynomial<C, I, P>(0);
+        Polynomial  operator*(const Polynomial  &lhs, const Monomial  &rhs) {
+            auto result = Polynomial(0);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator*(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
-            auto result = Polynomial<C, I, P>(0);
-            auto partial = Polynomial<C, I, P>(0);
+        Polynomial  operator*(const Polynomial  &lhs, const Polynomial  &rhs) {
+            auto result = Polynomial(0);
+            auto partial = Polynomial(0);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 partial.monomials.clear();
                 for (auto j = 0; j < rhs.monomials.size(); ++j) {
@@ -232,33 +202,29 @@ namespace md {
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator*(const Monomial <C, I, P> lhs, const Polynomial <C, I, P> rhs) {
+        Polynomial  operator*(const Monomial  lhs, const Polynomial  rhs) {
             return rhs * lhs;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator*(const Polynomial <C, I, P> &lhs, const T rhs) {
-            auto result = Polynomial<C, I, P>(0);
+        Polynomial  operator*(const Polynomial  &lhs, const C rhs) {
+            auto result = Polynomial(0);
             for (int i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
             return result;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator*(const T lhs, const Polynomial <C, I, P> rhs) {
+        Polynomial  operator*(const C lhs, const Polynomial  rhs) {
             return rhs * lhs;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator/(const Polynomial  &lhs, const Polynomial  &rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Polynomial<C, I, P>(0);
-            auto reminder = Polynomial<C, I, P>(lhs);
-            Monomial<C, I, P> next_monomial;
+            auto result = Polynomial(0);
+            auto reminder = Polynomial(lhs);
+            Monomial next_monomial;
             while (not reminder.is_constant()) {
                 next_monomial = (reminder.monomials[0] / rhs.monomials[0]);
                 result = result + next_monomial;
@@ -271,55 +237,48 @@ namespace md {
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const Monomial <C, I, P> &rhs) {
+        Polynomial  operator/(const Polynomial  &lhs, const Monomial  &rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Polynomial<C, I, P>();
+            auto result = Polynomial(0);
             for (auto i = 0; i < lhs.monomials.size(); i++) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
             return result;
         }
 
-        template<typename C, typename I, typename P>
-        Polynomial <C, I, P> operator/(const Monomial <C, I, P> &lhs, const Polynomial <C, I, P> &rhs) {
+        Polynomial  operator/(const Monomial  &lhs, const Polynomial  &rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
             }
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
-            auto result = Polynomial<C, I, P>(0);
+            auto result = Polynomial(0);
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator/(const Polynomial <C, I, P> &lhs, const T rhs) {
+        Polynomial  operator/(const Polynomial  &lhs, const C rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            if (rhs == 0) {
-                throw NonIntegerDivision();
-            }
-            auto result = Polynomial<C, I, P>(0);
+            auto result = Polynomial(0);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
             return result;
         }
 
-        template<typename C, typename I, typename P, typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        Polynomial <C, I, P> operator/(const T lhs, const Polynomial <C, I, P> rhs) {
+        Polynomial  operator/(const C lhs, const Polynomial  rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
             }
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
-            auto result = Polynomial<C, I, P>(0);
+            auto result = Polynomial(0);
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }
