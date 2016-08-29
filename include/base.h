@@ -244,10 +244,10 @@ namespace md {
 
         template<typename C, typename I, typename P>
         std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>>
-        Polynomial<C, I, P>::floor_registry;
+                Polynomial<C, I, P>::floor_registry;
         template<typename C, typename I, typename P>
         std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>>
-        Polynomial<C, I, P>::ceil_registry;
+                Polynomial<C, I, P>::ceil_registry;
         template<typename C, typename I, typename P>
         Polynomial<C, I, P> Polynomial<C, I, P>::zero = Polynomial<C, I, P>(0);
         template<typename C, typename I, typename P>
@@ -317,14 +317,37 @@ namespace md {
 
 
         template<typename C, typename I, typename P, typename T>
-        void reduce_polynomials(std::vector <std::pair<Polynomial<C, I, P>, T>> &polynomials, I id, T value){
+        void reduce_polynomials(std::vector <std::pair<Polynomial<C, I, P>, T>> &polynomials,
+                                const std::vector<std::pair<I, T>>& values,
+                                I id, T value){
             for(auto i = 0; i < polynomials.size(); ++i){
                 for(auto j = 0; j < polynomials[i].first.monomials.size(); ++j){
                     for(auto v = 0; v < polynomials[i].first.monomials[j].powers.size(); ++v){
-                        if(polynomials[i].first.monomials[j].powers[v].first == id){
-                            polynomials[i].first.monomials[j].coefficient *= pow(value, polynomials[i].first.monomials[j].powers[v].second);
+                        auto var_id = polynomials[i].first.monomials[j].powers[v].first;
+                        auto var_p = polynomials[i].first.monomials[j].powers[v].second;
+                        if(var_id == id){
+                            polynomials[i].first.monomials[j].coefficient *= pow(value, var_p);
                             polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
-                            break;
+                            --v;
+                            continue;
+                        }
+                        if(Polynomial<C, I, P>::get_floor(var_id).first != 0){
+                            try {
+                                auto floor_value = Polynomial<C, I, P>::specific_variable(var_id).eval(values);
+                                polynomials[i].first.monomials[j].coefficient *= pow(floor_value, var_p);
+                                polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
+                                --v;
+                                continue;
+                            } catch (...) {}
+                        }
+                        if(Polynomial<C, I, P>::get_ceil(var_id).first != 0) {
+                            try {
+                                auto ceil_value = Polynomial<C, I, P>::specific_variable(var_id).eval(values);
+                                polynomials[i].first.monomials[j].coefficient *= pow(ceil_value, var_p);
+                                polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
+                                --v;
+                                continue;
+                            } catch (...) {}
                         }
                     }
                     // Check if the monomial is the up to a constant to some previous and combine if so
@@ -378,7 +401,10 @@ namespace md {
                     // Remove current polynomial from list
                     work.erase(work.begin() + i);
                     // Reduce all other polynomials
-                    reduce_polynomials(work, id, value);
+                    if(work.size() == 0){
+                        break;
+                    }
+                    reduce_polynomials(work, values, id, value);
                     // Start from begin again
                     i = -1;
                 }

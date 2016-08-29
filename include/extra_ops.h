@@ -294,7 +294,7 @@ namespace md {
             if(all_divisible){
                 return dividend / divisor;
             }
-            Polynomial<C, I, P>::floor_registry.push_back(
+            Polynomial<C, I, P>::ceil_registry.push_back(
                     {Monomial<C, I, P>::total_ids, {dividend, Polynomial<C, I, P>(divisor)}});
             return Polynomial<C, I, P>::new_variable();
         };
