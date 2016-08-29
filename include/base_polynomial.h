@@ -2,8 +2,8 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef SYMBOLIC_INTEGERS_BASE_POLYNOMIAL_H
-#define SYMBOLIC_INTEGERS_BASE_POLYNOMIAL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_POLYNOMIAL_H
+#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_POLYNOMIAL_H
 
 namespace md{
     namespace sym{
@@ -49,7 +49,7 @@ namespace md{
              * @return
              */
             static Polynomial new_variable() {
-                return Polynomial(Monomial());
+                return Polynomial(Monomial::new_variable());
             }
 
             /**
@@ -80,6 +80,8 @@ namespace md{
                     monomials.push_back(Monomial(value));
                 }
             }
+
+            Polynomial(): Polynomial(0) {};
 
             bool is_constant() const {
                 switch (monomials.size()) {
@@ -130,6 +132,8 @@ namespace md{
             static std::vector<std::pair<I, C>> deduce_values(
                     const std::vector <std::pair<Polynomial, C>> &implicit_values);
         };
+
+        std::ostream &operator<<(std::ostream &f, const Polynomial &polynomial);
     }
 }
-#endif //SYMBOLIC_INTEGERS_BASE_POLYNOMIAL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_POLYNOMIAL_H

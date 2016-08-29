@@ -5,31 +5,10 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "symbolic_integers.h"
-
-template<typename CC, typename II, typename PP>
-struct TypeDefinitions {
-    typedef CC C;
-    typedef II I;
-    typedef PP P;
-};
-
-template<typename>
-class MonomialTest : public testing::Test {
-};
-
-typedef TypeDefinitions<short, unsigned short, unsigned short> Short;
-typedef TypeDefinitions<int, unsigned int, unsigned int> Int;
-typedef TypeDefinitions<long, unsigned long, unsigned long> Long;
-typedef TypeDefinitions<long long, unsigned long long, unsigned long long> LongLong;
-typedef testing::Types<Short, Int, Long, LongLong> Integers;
 using namespace md::sym;
 
-TYPED_TEST_CASE(MonomialTest, Integers);
-
-TYPED_TEST(MonomialTest, Constructor) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(MonomialTest, Constructor) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     // Constant monomial 1
@@ -39,7 +18,7 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_EQ(one.powers.size(), 0);
 
     // Monomial with 1 variable
-    auto a = Monomial();
+    auto a = Monomial::new_variable();
     EXPECT_EQ(a.coefficient, 1);
     EXPECT_FALSE(a.is_constant());
     EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{0, 1}));
@@ -58,10 +37,8 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_THAT(two_x2.powers, testing::ElementsAre(entry_pair{0, 2}));
 }
 
-TYPED_TEST(MonomialTest, Equality) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(MonomialTest, Equality) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     // Equality with integers
@@ -73,7 +50,7 @@ TYPED_TEST(MonomialTest, Equality) {
 
     // Not equality between 'x' and a constant
     auto two_2 = Monomial(2);
-    auto x = Monomial();
+    auto x = Monomial::new_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, x);
@@ -94,15 +71,13 @@ TYPED_TEST(MonomialTest, Equality) {
 }
 
 
-TYPED_TEST(MonomialTest, Operators) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(MonomialTest, Operators) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
-    auto x = Monomial();
-    auto y = Monomial();
-    auto z = Monomial();
+    auto x = Monomial::new_variable();
+    auto y = Monomial::new_variable();
+    auto z = Monomial::new_variable();
     auto composite = 2 * y * z * x;
 
     // Verify inner structure (such as ordering)
@@ -126,39 +101,36 @@ TYPED_TEST(MonomialTest, Operators) {
     EXPECT_THROW(composite / 0, md::sym::DivisionByZero);
 }
 
-TYPED_TEST(MonomialTest, FloorCeil) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(MonomialTest, FloorCeil) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
-    auto x = Monomial();
-    auto y = Monomial();
+    auto x = Monomial::new_variable();
+    auto y = Monomial::new_variable();
     auto five = Monomial(5);
-    auto two = Monomial(2);
     auto composite = five * x * x * y;
 
     // Testing numerical floor and ceil
-    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(2)), 0);
-    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(2)), -1);
-    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(-2)), -1);
-    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(-2)), 0);
-    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
-    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
-    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
-    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
-    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
-    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
-    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(2)), 1);
-    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(2)), 0);
-    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(-2)), 0);
-    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(-2)), 1);
-    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
-    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
-    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
-    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
-    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
-    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(floor(C(1), C(2)), 0);
+    EXPECT_EQ(floor(C(-1), C(2)), -1);
+    EXPECT_EQ(floor(C(1), C(-2)), -1);
+    EXPECT_EQ(floor(C(-1), C(-2)), 0);
+    EXPECT_EQ(floor(C(2), C(2)), 1);
+    EXPECT_EQ(floor(C(-2), C(2)), -1);
+    EXPECT_EQ(floor(C(2), C(-2)), -1);
+    EXPECT_EQ(floor(C(-2), C(-2)), 1);
+    EXPECT_EQ(floor(C(0), C(2)), 0);
+    EXPECT_EQ(floor(C(0), C(-2)), 0);
+    EXPECT_EQ(ceil(C(1), C(2)), 1);
+    EXPECT_EQ(ceil(C(-1), C(2)), 0);
+    EXPECT_EQ(ceil(C(1), C(-2)), 0);
+    EXPECT_EQ(ceil(C(-1), C(-2)), 1);
+    EXPECT_EQ(ceil(C(2), C(2)), 1);
+    EXPECT_EQ(ceil(C(-2), C(2)), -1);
+    EXPECT_EQ(ceil(C(2), C(-2)), -1);
+    EXPECT_EQ(ceil(C(-2), C(-2)), 1);
+    EXPECT_EQ(ceil(C(0), C(2)), 0);
+    EXPECT_EQ(ceil(C(0), C(-2)), 0);
 
     // Constant operations
     EXPECT_EQ(floor(five, 3), 1);
@@ -208,23 +180,21 @@ TYPED_TEST(MonomialTest, FloorCeil) {
 }
 
 
-TYPED_TEST(MonomialTest, Eval) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    typedef std::vector<std::pair<typename TypeParam::I, typename TypeParam::C>> value_vec;
+TEST(MonomialTest, Eval) {
+    typedef std::pair<I, P> entry_pair;
+    typedef std::vector<std::pair<I, C>> value_vec;
     Polynomial::reset_registry();
     // Values
-    const typename TypeParam::C x_val = 3;
-    const typename TypeParam::C y_val = 5;
-    const typename TypeParam::C z_val = 7;
-    const std::vector<typename TypeParam::C> values{x_val, y_val, z_val};
+    const C x_val = 3;
+    const C y_val = 5;
+    const C z_val = 7;
+    const std::vector<C> values{x_val, y_val, z_val};
 
     auto two = Monomial(2);
     auto five = Monomial(5);
-    auto x = Monomial();
-    auto y = Monomial();
-    auto z = Monomial();
+    auto x = Monomial::new_variable();
+    auto y = Monomial::new_variable();
+    auto z = Monomial::new_variable();
 
     // Constant
     EXPECT_EQ(two.eval(), 2);
@@ -264,4 +234,5 @@ TYPED_TEST(MonomialTest, Eval) {
 
     // Exception for zero division on eval
     EXPECT_THROW(floor(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), md::sym::DivisionByZero);
+    EXPECT_THROW(ceil(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), md::sym::DivisionByZero);
 }

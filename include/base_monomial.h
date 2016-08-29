@@ -2,8 +2,8 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef SYMBOLIC_INTEGERS_BASE_MONOMIAL_H
-#define SYMBOLIC_INTEGERS_BASE_MONOMIAL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_MONOMIAL_H
+#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_MONOMIAL_H
 
 namespace md{
     namespace sym{
@@ -26,22 +26,29 @@ namespace md{
                 return result;
             }
 
+            /**
+             *
+             */
+            static Monomial new_variable(){
+                auto monomial = Monomial(1);
+                monomial.powers.push_back({total_ids, 1});
+                ++total_ids;
+                return monomial;
+            }
+
             /** A power first argument is the id of the variable, the second is the actual power */
             std::vector <std::pair<I, P>> powers;
             /** The constant coefficient */
             C coefficient;
 
-            Monomial() : coefficient(1) {
-                powers.push_back({total_ids, 1});
-                ++total_ids;
-            }
-
-            Monomial(const C value) : coefficient(value) {}
-
             Monomial(const Monomial &monomial) {
                 powers = monomial.powers;
                 coefficient = monomial.coefficient;
             }
+
+            Monomial(const C value) : coefficient(value) {}
+
+            Monomial() : Monomial(0) {}
 
             /**
              * @return true if the monomial represents a constant
@@ -72,7 +79,7 @@ namespace md{
             std::string to_string() const;
         };
 
-        I Monomial::total_ids = 0;
+        std::ostream &operator<<(std::ostream &f, const Monomial &monomial);
     }
 }
-#endif //SYMBOLIC_INTEGERS_BASE_MONOMIAL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_BASE_MONOMIAL_H

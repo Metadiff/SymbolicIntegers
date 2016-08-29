@@ -2,287 +2,87 @@
 // Created by alex on 24/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_POLYNOMIAL_OPS_H
-#define METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_POLYNOMIAL_OPS_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_POLYNOMIAL_OPS_H
+#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_POLYNOMIAL_OPS_H
 
 namespace md {
     namespace sym {
-        bool operator==(const Polynomial  &lhs, const Polynomial  &rhs) {
-            if (lhs.monomials.size() != rhs.monomials.size()) {
-                return false;
-            }
-            for (auto i = 0; i < lhs.monomials.size(); ++i) {
-                if (lhs.monomials[i] != rhs.monomials[i]) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        bool operator==(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        bool operator!=(const Polynomial  &lhs, const Polynomial  &rhs) {
-            return not(lhs == rhs);
-        }
+        bool operator!=(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        bool operator==(const Polynomial  &lhs, const Monomial  &rhs) {
-            return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
-        }
+        bool operator==(const Polynomial  &lhs, const Monomial  &rhs);
 
-        bool operator!=(const Polynomial  &lhs, const Monomial  &rhs) {
-            return not(lhs == rhs);
-        }
+        bool operator!=(const Polynomial  &lhs, const Monomial  &rhs);
 
-        bool operator==(const Monomial  &lhs, const Polynomial  &rhs) {
-            return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
-        }
+        bool operator==(const Monomial  &lhs, const Polynomial  &rhs);
 
-        bool operator!=(const Monomial  &lhs, const Polynomial  &rhs) {
-            return not(lhs == rhs);
-        }
+        bool operator!=(const Monomial  &lhs, const Polynomial  &rhs);
 
-        bool operator==(const Polynomial  &lhs, const C rhs) {
-            return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
-        }
+        bool operator==(const Polynomial  &lhs, const C rhs);
 
-        bool operator!=(const Polynomial  &lhs, const C rhs) {
-            return not(lhs == rhs);
-        }
+        bool operator!=(const Polynomial  &lhs, const C rhs);
 
-        bool operator==(const C lhs, const Polynomial  &rhs) {
-            return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
-        }
+        bool operator==(const C lhs, const Polynomial  &rhs);
 
-        bool operator!=(const C lhs, const Polynomial  &rhs) {
-            return not(lhs == rhs);
-        }
+        bool operator!=(const C lhs, const Polynomial  &rhs);
 
-        Polynomial  operator+(const Polynomial  &rhs) {
-            return rhs;
-        }
+        Polynomial  operator+(const Polynomial  &rhs);
 
-        Polynomial  operator-(const Polynomial  &rhs) {
-            Polynomial result = Polynomial(rhs);
-            for (auto i = 0; i < rhs.monomials.size(); ++i) {
-                result.monomials[i].coefficient = -result.monomials[i].coefficient;
-            }
-            return result;
-        }
+        Polynomial  operator-(const Polynomial  &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const Monomial  &rhs) {
-            auto result = Polynomial(0);
-            if (up_to_coefficient(lhs, rhs)) {
-                if (lhs.coefficient != -rhs.coefficient) {
-                    result.monomials.push_back(lhs);
-                    result.monomials[0].coefficient += rhs.coefficient;
-                }
-            } else if (less_than_comparator(lhs, rhs)) {
-                result.monomials.push_back(lhs);
-                result.monomials.push_back(rhs);
-            } else {
-                result.monomials.push_back(rhs);
-                result.monomials.push_back(lhs);
-            }
-            return result;
-        }
+        Polynomial  operator+(const Monomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const C rhs) {
-            auto result = Polynomial(0);
-            if (lhs.is_constant()) {
-                if (lhs.coefficient != -rhs) {
-                    result.monomials.push_back(lhs);
-                    result.monomials[0].coefficient += rhs;
-                }
-            } else {
-                result.monomials.push_back(lhs);
-                result.monomials.push_back(Monomial(rhs));
-            }
-            return result;
-        }
+        Polynomial  operator+(const Monomial  &lhs, const C rhs);
 
-        Polynomial  operator+(const C lhs, const Monomial  &rhs) {
-            return rhs + lhs;
-        }
+        Polynomial  operator+(const C lhs, const Monomial  &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const Polynomial  &rhs) {
-            auto result = Polynomial(0);
-            auto i1 = 0;
-            auto i2 = 0;
-            while (i1 < lhs.monomials.size() and i2 < rhs.monomials.size()) {
-                if (up_to_coefficient(lhs.monomials[i1], rhs.monomials[i2])) {
-                    if (lhs.monomials[i1].coefficient != -rhs.monomials[i2].coefficient) {
-                        result.monomials.push_back(lhs.monomials[i1]);
-                        result.monomials.back().coefficient += rhs.monomials[i2].coefficient;
-                    }
-                    ++i1;
-                    ++i2;
-                } else if (less_than_comparator(lhs.monomials[i1], rhs.monomials[i2])) {
-                    result.monomials.push_back(lhs.monomials[i1]);
-                    ++i1;
-                } else {
-                    result.monomials.push_back(rhs.monomials[i2]);
-                    ++i2;
-                }
-            }
-            while (i1 < lhs.monomials.size()) {
-                result.monomials.push_back(lhs.monomials[i1]);
-                ++i1;
-            }
-            while (i2 < rhs.monomials.size()) {
-                result.monomials.push_back(rhs.monomials[i2]);
-                ++i2;
-            }
-            return result;
-        }
+        Polynomial  operator+(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const Monomial  &rhs) {
-            return lhs + Polynomial(rhs);
-        }
+        Polynomial  operator+(const Polynomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const Polynomial  &rhs) {
-            return rhs + lhs;
-        }
+        Polynomial  operator+(const Monomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const C rhs) {
-            return lhs + Polynomial(rhs);
-        }
+        Polynomial  operator+(const Polynomial  &lhs, const C rhs);
 
-        Polynomial  operator+(const C lhs, const Polynomial  &rhs) {
-            return rhs + lhs;
-        }
+        Polynomial  operator+(const C lhs, const Polynomial  &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const Monomial  &rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Monomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const C rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Monomial  &lhs, const C rhs);
 
-        Polynomial  operator-(const C lhs, const Monomial  rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const C lhs, const Monomial  rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const Polynomial  &rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const Monomial  &rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Polynomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const Polynomial  &rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Monomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const C rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const Polynomial  &lhs, const C rhs);
 
-        Polynomial  operator-(const C lhs, const Polynomial  &rhs) {
-            return lhs + (-rhs);
-        }
+        Polynomial  operator-(const C lhs, const Polynomial  &rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const Monomial  &rhs) {
-            auto result = Polynomial(0);
-            for (auto i = 0; i < lhs.monomials.size(); ++i) {
-                result.monomials.push_back(lhs.monomials[i] * rhs);
-            }
-            return result;
-        }
+        Polynomial  operator*(const Polynomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const Polynomial  &rhs) {
-            auto result = Polynomial(0);
-            auto partial = Polynomial(0);
-            for (auto i = 0; i < lhs.monomials.size(); ++i) {
-                partial.monomials.clear();
-                for (auto j = 0; j < rhs.monomials.size(); ++j) {
-                    partial.monomials.push_back(lhs.monomials[i] * rhs.monomials[j]);
-                }
-                result = result + partial;
-            }
-            return result;
-        }
+        Polynomial  operator*(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator*(const Monomial  lhs, const Polynomial  rhs) {
-            return rhs * lhs;
-        }
+        Polynomial  operator*(const Monomial  lhs, const Polynomial  rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const C rhs) {
-            auto result = Polynomial(0);
-            for (int i = 0; i < lhs.monomials.size(); ++i) {
-                result.monomials.push_back(lhs.monomials[i] * rhs);
-            }
-            return result;
-        }
+        Polynomial  operator*(const Polynomial  &lhs, const C rhs);
 
-        Polynomial  operator*(const C lhs, const Polynomial  rhs) {
-            return rhs * lhs;
-        }
+        Polynomial  operator*(const C lhs, const Polynomial  rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const Polynomial  &rhs) {
-            if(rhs == 0){
-                throw DivisionByZero();
-            }
-            auto result = Polynomial(0);
-            auto reminder = Polynomial(lhs);
-            Monomial next_monomial;
-            while (not reminder.is_constant()) {
-                next_monomial = (reminder.monomials[0] / rhs.monomials[0]);
-                result = result + next_monomial;
-                auto s = rhs * next_monomial;
-                reminder = reminder - s;
-            }
-            if (reminder != 0) {
-                throw NonIntegerDivision();
-            }
-            return result;
-        }
+        Polynomial  operator/(const Polynomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const Monomial  &rhs) {
-            if(rhs == 0){
-                throw DivisionByZero();
-            }
-            auto result = Polynomial(0);
-            for (auto i = 0; i < lhs.monomials.size(); i++) {
-                result.monomials.push_back(lhs.monomials[i] / rhs);
-            }
-            return result;
-        }
+        Polynomial  operator/(const Polynomial  &lhs, const Monomial  &rhs);
 
-        Polynomial  operator/(const Monomial  &lhs, const Polynomial  &rhs) {
-            if(rhs == 0){
-                throw DivisionByZero();
-            }
-            if (rhs.monomials.size() != 1) {
-                throw NonIntegerDivision();
-            }
-            auto result = Polynomial(0);
-            result.monomials.push_back(lhs / rhs.monomials[0]);
-            return result;
-        }
+        Polynomial  operator/(const Monomial  &lhs, const Polynomial  &rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const C rhs) {
-            if(rhs == 0){
-                throw DivisionByZero();
-            }
-            auto result = Polynomial(0);
-            for (auto i = 0; i < lhs.monomials.size(); ++i) {
-                result.monomials.push_back(lhs.monomials[i] / rhs);
-            }
-            return result;
-        }
+        Polynomial  operator/(const Polynomial  &lhs, const C rhs);
 
-        Polynomial  operator/(const C lhs, const Polynomial  rhs) {
-            if(rhs == 0){
-                throw DivisionByZero();
-            }
-            if (rhs.monomials.size() != 1) {
-                throw NonIntegerDivision();
-            }
-            auto result = Polynomial(0);
-            result.monomials.push_back(lhs / rhs.monomials[0]);
-            return result;
-        }
+        Polynomial  operator/(const C lhs, const Polynomial  rhs);
     }
 }
 
-#endif //METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_POLYNOMIAL_OPS_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_POLYNOMIAL_OPS_H

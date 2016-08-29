@@ -1,37 +1,12 @@
 //
-// Created by alex on 24/08/16.
+// Created by alex on 29/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_BASE_H
-#define METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_BASE_H
-namespace md {
-    namespace sym {
-        C floor(C dividend, C divisor) {
-            if(divisor == 0){
-                throw DivisionByZero();
-            }
-            if((dividend >= 0 and divisor > 0)
-               or (dividend <= 0 and divisor < 0)
-               or (dividend % divisor == 0)){
-                return (dividend / divisor);
-            }
-            return dividend / divisor - 1;
-        };
+#include "symbolic_integers.h"
 
-        C ceil(C dividend, C divisor){
-            if(divisor == 0){
-                throw DivisionByZero();
-            }
-            if((dividend >= 0 and divisor < 0) or (dividend <= 0 and divisor > 0)){
-                return dividend / divisor;
-            }
-            if(dividend % divisor == 0){
-                return dividend / divisor;
-            }
-            return dividend / divisor + 1;
-        };
-
-
+namespace md{
+    namespace sym{
+        I Monomial::total_ids = 0;
         std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>>
                 Polynomial::floor_registry;
         std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>>
@@ -40,18 +15,16 @@ namespace md {
         Polynomial Polynomial::one = Polynomial(1);
 
         C Monomial::eval(const std::vector <C> &values) const {
-            C value = coefficient;
+            C value = coefficient, cur_value;
+            std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                C cur_value;
-                auto floor_poly = Polynomial::get_floor(powers[i].first);
-                auto ceil_poly = Polynomial::get_ceil(powers[i].first);
-                if (floor_poly.first != 0) {
-                    C dividend = floor_poly.second.first.eval(values);
-                    C divisor = floor_poly.second.second.eval(values);
+                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                    C dividend = floor_var.second.first.eval(values);
+                    C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
-                } else if (ceil_poly.first != 0) {
-                    C dividend = ceil_poly.second.first.eval(values);
-                    C divisor = ceil_poly.second.second.eval(values);
+                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                    C dividend = ceil_var.second.first.eval(values);
+                    C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
                 } else if (values.size() <= powers[i].first) {
                     throw EvaluationFailure();
@@ -64,18 +37,16 @@ namespace md {
         }
 
         C Monomial::eval(const std::vector <std::pair<I, C>> &values) const {
-            C value = coefficient;
+            C value = coefficient, cur_value;
+            std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                C cur_value;
-                auto floor_poly = Polynomial::get_floor(powers[i].first);
-                auto ceil_poly = Polynomial::get_ceil(powers[i].first);
-                if (floor_poly.first != 0) {
-                    C dividend = floor_poly.second.first.eval(values);
-                    C divisor = floor_poly.second.second.eval(values);
+                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                    C dividend = floor_var.second.first.eval(values);
+                    C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
-                } else if (ceil_poly.first != 0) {
-                    C dividend = ceil_poly.second.first.eval(values);
-                    C divisor = ceil_poly.second.second.eval(values);
+                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                    C dividend = ceil_var.second.first.eval(values);
+                    C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
                 } else {
                     bool found = false;
@@ -94,7 +65,6 @@ namespace md {
             }
             return value;
         }
-
 
         void reduce_polynomials(std::vector <std::pair<Polynomial, C>> &polynomials,
                                 const std::vector<std::pair<I, C>>& values,
@@ -205,15 +175,14 @@ namespace md {
                     result += std::to_string(coefficient);
                 }
             }
-            std::pair <I, std::pair<Polynomial, Polynomial>> floor_value {0, {Polynomial(0), Polynomial(0)}};
-            std::pair <I, std::pair<Polynomial, Polynomial>> ceil_value {0, {Polynomial(0), Polynomial(0)}};
+            std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_value = Polynomial::get_floor(powers[i].first)).first != 0) {
-                    result += "floor(" + floor_value.second.first.to_string() + " / " +
-                              floor_value.second.second.to_string() + ")";
-                } else if ((ceil_value = Polynomial::get_ceil(powers[i].first)).first != 0) {
-                    result += "ceil(" + ceil_value.second.first.to_string() + " / " +
-                              ceil_value.second.second.to_string() + ")";
+                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                    result += "floor(" + floor_var.second.first.to_string() + " / " +
+                              floor_var.second.second.to_string() + ")";
+                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                    result += "ceil(" + ceil_var.second.first.to_string() + " / " +
+                              ceil_var.second.second.to_string() + ")";
                 } else {
                     result += ('a' + powers[i].first);
                     auto n = powers[i].second;
@@ -269,4 +238,3 @@ namespace md {
         }
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_BASE_H

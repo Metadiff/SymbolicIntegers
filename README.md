@@ -16,19 +16,21 @@ via `git submodule update --init --recursive`.
 The repository contains four branches, which implement the same thing 
 with small variations. Below are outlined these differences
   
-  1. master - All classes are templated. `C` is the type of the 
+  1. **master** - All classes are templated. `C` is the type of the 
   coefficient, `I` is the type of the variable id's and 
   `P` is the type of the powers. The registry for symbolic 
    variables is static attached to the corresponding class.
    
-  2. registry - Same as **master**, however there is a `Registry` class
+  2. **registry** - Same as **master**, however there is a `Registry` class
   which keeps information for all created variables. This allows to have
   different registries at the same time.
   
-  3. no_template - Same as **master**, however the classes are not templated,
-    and you need to define pre-processor variables
+  3. **no_template** - Same as **master**, however the classes are not templated.
+  You can define the preprocessor variables `C_WIDTH`, `I_WIDTH` and `P_WIDTH`
+  which specify how many bits (8, 16, 32 or 64) they will take. The 
+  default values are `C_WIDTH=32`, `I_WIDTH=16`, `P_WIDTH=8`.
   
-  4. no_template_registry - **2.** and **3.** combined.
+  4. **no_template_registry** - **2.** and **3.** combined.
   
 
 ## Example usage
@@ -40,9 +42,9 @@ be found in the `examples` directory.
 #include "symbolic_integers.h"
 #include "iostream"
 
-typedef md::sym::Polynomial<long long, unsigned short, unsigned short> SymInt;
-typedef std::vector<std::pair<unsigned short, int>> VecValues;
-typedef std::vector<std::pair<SymInt, int>> ImplicitValues;
+typedef md::sym::Polynomial SymInt;
+typedef std::vector<std::pair<I, C>> VecValues;
+typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
     // Get just the individual symbolic variables

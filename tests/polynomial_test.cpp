@@ -5,29 +5,10 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "symbolic_integers.h"
-
-template<typename CC, typename II, typename PP>
-struct TypeDefinitions {
-    typedef CC C;
-    typedef II I;
-    typedef PP P;
-};
-
-template<typename>
-class PolynomialTest : public testing::Test {};
-typedef TypeDefinitions<short, unsigned short, unsigned short> Short;
-typedef TypeDefinitions<int, unsigned int, unsigned int> Int;
-typedef TypeDefinitions<long, unsigned long, unsigned long> Long;
-typedef TypeDefinitions<long long, unsigned long long, unsigned long long> LongLong;
-typedef testing::Types<Short, Int, Long, LongLong> Integers;
 using namespace md::sym;
 
-TYPED_TEST_CASE(PolynomialTest, Integers);
-
-TYPED_TEST(PolynomialTest, Constructor) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, Constructor) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     auto zero = Polynomial(0);
@@ -64,10 +45,8 @@ TYPED_TEST(PolynomialTest, Constructor) {
     EXPECT_THAT(two_x.monomials[0].powers, testing::ElementsAre(entry_pair{0, 1}));
 }
 
-TYPED_TEST(PolynomialTest, Equality) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, Equality) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     // Equality with integers
@@ -108,14 +87,12 @@ TYPED_TEST(PolynomialTest, Equality) {
     EXPECT_EQ(y_monomial, y);
 }
 
-TYPED_TEST(PolynomialTest, AdditionOperators) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, AdditionOperators) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     // Compare x + y + 2
-    auto x_monomial = Monomial();
+    auto x_monomial = Monomial::new_variable();
     auto x = Polynomial::specific_variable(0);
     auto y = Polynomial::specific_variable(1);
     auto xpyp1_1 = x + y + 1;
@@ -144,10 +121,8 @@ TYPED_TEST(PolynomialTest, AdditionOperators) {
     EXPECT_TRUE(two.is_constant());
 }
 
-TYPED_TEST(PolynomialTest, MultuplyOperators) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, MultuplyOperators) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
     
     auto x = Polynomial::new_variable();
@@ -186,10 +161,8 @@ TYPED_TEST(PolynomialTest, MultuplyOperators) {
     EXPECT_THROW(product / x * x, md::sym::NonIntegerDivision);
 }
 
-TYPED_TEST(PolynomialTest, FloorCeil) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, FloorCeil) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     auto three = Polynomial(3);
@@ -259,17 +232,15 @@ TYPED_TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(Polynomial::ceil_registry.size(), 3);
 }
 
-TYPED_TEST(PolynomialTest, Eval) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+TEST(PolynomialTest, Eval) {
+    typedef std::pair<I, P> entry_pair;
     Polynomial::reset_registry();
 
     // Values
-    const typename TypeParam::C x_val = 3;
-    const typename TypeParam::C y_val = 5;
-    const typename TypeParam::C z_val = 7;
-    const std::vector<typename TypeParam::C> values{x_val, y_val, z_val};
+    const C x_val = 3;
+    const C y_val = 5;
+    const C z_val = 7;
+    const std::vector<C> values{x_val, y_val, z_val};
 
     auto two = Polynomial(2);
     auto x = Polynomial::new_variable();

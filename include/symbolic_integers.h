@@ -2,8 +2,8 @@
 // Created by alex on 21/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_H
-#define METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H
+#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H
 
 #include <cinttypes>
 
@@ -43,7 +43,7 @@ typedef uint32_t P;
 #elif I_WIDTH == 16
 typedef uint16_t P;
 #else
-typedef uint18_t P;
+typedef uint8_t P;
 #endif
 
 #include "string"
@@ -54,9 +54,8 @@ typedef uint18_t P;
 #include "base_monomial.h"
 #include "monomial_ops.h"
 #include "base_polynomial.h"
-#include "base.h"
 #include "polynomial_ops.h"
 #include "extra_ops.h"
 
 
-#endif //METADIFF_SYMBOLIC_INTEGERS_TEMPLATED_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H

@@ -5,37 +5,18 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "symbolic_integers.h"
-
-template<typename CC, typename II, typename PP>
-struct TypeDefinitions {
-    typedef CC C;
-    typedef II I;
-    typedef PP P;
-};
-
-template<typename>
-class DeductionTest : public testing::Test {};
-typedef TypeDefinitions<short, unsigned short, unsigned short> Short;
-typedef TypeDefinitions<int, unsigned int, unsigned int> Int;
-typedef TypeDefinitions<long, unsigned long, unsigned long> Long;
-typedef TypeDefinitions<long long, unsigned long long, unsigned long long> LongLong;
-typedef testing::Types<Short, Int, Long, LongLong> Integers;
 using namespace md::sym;
 
-TYPED_TEST_CASE(DeductionTest, Integers);
-
-TYPED_TEST(DeductionTest, VariableDeduction) {
-    typedef Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Monomial;
-    typedef Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P> Polynomial;
-    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
-    typedef std::vector<std::pair<typename TypeParam::I, typename TypeParam::C>> value_vec;
+TEST(DeductionTest, VariableDeduction) {
+    typedef std::pair<I, P> entry_pair;
+    typedef std::vector<std::pair<I, C>> value_vec;
     Polynomial::reset_registry();
 
     // Base variables
     auto x = Polynomial::new_variable();
     auto y = Polynomial::new_variable();
     auto z = Polynomial::new_variable();
-    typedef std::vector<std::pair<Polynomial, typename TypeParam::C>> ImplicitVec;
+    typedef std::vector<std::pair<Polynomial, C>> ImplicitVec;
     ImplicitVec implicit_values;
 
     // Example 1
@@ -176,7 +157,7 @@ TYPED_TEST(DeductionTest, VariableDeduction) {
     val1 = x_val * y_val * y_val;
     val2 = y_val * 2 + 1;
     val3 = z_val * z_val * x_val + z_val * y_val + 2;
-    implicit_values = std::vector<std::pair<Polynomial, typename TypeParam::C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
+    implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     EXPECT_THROW(Polynomial::deduce_values(implicit_values), EvaluationFailure);
 
     poly1 = x * y * y;
@@ -188,7 +169,7 @@ TYPED_TEST(DeductionTest, VariableDeduction) {
     val1 = x_val * y_val * y_val;
     val2 = y_val * z_val *  2 + 1;
     val3 = z_val * z_val * x_val + 2;
-    implicit_values = std::vector<std::pair<Polynomial, typename TypeParam::C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
+    implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     EXPECT_THROW(Polynomial::deduce_values(implicit_values), EvaluationFailure);
 
 }

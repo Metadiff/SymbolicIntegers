@@ -13,7 +13,11 @@ if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
 endif ()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
-
+set(SYMBOLIC_INTEGERS_SOURCES
+        ${PROJECT_SOURCE_DIR}/src/base.cpp
+        ${PROJECT_SOURCE_DIR}/src/monomial_ops.cpp
+        ${PROJECT_SOURCE_DIR}/src/polynomial_ops.cpp
+        ${PROJECT_SOURCE_DIR}/src/extra_ops.cpp)
 # Add gmock only if it has not been added by a parental project
 #message(WARNING "${BUILD_GMOCK} *********x*****************************")
 #if ((NOT DEFINED BUILD_GMOCK) OR (NOT BUILD_GMOCK))
@@ -25,7 +29,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Build tests
 add_subdirectory(tests)
-add_executable(example examples/example.cpp)
+add_executable(example examples/example.cpp ${SYMBOLIC_INTEGERS_SOURCES})
 
 ## --- Google test stuff
 #set(GOOGLETEST_ROOT ${PROJECT_SOURCE_DIR}/external/googletest/googletest CACHE STRING "Google Test source root")
