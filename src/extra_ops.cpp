@@ -53,7 +53,7 @@ namespace md {
                 return dividend / divisor;
             }
             Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, Polynomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Monomial::new_variable();
         };
 
@@ -62,7 +62,7 @@ namespace md {
                 return Monomial(floor(dividend, divisor.eval()));
             }
             Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, Polynomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Monomial::new_variable();
         };
 
@@ -116,7 +116,7 @@ namespace md {
                 return dividend / divisor;
             }
             Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, Polynomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Polynomial::new_variable();
         };
 
@@ -125,7 +125,7 @@ namespace md {
                 return Polynomial(floor(dividend, divisor.eval()));
             }
             Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, Polynomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Polynomial::new_variable();
         };
 
@@ -149,7 +149,7 @@ namespace md {
                 return dividend / divisor;
             }
             Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, Monomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Monomial::new_variable();
         };
 
@@ -158,7 +158,7 @@ namespace md {
                 return Monomial(ceil(dividend, divisor.eval()));
             }
             Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, Monomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Monomial::new_variable();
         };
 
@@ -212,7 +212,7 @@ namespace md {
                 return dividend / divisor;
             }
             Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, Polynomial(divisor)}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Polynomial::new_variable();
         };
 
@@ -221,7 +221,7 @@ namespace md {
                 return Polynomial(ceil(dividend, divisor.eval()));
             }
             Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {Polynomial(dividend), divisor}});
+                    {Monomial::total_ids, {dividend, divisor}});
             return Polynomial::new_variable();
         };
     }
