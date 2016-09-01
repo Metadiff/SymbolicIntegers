@@ -110,7 +110,7 @@ namespace md {
         }
 
         Monomial  operator*(const Monomial  &lhs, const Monomial  &rhs) {
-            auto result = Monomial(lhs.coefficient * rhs.coefficient);
+            auto result = Monomial(lhs.coefficient * rhs.coefficient, lhs.registry);
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
@@ -154,7 +154,7 @@ namespace md {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Monomial(1);
+            auto result = Monomial(1, lhs.registry);
             if (lhs.coefficient % rhs.coefficient != 0) {
                 throw NonIntegerDivision();
             }
@@ -208,7 +208,7 @@ namespace md {
             if ((not rhs.is_constant()) or lhs % rhs.coefficient != 0) {
                 throw NonIntegerDivision();
             }
-            return Monomial(lhs / rhs.coefficient);
+            return Monomial(lhs / rhs.coefficient, rhs.registry);
         }
     }
 }

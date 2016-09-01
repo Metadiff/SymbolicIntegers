@@ -42,15 +42,20 @@ be found in the `examples` directory.
 #include "symbolic_integers.h"
 #include "iostream"
 
+typedef md::sym::Registry Registry;
 typedef md::sym::Polynomial SymInt;
 typedef std::vector<std::pair<I, C>> VecValues;
 typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
+    // Make a registry
+    auto registry = std::make_shared<Registry>();
+    registry->init();
+
     // Get just the individual symbolic variables
-    auto a = SymInt::new_variable();
-    auto b = SymInt::new_variable();
-    auto c = SymInt::new_variable();
+    auto a = registry->new_variable();
+    auto b = registry->new_variable();
+    auto c = registry->new_variable();
 
     // Build polynomials
     auto poly1 = a * a - a * b + 12;
@@ -85,7 +90,7 @@ int main(){
     auto b_val = 3;
     auto c_val = 8;
     ImplicitValues implicit_values{{5*b + 2, 17}, {poly3, 15}, {poly2, 66}};
-    VecValues deduced_values = SymInt::deduce_values(implicit_values);
+    VecValues deduced_values = registry->deduce_values(implicit_values);
     std::cout << "Deduced values: " << std::endl
               << "a = " << a.eval(deduced_values) << " [Expected: " << a_val << "]" <<  std::endl
               << "b = " << b.eval(deduced_values) << " [Expected: " << b_val << "]" <<  std::endl

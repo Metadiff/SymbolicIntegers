@@ -6,23 +6,16 @@
 
 namespace md{
     namespace sym{
-        I Monomial::total_ids = 0;
-        std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>>
-                Polynomial::floor_registry;
-        std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>>
-                Polynomial::ceil_registry;
-        Polynomial Polynomial::zero = Polynomial(0);
-        Polynomial Polynomial::one = Polynomial(1);
 
         C Monomial::eval(const std::vector <C> &values) const {
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
                     C dividend = floor_var.second.first.eval(values);
                     C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
-                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
                     C dividend = ceil_var.second.first.eval(values);
                     C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
@@ -40,11 +33,11 @@ namespace md{
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
                     C dividend = floor_var.second.first.eval(values);
                     C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
-                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
                     C dividend = ceil_var.second.first.eval(values);
                     C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
@@ -66,7 +59,8 @@ namespace md{
             return value;
         }
 
-        void reduce_polynomials(std::vector <std::pair<Polynomial, C>> &polynomials,
+        void reduce_polynomials(std::shared_ptr<Registry> registry,
+                                std::vector <std::pair<Polynomial, C>> &polynomials,
                                 const std::vector<std::pair<I, C>>& values,
                                 I id, C value){
             for(auto i = 0; i < polynomials.size(); ++i){
@@ -80,18 +74,18 @@ namespace md{
                             --v;
                             continue;
                         }
-                        if(Polynomial::get_floor(var_id).first != 0){
+                        if(registry->get_floor(var_id).first != 0){
                             try {
-                                auto floor_value = Polynomial::specific_variable(var_id).eval(values);
+                                auto floor_value = registry->specific_variable(var_id).eval(values);
                                 polynomials[i].first.monomials[j].coefficient *= pow(floor_value, var_p);
                                 polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
                                 --v;
                                 continue;
                             } catch (...) {}
                         }
-                        if(Polynomial::get_ceil(var_id).first != 0) {
+                        if(registry->get_ceil(var_id).first != 0) {
                             try {
-                                auto ceil_value = Polynomial::specific_variable(var_id).eval(values);
+                                auto ceil_value = registry->specific_variable(var_id).eval(values);
                                 polynomials[i].first.monomials[j].coefficient *= pow(ceil_value, var_p);
                                 polynomials[i].first.monomials[j].powers.erase(polynomials[i].first.monomials[j].powers.begin() + v);
                                 --v;
@@ -112,7 +106,7 @@ namespace md{
             }
         };
 
-        std::vector<std::pair<I, C>> Polynomial::deduce_values(
+        std::vector<std::pair<I, C>> Registry::deduce_values(
                 const std::vector <std::pair<Polynomial, C>> &implicit_values){
             std::vector<std::pair<Polynomial, C>> work = implicit_values;
             std::vector<std::pair<I, C>> values;
@@ -151,7 +145,7 @@ namespace md{
                     if(work.size() == 0){
                         break;
                     }
-                    reduce_polynomials(work, values, id, value);
+                    reduce_polynomials(this->shared_from_this(), work, values, id, value);
                     // Start from begin again
                     i = -1;
                 }
@@ -177,10 +171,10 @@ namespace md{
             }
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = Polynomial::get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
                     result += "floor(" + floor_var.second.first.to_string() + " / " +
                               floor_var.second.second.to_string() + ")";
-                } else if ((ceil_var = Polynomial::get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
                     result += "ceil(" + ceil_var.second.first.to_string() + " / " +
                               ceil_var.second.second.to_string() + ")";
                 } else {

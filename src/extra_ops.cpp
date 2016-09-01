@@ -35,76 +35,76 @@ namespace md {
             if (dividend.is_constant() and divisor.is_constant()) {
                 auto dividend_value = dividend.eval();
                 auto divisor_value = divisor.eval();
-                return Monomial(floor(dividend_value, divisor_value));
+                return Monomial(floor(dividend_value, divisor_value), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::floor_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Monomial::new_variable();
+                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_monomial_variable();
             }
         };
 
         Monomial  floor(const Monomial  &dividend, const C divisor) {
             if (dividend.is_constant()) {
-                return Monomial(floor(dividend.eval(), divisor));
+                return Monomial(floor(dividend.eval(), divisor), dividend.registry);
             }
             if (dividend.coefficient % divisor == 0) {
                 return dividend / divisor;
             }
-            Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Monomial::new_variable();
+            dividend.registry->floor_registry.push_back(
+                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            return dividend.registry->new_monomial_variable();
         };
 
         Monomial  floor(const C dividend, const Monomial  &divisor) {
             if (divisor.is_constant()) {
-                return Monomial(floor(dividend, divisor.eval()));
+                return Monomial(floor(dividend, divisor.eval()), divisor.registry);
             }
-            Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Monomial::new_variable();
+            divisor.registry->floor_registry.push_back(
+                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            return divisor.registry->new_monomial_variable();
         };
 
         Polynomial floor(const Polynomial  &dividend, const Polynomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(dividend.eval() / divisor.eval());
+                return Polynomial(dividend.eval() / divisor.eval(), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::floor_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial floor(const Polynomial  &dividend, const Monomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(floor(dividend.eval(), divisor.eval()));
+                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::floor_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial floor(const Monomial  &dividend, const Polynomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(floor(dividend.eval(), divisor.eval()));
+                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::floor_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial  floor(const Polynomial  &dividend, const C divisor) {
             if (dividend.is_constant()) {
-                return Polynomial(floor(dividend.eval(), divisor));
+                return Polynomial(floor(dividend.eval(), divisor), dividend.registry);
             }
             bool all_divisible = true;
             for(auto i=0;i<dividend.monomials.size();++i){
@@ -115,92 +115,92 @@ namespace md {
             if(all_divisible){
                 return dividend / divisor;
             }
-            Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Polynomial::new_variable();
+            dividend.registry->floor_registry.push_back(
+                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            return dividend.registry->new_variable();
         };
 
         Polynomial  floor(const C dividend, const Polynomial  &divisor) {
             if (divisor.is_constant()) {
-                return Polynomial(floor(dividend, divisor.eval()));
+                return Polynomial(floor(dividend, divisor.eval()), divisor.registry);
             }
-            Polynomial::floor_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Polynomial::new_variable();
+            divisor.registry->floor_registry.push_back(
+                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            return divisor.registry->new_variable();
         };
 
         Monomial  ceil(const Monomial  &dividend, const Monomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Monomial(ceil(dividend.eval(), divisor.eval()));
+                return Monomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::ceil_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Monomial::new_variable();
+                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_monomial_variable();
             }
         };
 
         Monomial  ceil(const Monomial  &dividend, const C divisor) {
             if (dividend.is_constant()) {
-                return Monomial(ceil(dividend.eval(), divisor));
+                return Monomial(ceil(dividend.eval(), divisor), dividend.registry);
             }
             if (dividend.coefficient % divisor == 0) {
                 return dividend / divisor;
             }
-            Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Monomial::new_variable();
+            dividend.registry->ceil_registry.push_back(
+                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            return dividend.registry->new_monomial_variable();
         };
 
         Monomial  ceil(const C dividend, const Monomial  &divisor) {
             if (divisor.is_constant()) {
-                return Monomial(ceil(dividend, divisor.eval()));
+                return Monomial(ceil(dividend, divisor.eval()), divisor.registry);
             }
-            Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Monomial::new_variable();
+            divisor.registry->ceil_registry.push_back(
+                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            return divisor.registry->new_monomial_variable();
         };
 
         Polynomial  ceil(const Polynomial  &dividend, const Polynomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(ceil(dividend.eval(), divisor.eval()));
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::ceil_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial  ceil(const Polynomial  &dividend, const Monomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(ceil(dividend.eval(), divisor.eval()));
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::ceil_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial  ceil(const Monomial  &dividend, const Polynomial  &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial(ceil(dividend.eval(), divisor.eval()));
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
             }
             try {
                 return dividend / divisor;
             } catch (...) {
-                Polynomial::ceil_registry.push_back({Monomial::total_ids, {dividend, divisor}});
-                return Polynomial::new_variable();
+                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
+                return dividend.registry->new_variable();
             }
         };
 
         Polynomial  ceil(const Polynomial  &dividend, const C divisor) {
             if (dividend.is_constant()) {
-                return Polynomial(ceil(dividend.eval(), divisor));
+                return Polynomial(ceil(dividend.eval(), divisor), dividend.registry);
             }
             bool all_divisible = true;
             for(auto i=0;i<dividend.monomials.size();++i){
@@ -211,18 +211,18 @@ namespace md {
             if(all_divisible){
                 return dividend / divisor;
             }
-            Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Polynomial::new_variable();
+            dividend.registry->ceil_registry.push_back(
+                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            return dividend.registry->new_variable();
         };
 
         Polynomial  ceil(const C dividend, const Polynomial  &divisor) {
             if (divisor.is_constant()) {
-                return Polynomial(ceil(dividend, divisor.eval()));
+                return Polynomial(ceil(dividend, divisor.eval()), divisor.registry);
             }
-            Polynomial::ceil_registry.push_back(
-                    {Monomial::total_ids, {dividend, divisor}});
-            return Polynomial::new_variable();
+            divisor.registry->ceil_registry.push_back(
+                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            return divisor.registry->new_variable();
         };
     }
 }

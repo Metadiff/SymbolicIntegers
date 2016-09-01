@@ -9,21 +9,22 @@ using namespace md::sym;
 
 TEST(PolynomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
-    auto zero = Polynomial(0);
+    auto zero = Polynomial(0, registry);
     EXPECT_EQ(zero.monomials.size(), 0);
     EXPECT_TRUE(zero.is_constant());
 
     // Polynomial with 1 variable
-    auto x = Polynomial::new_variable();
+    auto x = registry->new_variable();
     EXPECT_EQ(x.monomials.size(), 1);
     EXPECT_EQ(x.monomials[0].coefficient, 1);
     EXPECT_FALSE(x.is_constant());
     EXPECT_THAT(x.monomials[0].powers, testing::ElementsAre(entry_pair{0, 1}));
 
     // From constant
-    auto two = Polynomial(2);
+    auto two = Polynomial(2, registry);
     EXPECT_EQ(two.monomials.size(), 1);
     EXPECT_EQ(two.monomials[0].coefficient, 2);
     EXPECT_TRUE(two.is_constant());
@@ -47,18 +48,19 @@ TEST(PolynomialTest, Constructor) {
 
 TEST(PolynomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
     // Equality with integers
-    auto two = Polynomial(2);
+    auto two = Polynomial(2, registry);
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_NE(two, 1);
     EXPECT_NE(1, two);
 
     // Not equality between 'x' and a constant
-    auto two_2 = Polynomial(2);
-    auto x = Polynomial::new_variable();
+    auto two_2 = Polynomial(2, registry);
+    auto x = registry->new_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, x);
@@ -67,18 +69,18 @@ TEST(PolynomialTest, Equality) {
     EXPECT_NE(x, two_2);
 
     // Equality with 'x' as monomial
-    auto x_monomial = Monomial::specific_variable(0);
+    auto x_monomial = registry->specific_monomial_variable(0);
     EXPECT_EQ(x, x_monomial);
     EXPECT_EQ(x_monomial, x);
 
     // Non equality with 'y' as monomial
-    auto y_monomial = Monomial::specific_variable(1);
+    auto y_monomial = registry->specific_monomial_variable(1);
     EXPECT_NE(x, y_monomial);
     EXPECT_NE(y_monomial, x);
 
     // Equality and non equality between polynomials
-    auto x_again = Polynomial::specific_variable(0);
-    auto y = Polynomial::specific_variable(1);
+    auto x_again = registry->specific_variable(0);
+    auto y = registry->specific_variable(1);
     EXPECT_EQ(x, x_again);
     EXPECT_EQ(x_again, x);
     EXPECT_NE(x, y);
@@ -89,12 +91,13 @@ TEST(PolynomialTest, Equality) {
 
 TEST(PolynomialTest, AdditionOperators) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
     // Compare x + y + 2
-    auto x_monomial = Monomial::new_variable();
-    auto x = Polynomial::specific_variable(0);
-    auto y = Polynomial::specific_variable(1);
+    auto x_monomial = registry->new_monomial_variable();
+    auto x = registry->specific_variable(0);
+    auto y = registry->specific_variable(1);
     auto xpyp1_1 = x + y + 1;
     auto xpyp1_2 = x_monomial + y + 1;
     EXPECT_FALSE(xpyp1_1.is_constant());
@@ -115,7 +118,7 @@ TEST(PolynomialTest, AdditionOperators) {
     }
 
     // Check subtraction
-    auto two = two_xpyp1 - 2 * Polynomial::specific_variable(0) - 2 * Polynomial::specific_variable(1);
+    auto two = two_xpyp1 - 2 * registry->specific_variable(0) - 2 * registry->specific_variable(1);
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_TRUE(two.is_constant());
@@ -123,10 +126,11 @@ TEST(PolynomialTest, AdditionOperators) {
 
 TEST(PolynomialTest, MultuplyOperators) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
     
-    auto x = Polynomial::new_variable();
-    auto y = Polynomial::new_variable();
+    auto x = registry->new_variable();
+    auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
     
@@ -163,12 +167,13 @@ TEST(PolynomialTest, MultuplyOperators) {
 
 TEST(PolynomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
-    auto three = Polynomial(3);
-    auto five = Polynomial(5);
-    auto x = Polynomial::new_variable();
-    auto y = Polynomial::new_variable();
+    auto three = Polynomial(3, registry);
+    auto five = Polynomial(5, registry);
+    auto x = registry->new_variable();
+    auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
 
@@ -211,7 +216,7 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(floor_y.monomials[0].coefficient, 1);
     EXPECT_EQ(floor_y.monomials[0].powers.size(), 1);
     EXPECT_EQ(floor_y.monomials[0].powers[0].second, 1);
-    EXPECT_EQ(Polynomial::floor_registry.size(), 3);
+    EXPECT_EQ(registry->floor_registry.size(), 3);
 
     // Partial ceil divisions
     auto ceil_3 = ceil(product, three);
@@ -229,12 +234,13 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(ceil_y.monomials[0].coefficient, 1);
     EXPECT_EQ(ceil_y.monomials[0].powers.size(), 1);
     EXPECT_EQ(ceil_y.monomials[0].powers[0].second, 1);
-    EXPECT_EQ(Polynomial::ceil_registry.size(), 3);
+    EXPECT_EQ(registry->ceil_registry.size(), 3);
 }
 
 TEST(PolynomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
     // Values
     const C x_val = 3;
@@ -242,9 +248,9 @@ TEST(PolynomialTest, Eval) {
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
 
-    auto two = Polynomial(2);
-    auto x = Polynomial::new_variable();
-    auto y = Polynomial::new_variable();
+    auto two = Polynomial(2, registry);
+    auto x = registry->new_variable();
+    auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
 

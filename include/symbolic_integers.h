@@ -2,8 +2,8 @@
 // Created by alex on 21/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H
-#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_H
+#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_H
 
 #include <cinttypes>
 
@@ -50,6 +50,7 @@ typedef uint8_t P;
 #include "math.h"
 #include "limits"
 #include "vector"
+#include "memory"
 #include "exceptions.h"
 #include "base_monomial.h"
 #include "monomial_ops.h"
@@ -58,4 +59,4 @@ typedef uint8_t P;
 #include "extra_ops.h"
 
 
-#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_H

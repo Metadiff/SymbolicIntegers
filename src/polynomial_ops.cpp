@@ -67,7 +67,7 @@ namespace md {
         }
 
         Polynomial  operator+(const Monomial  &lhs, const Monomial  &rhs) {
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             if (up_to_coefficient(lhs, rhs)) {
                 if (lhs.coefficient != -rhs.coefficient) {
                     result.monomials.push_back(lhs);
@@ -84,7 +84,7 @@ namespace md {
         }
 
         Polynomial  operator+(const Monomial  &lhs, const C rhs) {
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             if (lhs.is_constant()) {
                 if (lhs.coefficient != -rhs) {
                     result.monomials.push_back(lhs);
@@ -92,7 +92,7 @@ namespace md {
                 }
             } else {
                 result.monomials.push_back(lhs);
-                result.monomials.push_back(Monomial(rhs));
+                result.monomials.push_back(Monomial(rhs, lhs.registry));
             }
             return result;
         }
@@ -102,7 +102,7 @@ namespace md {
         }
 
         Polynomial  operator+(const Polynomial  &lhs, const Polynomial  &rhs) {
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.monomials.size() and i2 < rhs.monomials.size()) {
@@ -141,7 +141,7 @@ namespace md {
         }
 
         Polynomial  operator+(const Polynomial  &lhs, const C rhs) {
-            return lhs + Polynomial(rhs);
+            return lhs + Polynomial(rhs, lhs.registry);
         }
 
         Polynomial  operator+(const C lhs, const Polynomial  &rhs) {
@@ -181,7 +181,7 @@ namespace md {
         }
 
         Polynomial  operator*(const Polynomial  &lhs, const Monomial  &rhs) {
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
@@ -189,8 +189,8 @@ namespace md {
         }
 
         Polynomial  operator*(const Polynomial  &lhs, const Polynomial  &rhs) {
-            auto result = Polynomial(0);
-            auto partial = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
+            auto partial = Polynomial(0, lhs.registry);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 partial.monomials.clear();
                 for (auto j = 0; j < rhs.monomials.size(); ++j) {
@@ -206,7 +206,7 @@ namespace md {
         }
 
         Polynomial  operator*(const Polynomial  &lhs, const C rhs) {
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             for (int i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
@@ -221,7 +221,7 @@ namespace md {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             auto reminder = Polynomial(lhs);
             Monomial next_monomial;
             while (not reminder.is_constant()) {
@@ -240,7 +240,7 @@ namespace md {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             for (auto i = 0; i < lhs.monomials.size(); i++) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
@@ -254,7 +254,7 @@ namespace md {
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }
@@ -263,7 +263,7 @@ namespace md {
             if(rhs == 0){
                 throw DivisionByZero();
             }
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, lhs.registry);
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
@@ -277,7 +277,7 @@ namespace md {
             if (rhs.monomials.size() != 1) {
                 throw NonIntegerDivision();
             }
-            auto result = Polynomial(0);
+            auto result = Polynomial(0, rhs.registry);
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }

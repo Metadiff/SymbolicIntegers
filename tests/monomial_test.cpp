@@ -9,22 +9,23 @@ using namespace md::sym;
 
 TEST(MonomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
     // Constant monomial 1
-    auto one = Monomial(1);
+    auto one = Monomial(1, registry);
     EXPECT_EQ(one.coefficient, 1);
     EXPECT_TRUE(one.is_constant());
     EXPECT_EQ(one.powers.size(), 0);
 
     // Monomial with 1 variable
-    auto a = Monomial::new_variable();
+    auto a = registry->new_monomial_variable();
     EXPECT_EQ(a.coefficient, 1);
     EXPECT_FALSE(a.is_constant());
     EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{0, 1}));
 
     // From constant
-    auto two = Monomial(2);
+    auto two = Monomial(2, registry);
     EXPECT_EQ(two.coefficient, 2);
     EXPECT_TRUE(two.is_constant());
     EXPECT_EQ(two.powers.size(), 0);
@@ -39,18 +40,19 @@ TEST(MonomialTest, Constructor) {
 
 TEST(MonomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
     // Equality with integers
-    auto two = Monomial(2);
+    auto two = Monomial(2, registry);
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_NE(two, 1);
     EXPECT_NE(1, two);
 
     // Not equality between 'x' and a constant
-    auto two_2 = Monomial(2);
-    auto x = Monomial::new_variable();
+    auto two_2 = Monomial(2, registry);
+    auto x = registry->new_monomial_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, x);
@@ -64,7 +66,7 @@ TEST(MonomialTest, Equality) {
     EXPECT_FALSE(up_to_coefficient(0, x));
 
     // Up to coefficient equality for 'x' and '10x'
-    auto ten_x = Monomial(10);
+    auto ten_x = Monomial(10, registry);
     ten_x.powers.push_back(x.powers[0]);
     EXPECT_TRUE(up_to_coefficient(x, ten_x));
     EXPECT_TRUE(up_to_coefficient(ten_x, x));
@@ -73,11 +75,12 @@ TEST(MonomialTest, Equality) {
 
 TEST(MonomialTest, Operators) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
-    auto x = Monomial::new_variable();
-    auto y = Monomial::new_variable();
-    auto z = Monomial::new_variable();
+    auto x = registry->new_monomial_variable();
+    auto y = registry->new_monomial_variable();
+    auto z = registry->new_monomial_variable();
     auto composite = 2 * y * z * x;
 
     // Verify inner structure (such as ordering)
@@ -103,11 +106,12 @@ TEST(MonomialTest, Operators) {
 
 TEST(MonomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
 
-    auto x = Monomial::new_variable();
-    auto y = Monomial::new_variable();
-    auto five = Monomial(5);
+    auto x = registry->new_monomial_variable();
+    auto y = registry->new_monomial_variable();
+    auto five = Monomial(5, registry);
     auto composite = five * x * x * y;
 
     // Testing numerical floor and ceil
@@ -183,18 +187,19 @@ TEST(MonomialTest, FloorCeil) {
 TEST(MonomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
-    Polynomial::reset_registry();
+    auto registry = std::make_shared<Registry>();
+    registry->init();
     // Values
     const C x_val = 3;
     const C y_val = 5;
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
 
-    auto two = Monomial(2);
-    auto five = Monomial(5);
-    auto x = Monomial::new_variable();
-    auto y = Monomial::new_variable();
-    auto z = Monomial::new_variable();
+    auto two = Monomial(2, registry);
+    auto five = Monomial(5, registry);
+    auto x = registry->new_monomial_variable();
+    auto y = registry->new_monomial_variable();
+    auto z = registry->new_monomial_variable();
 
     // Constant
     EXPECT_EQ(two.eval(), 2);
