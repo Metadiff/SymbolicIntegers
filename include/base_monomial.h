@@ -2,8 +2,8 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_BASE_MONOMIAL_H
-#define METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_BASE_MONOMIAL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_MONOMIAL_H
+#define METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_MONOMIAL_H
 
 namespace md{
     namespace sym{
@@ -13,24 +13,34 @@ namespace md{
          */
         class Monomial {
         public:
-            Monomial(){};
-            std::shared_ptr<Registry> registry;
             /** A power first argument is the id of the variable, the second is the actual power */
             std::vector <std::pair<I, P>> powers;
             /** The constant coefficient */
             C coefficient;
-
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+            std::shared_ptr<Registry> registry;
             Monomial(const Monomial &monomial):
-                    registry(monomial.registry),
+                    powers(monomial.powers),
+                    coefficient(monomial.coefficient),
+                    registry(monomial.registry) {}
+
+            Monomial(const C value, std::shared_ptr<Registry> registry) :
+                    coefficient(value),
+                    registry(registry) {}
+
+            Monomial(std::shared_ptr<Registry> registry) :
+                    Monomial(0, registry) {}
+            Monomial(){};
+#else
+            const static std::shared_ptr<Registry> registry;
+            Monomial(const Monomial &monomial):
                     powers(monomial.powers),
                     coefficient(monomial.coefficient){}
 
-            Monomial(const C value, std::shared_ptr<Registry> registry) :
-                    registry(registry),
-                    coefficient(value) {}
+            Monomial(const C value): coefficient(value){}
 
-            Monomial(std::shared_ptr<Registry> registry) : Monomial(0, registry) {}
-
+            Monomial(): Monomial(0) {}
+#endif
             /**
              * @return true if the monomial represents a constant
              */
@@ -63,4 +73,4 @@ namespace md{
         std::ostream &operator<<(std::ostream &f, const Monomial &monomial);
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_NO_TEMPLATE_REGISTRY_BASE_MONOMIAL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_MONOMIAL_H

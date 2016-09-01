@@ -29,7 +29,14 @@ set(SYMBOLIC_INTEGERS_SOURCES
 
 # Build tests
 add_subdirectory(tests)
-add_executable(example examples/example.cpp ${SYMBOLIC_INTEGERS_SOURCES})
+add_executable(example examples/example.cpp )
+
+# Static registry example
+add_executable(example_static_registry examples/example.cpp ${SYMBOLIC_INTEGERS_SOURCES})
+
+# Dynamic registry example
+add_executable(example_dynamic_registry examples/example.cpp ${SYMBOLIC_INTEGERS_SOURCES})
+target_compile_definitions(example_dynamic_registry PRIVATE METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY)
 
 ## --- Google test stuff
 #set(GOOGLETEST_ROOT ${PROJECT_SOURCE_DIR}/external/googletest/googletest CACHE STRING "Google Test source root")

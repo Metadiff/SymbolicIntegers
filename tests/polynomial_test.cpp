@@ -9,10 +9,17 @@ using namespace md::sym;
 
 TEST(PolynomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
     auto zero = Polynomial(0, registry);
+    auto two = Polynomial(2, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto zero = Polynomial(0);
+    auto two = Polynomial(2);
+#endif
+    // Constant comparison
     EXPECT_EQ(zero.monomials.size(), 0);
     EXPECT_TRUE(zero.is_constant());
 
@@ -24,7 +31,6 @@ TEST(PolynomialTest, Constructor) {
     EXPECT_THAT(x.monomials[0].powers, testing::ElementsAre(entry_pair{0, 1}));
 
     // From constant
-    auto two = Polynomial(2, registry);
     EXPECT_EQ(two.monomials.size(), 1);
     EXPECT_EQ(two.monomials[0].coefficient, 2);
     EXPECT_TRUE(two.is_constant());
@@ -48,18 +54,23 @@ TEST(PolynomialTest, Constructor) {
 
 TEST(PolynomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
-    // Equality with integers
     auto two = Polynomial(2, registry);
+    auto two_2 = Polynomial(2, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto two = Polynomial(2);
+    auto two_2 = Polynomial(2);
+#endif
+    // Equality with integers
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_NE(two, 1);
     EXPECT_NE(1, two);
 
     // Not equality between 'x' and a constant
-    auto two_2 = Polynomial(2, registry);
     auto x = registry->new_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
@@ -87,13 +98,16 @@ TEST(PolynomialTest, Equality) {
     EXPECT_NE(y, x);
     EXPECT_EQ(y, y_monomial);
     EXPECT_EQ(y_monomial, y);
-}
+    }
 
 TEST(PolynomialTest, AdditionOperators) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+#endif
     // Compare x + y + 2
     auto x_monomial = registry->new_monomial_variable();
     auto x = registry->specific_variable(0);
@@ -126,14 +140,18 @@ TEST(PolynomialTest, AdditionOperators) {
 
 TEST(PolynomialTest, MultuplyOperators) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-    
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+#endif
+    // Values
     auto x = registry->new_variable();
     auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
-    
+
     // x^3y  + 2x^2y^2 + 2x^2 + xy^3 + 3xy + y^2 + 2
     auto product = xy_plus_x_square_plus_one * xy_plus_y_square_plus_two;
     EXPECT_EQ(product.monomials.size(), 7);
@@ -167,11 +185,17 @@ TEST(PolynomialTest, MultuplyOperators) {
 
 TEST(PolynomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
     auto three = Polynomial(3, registry);
     auto five = Polynomial(5, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto three = Polynomial(3);
+    auto five = Polynomial(5);
+#endif
+    // Values
     auto x = registry->new_variable();
     auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
@@ -239,16 +263,19 @@ TEST(PolynomialTest, FloorCeil) {
 
 TEST(PolynomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
+    auto two = Polynomial(2, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto two = Polynomial(2);
+#endif
     // Values
     const C x_val = 3;
     const C y_val = 5;
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
-
-    auto two = Polynomial(2, registry);
     auto x = registry->new_variable();
     auto y = registry->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;

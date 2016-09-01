@@ -6,7 +6,10 @@
 
 namespace md{
     namespace sym{
-
+#ifndef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+        const std::shared_ptr<Registry> Monomial::registry = std::make_shared<Registry>();
+        const std::shared_ptr<Registry> Polynomial::registry = Monomial::registry;
+#endif
         C Monomial::eval(const std::vector <C> &values) const {
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;

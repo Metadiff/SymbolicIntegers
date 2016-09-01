@@ -9,11 +9,17 @@ using namespace md::sym;
 
 TEST(MonomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
-    // Constant monomial 1
     auto one = Monomial(1, registry);
+    auto two = Monomial(2, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto one = Monomial(1);
+    auto two = Monomial(2);
+#endif
+    // Constant monomial 1
     EXPECT_EQ(one.coefficient, 1);
     EXPECT_TRUE(one.is_constant());
     EXPECT_EQ(one.powers.size(), 0);
@@ -25,7 +31,6 @@ TEST(MonomialTest, Constructor) {
     EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{0, 1}));
 
     // From constant
-    auto two = Monomial(2, registry);
     EXPECT_EQ(two.coefficient, 2);
     EXPECT_TRUE(two.is_constant());
     EXPECT_EQ(two.powers.size(), 0);
@@ -40,19 +45,27 @@ TEST(MonomialTest, Constructor) {
 
 TEST(MonomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
-    // Equality with integers
     auto two = Monomial(2, registry);
+    auto two_2 = Monomial(2, registry);
+    auto ten_x = Monomial(10, registry);
+    auto x = registry->new_monomial_variable();
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto two = Monomial(2);
+    auto two_2 = Monomial(2);
+    auto ten_x = Monomial(10);
+    auto x = registry->new_monomial_variable();
+#endif
+    // Equality with integers
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_NE(two, 1);
     EXPECT_NE(1, two);
 
     // Not equality between 'x' and a constant
-    auto two_2 = Monomial(2, registry);
-    auto x = registry->new_monomial_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, x);
@@ -66,7 +79,6 @@ TEST(MonomialTest, Equality) {
     EXPECT_FALSE(up_to_coefficient(0, x));
 
     // Up to coefficient equality for 'x' and '10x'
-    auto ten_x = Monomial(10, registry);
     ten_x.powers.push_back(x.powers[0]);
     EXPECT_TRUE(up_to_coefficient(x, ten_x));
     EXPECT_TRUE(up_to_coefficient(ten_x, x));
@@ -75,9 +87,13 @@ TEST(MonomialTest, Equality) {
 
 TEST(MonomialTest, Operators) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+#endif
+    // Values
     auto x = registry->new_monomial_variable();
     auto y = registry->new_monomial_variable();
     auto z = registry->new_monomial_variable();
@@ -106,12 +122,17 @@ TEST(MonomialTest, Operators) {
 
 TEST(MonomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
-
+    auto five = Monomial(5, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto five = Monomial(5);
+#endif
+    // Values
     auto x = registry->new_monomial_variable();
     auto y = registry->new_monomial_variable();
-    auto five = Monomial(5, registry);
     auto composite = five * x * x * y;
 
     // Testing numerical floor and ceil
@@ -187,16 +208,21 @@ TEST(MonomialTest, FloorCeil) {
 TEST(MonomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
+    auto two = Monomial(2, registry);
+    auto five = Monomial(5, registry);
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+    auto two = Monomial(2);
+    auto five = Monomial(5);
+#endif
     // Values
     const C x_val = 3;
     const C y_val = 5;
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
-
-    auto two = Monomial(2, registry);
-    auto five = Monomial(5, registry);
     auto x = registry->new_monomial_variable();
     auto y = registry->new_monomial_variable();
     auto z = registry->new_monomial_variable();

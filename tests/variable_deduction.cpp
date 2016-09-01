@@ -10,8 +10,12 @@ using namespace md::sym;
 TEST(DeductionTest, VariableDeduction) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
+#else
+    auto registry = Polynomial::registry;
+    registry->reset();
+#endif
 
     // Base variables
     auto x = registry->new_variable();
@@ -172,5 +176,4 @@ TEST(DeductionTest, VariableDeduction) {
     val3 = z_val * z_val * x_val + 2;
     implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     EXPECT_THROW(registry->deduce_values(implicit_values), EvaluationFailure);
-
 }

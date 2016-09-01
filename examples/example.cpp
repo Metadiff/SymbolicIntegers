@@ -8,8 +8,11 @@ typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
     // Make a registry
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
     auto registry = std::make_shared<Registry>();
-    registry->init();
+#else
+    auto registry = SymInt::registry;
+#endif
 
     // Get just the individual symbolic variables
     auto a = registry->new_variable();

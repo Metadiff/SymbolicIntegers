@@ -23,6 +23,12 @@ namespace md {
                 return "Attempted division by zero";
             }
         };
+
+        class DifferentRegistries : public std::exception {
+            virtual const char *what() const throw() {
+                return "Operating on variables from different registries";
+            }
+        };
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_EXCEPTIONS_H
