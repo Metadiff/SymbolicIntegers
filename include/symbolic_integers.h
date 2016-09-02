@@ -45,7 +45,7 @@ typedef uint16_t P;
 #else
 typedef uint8_t P;
 #endif
-//#define METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+
 #include "string"
 #include "math.h"
 #include "limits"
@@ -58,6 +58,5 @@ typedef uint8_t P;
 #include "monomial_ops.h"
 #include "polynomial_ops.h"
 #include "extra_ops.h"
-
 
 #endif //METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_H

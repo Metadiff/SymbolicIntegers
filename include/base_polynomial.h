@@ -7,18 +7,17 @@
 
 namespace md{
     namespace sym{
-        /**
-         * An instance of a single symbolic polynomial
-         */
+        /** An instance of a single symbolic polynomial */
         class Polynomial {
         public:
             /**
-             * The list of monoimals of the polynomial.
+             * The list of monomials comprising the polynomial
              * Note: The vector is always sorted according to less_then_comparator
              */
             std::vector <Monomial> monomials;
 
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+            /** Registry to which this instance is linked to */
             std::shared_ptr<Registry> registry;
 
             Polynomial(const Polynomial &polynomial) :
@@ -43,6 +42,7 @@ namespace md{
 
             Polynomial() {};
 #else
+            /** A static Registry for all variables */
             const static std::shared_ptr<Registry> registry;
 
             Polynomial(const Polynomial &polynomial) :
@@ -62,6 +62,9 @@ namespace md{
 
             Polynomial(): Polynomial(0) {};
 #endif
+            /**
+             * @return true if the monomial represents a constant
+             */
             bool is_constant() const {
                 switch (monomials.size()) {
                     case 0:
@@ -73,6 +76,12 @@ namespace md{
                 }
             }
 
+            /**
+             * The values vector contains at i'th position the value
+             * of the symbolic variable with id 'i'.
+             * @param values
+             * @return The value of the polynomial evaluated at the values.
+             */
             C eval(const std::vector <C> &values) const {
                 C value = 0;
                 for (auto i = 0; i < monomials.size(); ++i) {
@@ -81,6 +90,12 @@ namespace md{
                 return value;
             }
 
+            /**
+             * The values vector is a mapping between symbolic variable id
+             * and its actual value.
+             * @param values
+             * @return The value of the polynomial evaluated at the values.
+             */
             C eval(const std::vector <std::pair<I, C>> &values) const {
                 C value = 0;
                 for (auto i = 0; i < monomials.size(); ++i) {
@@ -89,10 +104,17 @@ namespace md{
                 return value;
             }
 
+            /**
+             * Valid only for constant monomials
+             * @return The value of the polynomial
+             */
             C eval() const {
                 return eval(std::vector < C > {});
             }
 
+            /**
+             * @return A string representation of the monomial
+             */
             std::string to_string() const {
                 if (monomials.size() == 0) {
                     return "0";

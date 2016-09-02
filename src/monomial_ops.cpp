@@ -23,7 +23,6 @@ namespace md {
             return true;
         }
 
-        
         bool operator!=(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(lhs.registry != rhs.registry){
@@ -41,12 +40,10 @@ namespace md {
             return false;
         }
 
-        
         bool operator==(const Monomial &lhs, const C rhs) {
             return lhs.is_constant() and (lhs.coefficient == rhs);
         }
 
-        
         bool operator!=(const Monomial &lhs, const C rhs) {
             return (not lhs.is_constant()) or (lhs.coefficient != rhs);
         }
@@ -56,12 +53,10 @@ namespace md {
             return rhs.is_constant() and (rhs.coefficient == lhs);
         }
 
-        
         bool operator!=(const C lhs, const Monomial &rhs) {
             return (not rhs.is_constant()) or (rhs.coefficient != lhs);
         }
 
-        
         bool up_to_coefficient(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(lhs.registry != rhs.registry){
@@ -79,28 +74,14 @@ namespace md {
             return true;
         }
 
-        
         bool up_to_coefficient(const C lhs, const Monomial &rhs) {
             return rhs.is_constant();
         }
 
-        
         bool up_to_coefficient(const Monomial &lhs, const C rhs) {
             return lhs.is_constant();
         }
 
-        /**
-         * An monomial m1 is compared to monomial m2 in the following order of precedence:
-         * 1. Check if the lowest variable id in m1 and m2 are equal.
-         *    - If they are not than whoever has the lowest is "before" the other.
-         * 2.If they are equal compare the power of this variable.
-         *    - Whoever has the higher is "before" the other.
-         * 3. If the they are equal continue with next lowest variable by id.
-         * 4. If all are equal compare coefficients.
-         *
-         * For instance a^2b^1 is "before" 100ab^300, since a^2 <-> a.
-         */
-        
         bool less_than_comparator(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(lhs.registry != rhs.registry){
@@ -129,19 +110,16 @@ namespace md {
             }
         }
 
-        
         Monomial operator+(const Monomial &rhs) {
             return rhs;
         }
 
-        
         Monomial operator-(const Monomial &rhs) {
             auto result = Monomial(rhs);
             result.coefficient = -result.coefficient;
             return result;
         }
 
-        
         Monomial operator*(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(lhs.registry != rhs.registry){
@@ -178,21 +156,18 @@ namespace md {
             return result;
         }
 
-        
         Monomial operator*(const Monomial &lhs, const C rhs) {
             auto result = Monomial(lhs);
             result.coefficient *= rhs;
             return result;
         }
 
-        
         Monomial operator*(const C lhs, const Monomial &rhs) {
             auto result = Monomial(rhs);
             result.coefficient *= lhs;
             return result;
         }
 
-        
         Monomial operator/(const Monomial &lhs, const Monomial &rhs) {
             if(rhs.coefficient == 0){
                 throw DivisionByZero();
@@ -239,7 +214,6 @@ namespace md {
             return result;
         }
 
-        
         Monomial operator/(const Monomial &lhs, const C rhs) {
             if(rhs == 0){
                 throw DivisionByZero();
@@ -252,7 +226,6 @@ namespace md {
             return result;
         }
 
-        
         Monomial operator/(const C lhs, const Monomial &rhs) {
             if(rhs.coefficient == 0){
                 throw DivisionByZero();

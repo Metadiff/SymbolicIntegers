@@ -26,7 +26,7 @@ namespace md {
         bool up_to_coefficient(const Monomial  &lhs, const C rhs);
 
         /**
-         * An monomial m1 is compared to monomial m2 in the following order of precedence:
+         * A monomial m1 is compared to monomial m2 in the following order of precedence:
          * 1. Check if the lowest variable id in m1 and m2 are equal.
          *    - If they are not than whoever has the lowest is "before" the other.
          * 2.If they are equal compare the power of this variable.
@@ -36,7 +36,7 @@ namespace md {
          *
          * For instance a^2b^1 is "before" 100ab^300, since a^2 <-> a.
          */
-        bool less_than_comparator(const Monomial  &monomial1, const Monomial  &monomial2);
+        bool less_than_comparator(const Monomial  &lhs, const Monomial  &rhs);
 
         Monomial  operator+(const Monomial  &rhs);
 

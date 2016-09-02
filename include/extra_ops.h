@@ -7,8 +7,20 @@
 
 namespace md {
     namespace sym {
+        /**
+         * Makes a floor division, e.g. returns the result of floor(a/b)
+         * @param dividend
+         * @param divisor
+         * @return
+         */
         C floor(C dividend, C divisor);
 
+        /**
+         * Makes a ceil division, e.g. returns the result of floor(a/b)
+         * @param dividend
+         * @param divisor
+         * @return
+         */
         C ceil(C dividend, C divisor);
 
         /**

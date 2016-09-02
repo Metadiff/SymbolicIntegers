@@ -31,7 +31,6 @@ namespace md {
             return dividend / divisor + 1;
         };
 
-
         Monomial floor(const Monomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(dividend.registry != divisor.registry){
@@ -55,13 +54,6 @@ namespace md {
             }
         };
 
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Monomial floor(const Monomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -83,13 +75,6 @@ namespace md {
             return dividend.registry->new_monomial_variable();
         };
 
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Monomial floor(const C dividend, const Monomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -107,14 +92,6 @@ namespace md {
 #endif
             return divisor.registry->new_monomial_variable();
         };
-
-
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
 
         Polynomial floor(const Polynomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -137,13 +114,6 @@ namespace md {
             }
         };
 
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Polynomial floor(const Polynomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(dividend.registry != divisor.registry){
@@ -165,13 +135,6 @@ namespace md {
             }
         };
 
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Polynomial floor(const Monomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(dividend.registry != divisor.registry){
@@ -192,13 +155,6 @@ namespace md {
                 return dividend.registry->new_variable();
             }
         };
-
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
 
         Polynomial floor(const Polynomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
@@ -227,13 +183,6 @@ namespace md {
             return dividend.registry->new_variable();
         };
 
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Polynomial floor(const C dividend, const Polynomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -251,14 +200,6 @@ namespace md {
 #endif
             return divisor.registry->new_variable();
         };
-
-
-        /**
-          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-          * @param dividend
-          * @param divisor
-          * @return
-          */
 
         Monomial ceil(const Monomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -281,13 +222,6 @@ namespace md {
             }
         };
 
-        /**
-         * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Monomial ceil(const Monomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -309,13 +243,6 @@ namespace md {
             return dividend.registry->new_monomial_variable();
         };
 
-        /**
-         * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-
         Monomial ceil(const C dividend, const Monomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -333,13 +260,6 @@ namespace md {
 #endif
             return divisor.registry->new_monomial_variable();
         };
-
-        /**
-          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-          * @param dividend
-          * @param divisor
-          * @return
-          */
 
         Polynomial ceil(const Polynomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
@@ -362,13 +282,6 @@ namespace md {
             }
         };
 
-        /**
-          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-          * @param dividend
-          * @param divisor
-          * @return
-          */
-
         Polynomial ceil(const Polynomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(dividend.registry != divisor.registry){
@@ -390,13 +303,6 @@ namespace md {
             }
         };
 
-        /**
-          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-          * @param dividend
-          * @param divisor
-          * @return
-          */
-
         Polynomial ceil(const Monomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
             if(dividend.registry != divisor.registry){
@@ -417,13 +323,6 @@ namespace md {
                 return dividend.registry->new_variable();
             }
         };
-
-        /**
-         * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
 
         Polynomial ceil(const Polynomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
@@ -451,13 +350,6 @@ namespace md {
 #endif
             return dividend.registry->new_variable();
         };
-
-        /**
-         * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
 
         Polynomial ceil(const C dividend, const Polynomial &divisor) {
             if (divisor.is_constant()) {
