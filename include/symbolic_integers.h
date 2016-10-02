@@ -36,21 +36,16 @@ typedef uint16_t I;
 // Define P type
 #ifndef P_WIDTH
 typedef uint8_t P;
-#elif I_WIDTH == 64
+#elif P_WIDTH == 64
 typedef uint64_t P;
-#elif I_WIDTH == 32
+#elif P_WIDTH == 32
 typedef uint32_t P;
-#elif I_WIDTH == 16
+#elif P_WIDTH == 16
 typedef uint16_t P;
 #else
 typedef uint8_t P;
 #endif
 
-#include "string"
-#include "math.h"
-#include "limits"
-#include "vector"
-#include "memory"
 #include "exceptions.h"
 #include "base_monomial.h"
 #include "base_polynomial.h"

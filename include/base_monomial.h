@@ -5,6 +5,10 @@
 #ifndef METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_MONOMIAL_H
 #define METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_MONOMIAL_H
 
+#include "vector"
+#include "memory"
+#include "math.h"
+
 namespace md{
     namespace sym{
         /** A Registry for which symbolic variables have been used */

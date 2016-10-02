@@ -4,6 +4,9 @@
 
 #ifndef METADIFF_SYMBOLIC_INTEGERS_EXCEPTIONS_H
 #define METADIFF_SYMBOLIC_INTEGERS_EXCEPTIONS_H
+
+#include "exception"
+
 namespace md {
     namespace sym {
         class NonIntegerDivision : public std::exception {
