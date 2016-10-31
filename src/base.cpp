@@ -40,15 +40,18 @@ namespace md{
                     C dividend = floor_var.second.first.eval(values);
                     C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
+                    value *= pow(cur_value, powers[i].second);
                 } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
                     C dividend = ceil_var.second.first.eval(values);
                     C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
+                    value *= pow(cur_value, powers[i].second);
                 } else {
                     bool found = false;
                     for(auto j = 0; j < values.size(); ++j){
                         if(values[j].first == powers[i].first){
                             cur_value = values[j].second;
+                            value *= pow(cur_value, powers[i].second);
                             found = true;
                             break;
                         }
@@ -57,7 +60,6 @@ namespace md{
                         throw EvaluationFailure();
                     }
                 }
-                value *= pow(cur_value, powers[i].second);
             }
             return value;
         }
@@ -183,44 +185,10 @@ namespace md{
                 } else {
                     result += ('a' + powers[i].first);
                     auto n = powers[i].second;
-                    std::string super_scripts;
-                    while (n > 0) {
-                        auto reminder = n % 10;
-                        n /= 10;
-                        switch (reminder) {
-                            case 0:
-                                super_scripts = "\u2070" + super_scripts;
-                                break;
-                            case 1:
-                                super_scripts = "\u00B9" + super_scripts;
-                                break;
-                            case 2:
-                                super_scripts = "\u00B2" + super_scripts;
-                                break;
-                            case 3:
-                                super_scripts = "\u00B3" + super_scripts;
-                                break;
-                            case 4:
-                                super_scripts = "\u2074" + super_scripts;
-                                break;
-                            case 5:
-                                super_scripts = "\u2075" + super_scripts;
-                                break;
-                            case 6:
-                                super_scripts = "\u2076" + super_scripts;
-                                break;
-                            case 7:
-                                super_scripts = "\u2077" + super_scripts;
-                                break;
-                            case 8:
-                                super_scripts = "\u2078" + super_scripts;
-                                break;
-                            case 9:
-                                super_scripts = "\u2079" + super_scripts;
-                                break;
-                        }
+                    if (n > 1) {
+                        result += '^';
+                        result += std::to_string(n);
                     }
-                    result += super_scripts;
                 }
             }
             return result;

@@ -1,5 +1,32 @@
-cmake_minimum_required(VERSION 2.8) # Could be even lower. Works with 3.0
-project(symbolic_integers)
+cmake_minimum_required(VERSION 2.8)
+
+project(SymbolicIntegers)
+set(SYMBOLIC_INTEGERS_MAJOR_VERSION 0)
+set(SYMBOLIC_INTEGERS_VERSION 9)
+set(SYMBOLIC_INTEGERS_VERSION 1)
+set(SYMBOLIC_INTEGERS_VERSION
+        ${SYMBOLIC_INTEGERS_MAJOR_VERSION}.${SYMBOLIC_INTEGERS_MINOR_VERSION}.${SYMBOLIC_INTEGERS_PATCH_VERSION})
+
+## Offer the user the choice of overriding the installation directories
+#set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+#set(INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+#set(INSTALL_INCLUDE_DIR include CACHE PATH
+#        "Installation directory for header files")
+#if(WIN32 AND NOT CYGWIN)
+#    set(DEF_INSTALL_CMAKE_DIR CMake)
+#else()
+#    set(DEF_INSTALL_CMAKE_DIR lib/CMake/FooBar)
+#endif()
+#set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH
+#        "Installation directory for CMake files")
+#
+## Make relative paths absolute (needed later on)
+#foreach(p LIB BIN INCLUDE CMAKE)
+#    set(var INSTALL_${p}_DIR)
+#    if(NOT IS_ABSOLUTE "${${var}}")
+#        set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+#    endif()
+#endforeach()
 
 if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
     # Standalone build

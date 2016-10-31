@@ -9,15 +9,15 @@
 
 // Define C type
 #ifndef C_WIDTH
-typedef int32_t C;
+typedef int64_t C;
 #elif C_WIDTH == 8
 typedef int8_t C;
 #elif C_WIDTH == 16
 typedef int16_t C;
-#elif C_WIDTH == 64
-typedef int64_t C;
-#else
+#elif C_WIDTH == 32
 typedef int32_t C;
+#else
+typedef int64_t C;
 #endif
 
 // Define I type

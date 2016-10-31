@@ -26,7 +26,7 @@ int main(){
     auto poly4 = (a + b + 1) * (c*2 + 3);
 
     // Evaluate using a vector
-    std::vector<int> vals0 {1, 7, 4};
+    std::vector<C> vals0 {1, 7, 4};
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;
