@@ -6,19 +6,15 @@
 
 namespace md{
     namespace sym{
-#ifndef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-        const std::shared_ptr<Registry> Monomial::registry = std::make_shared<Registry>();
-        const std::shared_ptr<Registry> Polynomial::registry = Monomial::registry;
-#endif
         C Monomial::eval(const std::vector <C> &values) const {
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry()->get_floor(powers[i].first)).first != 0) {
                     C dividend = floor_var.second.first.eval(values);
                     C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
-                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry()->get_ceil(powers[i].first)).first != 0) {
                     C dividend = ceil_var.second.first.eval(values);
                     C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
@@ -36,12 +32,12 @@ namespace md{
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry()->get_floor(powers[i].first)).first != 0) {
                     C dividend = floor_var.second.first.eval(values);
                     C divisor = floor_var.second.second.eval(values);
                     cur_value = floor(dividend, divisor);
                     value *= pow(cur_value, powers[i].second);
-                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry()->get_ceil(powers[i].first)).first != 0) {
                     C dividend = ceil_var.second.first.eval(values);
                     C divisor = ceil_var.second.second.eval(values);
                     cur_value = ceil(dividend, divisor);
@@ -176,10 +172,10 @@ namespace md{
             }
             std::pair <I, std::pair<Polynomial, Polynomial>> floor_var, ceil_var;
             for (auto i = 0; i < powers.size(); ++i) {
-                if ((floor_var = registry->get_floor(powers[i].first)).first != 0) {
+                if ((floor_var = registry()->get_floor(powers[i].first)).first != 0) {
                     result += "floor(" + floor_var.second.first.to_string() + " / " +
                               floor_var.second.second.to_string() + ")";
-                } else if ((ceil_var = registry->get_ceil(powers[i].first)).first != 0) {
+                } else if ((ceil_var = registry()->get_ceil(powers[i].first)).first != 0) {
                     result += "ceil(" + ceil_var.second.first.to_string() + " / " +
                               ceil_var.second.second.to_string() + ")";
                 } else {

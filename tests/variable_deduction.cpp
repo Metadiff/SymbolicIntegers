@@ -11,16 +11,16 @@ TEST(DeductionTest, VariableDeduction) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
+    auto reg = std::make_shared<Registry>();
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
 #endif
 
     // Base variables
-    auto x = registry->new_variable();
-    auto y = registry->new_variable();
-    auto z = registry->new_variable();
+    auto x = reg->new_variable();
+    auto y = reg->new_variable();
+    auto z = reg->new_variable();
     typedef std::vector<std::pair<Polynomial, C>> ImplicitVec;
     ImplicitVec implicit_values;
 
@@ -36,7 +36,7 @@ TEST(DeductionTest, VariableDeduction) {
     auto val3 = 5 * x_val * x_val * y_val * y_val * z_val * z_val + x_val * x_val * y_val + 3;
 
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    auto values = registry->deduce_values(implicit_values);
+    auto values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -57,7 +57,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = x_val * x_val + z_val * z_val + 2;
     val3 = 5 * z_val;
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    values = registry->deduce_values(implicit_values);
+    values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -78,7 +78,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = y_val * y_val * y_val + x_val * x_val * x_val - 10;
     val3 = x_val * y_val + x_val * z_val + y_val * z_val + 3;
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    values = registry->deduce_values(implicit_values);
+    values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -100,7 +100,7 @@ TEST(DeductionTest, VariableDeduction) {
     val3 = 5 * x_val * x_val * y_val * y_val * z_val * z_val + floor(float(x_val * y_val * y_val) / 2.0) + 3;
 
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    values = registry->deduce_values(implicit_values);
+    values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -121,7 +121,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = x_val * x_val + ceil(float(z_val * z_val) / 6.0) + 2;
     val3 = 5 * z_val;
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    values = registry->deduce_values(implicit_values);
+    values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -142,7 +142,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = floor(float(y_val * y_val * y_val) / 3.0) + x_val * x_val * x_val - 10;
     val3 = ceil(float(x_val * y_val * 7) / 5.0) + x_val * z_val + y_val * z_val + 3;
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    values = registry->deduce_values(implicit_values);
+    values = reg->deduce_values(implicit_values);
     // Simple checks
     EXPECT_EQ((x * x).eval(values), x_val * x_val);
     EXPECT_EQ((y * y).eval(values), y_val * y_val);
@@ -163,7 +163,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = y_val * 2 + 1;
     val3 = z_val * z_val * x_val + z_val * y_val + 2;
     implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    EXPECT_THROW(registry->deduce_values(implicit_values), EvaluationFailure);
+    EXPECT_THROW(reg->deduce_values(implicit_values), EvaluationFailure);
 
     poly1 = x * y * y;
     poly2 = y * z * 2 + 1;
@@ -175,5 +175,5 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = y_val * z_val *  2 + 1;
     val3 = z_val * z_val * x_val + 2;
     implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    EXPECT_THROW(registry->deduce_values(implicit_values), EvaluationFailure);
+    EXPECT_THROW(reg->deduce_values(implicit_values), EvaluationFailure);
 }

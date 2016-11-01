@@ -13,9 +13,32 @@ namespace md{
     namespace sym{
         /** A Registry for which symbolic variables have been used */
         class Registry;
+
+#ifndef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+        inline std::shared_ptr<Registry> registry(){
+            static std::shared_ptr<Registry> registry;
+            if(not registry){
+                registry = std::make_shared<Registry>();
+            }
+            return registry;
+        }
+#endif
         /** An instance of a single symbolic monomial */
         class Monomial {
+#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
+        private:
+            /** Registry to which this instance is linked to */
+            std::shared_ptr<Registry> reg;
         public:
+            std::shared_ptr<Registry> registry() const {
+                return reg;
+            }
+#else
+        public:
+            std::shared_ptr<Registry> registry() const {
+                return sym::registry();
+            }
+#endif
             /**
              * A vector of monomial powers (a^n),
              * first argument is the id of the variable,
@@ -25,26 +48,21 @@ namespace md{
             /** The constant coefficient */
             C coefficient;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            /** Registry to which this instance is linked to */
-            std::shared_ptr<Registry> registry;
-
             Monomial(const Monomial &monomial):
+                    reg(monomial.registry()),
                     powers(monomial.powers),
-                    coefficient(monomial.coefficient),
-                    registry(monomial.registry) {}
+                    coefficient(monomial.coefficient) {}
 
             Monomial(const C value, std::shared_ptr<Registry> registry) :
-                    coefficient(value),
-                    registry(registry) {}
+                    reg(registry),
+                    coefficient(value) {}
+
 
             Monomial(std::shared_ptr<Registry> registry) :
                     Monomial(0, registry) {}
 
             Monomial(){};
 #else
-            /** A static Registry for all variables */
-            const static std::shared_ptr<Registry> registry;
-
             Monomial(const Monomial &monomial):
                     powers(monomial.powers),
                     coefficient(monomial.coefficient){}

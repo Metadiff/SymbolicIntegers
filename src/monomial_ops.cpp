@@ -8,7 +8,7 @@ namespace md {
         
         bool operator==(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
 #endif
@@ -25,7 +25,7 @@ namespace md {
 
         bool operator!=(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
 #endif
@@ -59,7 +59,7 @@ namespace md {
 
         bool up_to_coefficient(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
 #endif
@@ -84,7 +84,7 @@ namespace md {
 
         bool less_than_comparator(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
 #endif
@@ -122,10 +122,10 @@ namespace md {
 
         Monomial operator*(const Monomial &lhs, const Monomial &rhs) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
-            auto result = Monomial(lhs.coefficient * rhs.coefficient, lhs.registry);
+            auto result = Monomial(lhs.coefficient * rhs.coefficient, lhs.registry());
 #else
             auto result = Monomial(lhs.coefficient * rhs.coefficient);
 #endif
@@ -173,10 +173,10 @@ namespace md {
                 throw DivisionByZero();
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry != rhs.registry){
+            if(lhs.registry() != rhs.registry()){
                 throw DifferentRegistries();
             }
-            auto result = Monomial(1, lhs.registry);
+            auto result = Monomial(1, lhs.registry());
 #else
             auto result = Monomial(1);
 #endif
@@ -234,7 +234,7 @@ namespace md {
                 throw NonIntegerDivision();
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            return Monomial(lhs / rhs.coefficient, rhs.registry);
+            return Monomial(lhs / rhs.coefficient, rhs.registry());
 #else
             return Monomial(lhs / rhs.coefficient);
 #endif

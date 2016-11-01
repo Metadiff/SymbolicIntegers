@@ -7,17 +7,18 @@ typedef std::vector<std::pair<I, C>> VecValues;
 typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
-    // Make a registry
+    // Make a reg
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
+    auto reg = std::make_shared<Registry>();
 #else
-    auto registry = SymInt::registry;
+    auto reg = md::sym::registry();
 #endif
+    std::cout << reg->total_ids << std::endl;
 
     // Get just the individual symbolic variables
-    auto a = registry->new_variable();
-    auto b = registry->new_variable();
-    auto c = registry->new_variable();
+    auto a = reg->new_variable();
+    auto b = reg->new_variable();
+    auto c = reg->new_variable();
 
     // Build polynomials
     auto poly1 = a * a - a * b + 12;
@@ -52,7 +53,7 @@ int main(){
     auto b_val = 3;
     auto c_val = 8;
     ImplicitValues implicit_values{{5*b + 2, 17}, {poly3, 15}, {poly2, 66}};
-    VecValues deduced_values = registry->deduce_values(implicit_values);
+    VecValues deduced_values = reg->deduce_values(implicit_values);
     std::cout << "Deduced values: " << std::endl
               << "a = " << a.eval(deduced_values) << " [Expected: " << a_val << "]" <<  std::endl
               << "b = " << b.eval(deduced_values) << " [Expected: " << b_val << "]" <<  std::endl

@@ -33,7 +33,7 @@ namespace md {
 
         Monomial floor(const Monomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
@@ -41,7 +41,7 @@ namespace md {
                 auto dividend_value = dividend.eval();
                 auto divisor_value = divisor.eval();
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(floor(dividend_value, divisor_value), dividend.registry);
+                return Monomial(floor(dividend_value, divisor_value), dividend.registry());
 #else
                 return Monomial(floor(dividend_value, divisor_value));
 #endif
@@ -49,15 +49,15 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_monomial_variable();
+                dividend.registry()->floor_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_monomial_variable();
             }
         };
 
         Monomial floor(const Monomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(floor(dividend.eval(), divisor), dividend.registry);
+                return Monomial(floor(dividend.eval(), divisor), dividend.registry());
 #else
                 return Monomial(floor(dividend.eval(), divisor));
 #endif
@@ -66,42 +66,42 @@ namespace md {
                 return dividend / divisor;
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            dividend.registry->floor_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            dividend.registry()->floor_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, Polynomial(divisor, dividend.registry())}});
 #else
-            dividend.registry->floor_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, divisor}});
+            dividend.registry()->floor_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, divisor}});
 #endif
-            return dividend.registry->new_monomial_variable();
+            return dividend.registry()->new_monomial_variable();
         };
 
         Monomial floor(const C dividend, const Monomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(floor(dividend, divisor.eval()), divisor.registry);
+                return Monomial(floor(dividend, divisor.eval()), divisor.registry());
 #else
                 return Monomial(floor(dividend, divisor.eval()));
 #endif
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            divisor.registry->floor_registry.push_back(
-                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            divisor.registry()->floor_registry.push_back(
+                    {divisor.registry()->total_ids, {Polynomial(dividend, divisor.registry()), divisor}});
 #else
-            divisor.registry->floor_registry.push_back(
-                    {divisor.registry->total_ids, {dividend, divisor}});
+            divisor.registry()->floor_registry.push_back(
+                    {divisor.registry()->total_ids, {dividend, divisor}});
 #endif
-            return divisor.registry->new_monomial_variable();
+            return divisor.registry()->new_monomial_variable();
         };
 
         Polynomial floor(const Polynomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(dividend.eval() / divisor.eval(), dividend.registry);
+                return Polynomial(dividend.eval() / divisor.eval(), dividend.registry());
 #else
                 return Polynomial(dividend.eval() / divisor.eval());
 #endif
@@ -109,20 +109,20 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->floor_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial floor(const Polynomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry);
+                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Polynomial(floor(dividend.eval(), divisor.eval()));
 #endif
@@ -130,20 +130,20 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->floor_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial floor(const Monomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry);
+                return Polynomial(floor(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Polynomial(floor(dividend.eval(), divisor.eval()));
 #endif
@@ -151,15 +151,15 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->floor_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->floor_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial floor(const Polynomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(floor(dividend.eval(), divisor), dividend.registry);
+                return Polynomial(floor(dividend.eval(), divisor), dividend.registry());
 #else
                 return Polynomial(floor(dividend.eval(), divisor));
 #endif
@@ -174,42 +174,42 @@ namespace md {
                 return dividend / divisor;
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            dividend.registry->floor_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            dividend.registry()->floor_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, Polynomial(divisor, dividend.registry())}});
 #else
-            dividend.registry->floor_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, divisor}});
+            dividend.registry()->floor_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, divisor}});
 #endif
-            return dividend.registry->new_variable();
+            return dividend.registry()->new_variable();
         };
 
         Polynomial floor(const C dividend, const Polynomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(floor(dividend, divisor.eval()), divisor.registry);
+                return Polynomial(floor(dividend, divisor.eval()), divisor.registry());
 #else
                 return Polynomial(floor(dividend, divisor.eval()));
 #endif
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            divisor.registry->floor_registry.push_back(
-                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            divisor.registry()->floor_registry.push_back(
+                    {divisor.registry()->total_ids, {Polynomial(dividend, divisor.registry()), divisor}});
 #else
-            divisor.registry->floor_registry.push_back(
-                    {divisor.registry->total_ids, {dividend, divisor}});
+            divisor.registry()->floor_registry.push_back(
+                    {divisor.registry()->total_ids, {dividend, divisor}});
 #endif
-            return divisor.registry->new_variable();
+            return divisor.registry()->new_variable();
         };
 
         Monomial ceil(const Monomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
+                return Monomial(ceil(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Monomial(ceil(dividend.eval(), divisor.eval()));
 #endif
@@ -217,15 +217,15 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_monomial_variable();
+                dividend.registry()->ceil_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_monomial_variable();
             }
         };
 
         Monomial ceil(const Monomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(ceil(dividend.eval(), divisor), dividend.registry);
+                return Monomial(ceil(dividend.eval(), divisor), dividend.registry());
 #else
                 return Monomial(ceil(dividend.eval(), divisor));
 #endif
@@ -234,42 +234,42 @@ namespace md {
                 return dividend / divisor;
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            dividend.registry->ceil_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            dividend.registry()->ceil_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, Polynomial(divisor, dividend.registry())}});
 #else
-            dividend.registry->ceil_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, divisor}});
+            dividend.registry()->ceil_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, divisor}});
 #endif
-            return dividend.registry->new_monomial_variable();
+            return dividend.registry()->new_monomial_variable();
         };
 
         Monomial ceil(const C dividend, const Monomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Monomial(ceil(dividend, divisor.eval()), divisor.registry);
+                return Monomial(ceil(dividend, divisor.eval()), divisor.registry());
 #else
                 return Monomial(ceil(dividend, divisor.eval()));
 #endif
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            divisor.registry->ceil_registry.push_back(
-                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            divisor.registry()->ceil_registry.push_back(
+                    {divisor.registry()->total_ids, {Polynomial(dividend, divisor.registry()), divisor}});
 #else
-            divisor.registry->ceil_registry.push_back(
-                    {divisor.registry->total_ids, {dividend, divisor}});
+            divisor.registry()->ceil_registry.push_back(
+                    {divisor.registry()->total_ids, {dividend, divisor}});
 #endif
-            return divisor.registry->new_monomial_variable();
+            return divisor.registry()->new_monomial_variable();
         };
 
         Polynomial ceil(const Polynomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Polynomial(ceil(dividend.eval(), divisor.eval()));
 #endif
@@ -277,20 +277,20 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->ceil_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial ceil(const Polynomial &dividend, const Monomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Polynomial(ceil(dividend.eval(), divisor.eval()));
 #endif
@@ -298,20 +298,20 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->ceil_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial ceil(const Monomial &dividend, const Polynomial &divisor) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(dividend.registry != divisor.registry){
+            if(dividend.registry() != divisor.registry()){
                 throw DifferentRegistries();
             }
 #endif
             if (dividend.is_constant() and divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry);
+                return Polynomial(ceil(dividend.eval(), divisor.eval()), dividend.registry());
 #else
                 return Polynomial(ceil(dividend.eval(), divisor.eval()));
 #endif
@@ -319,15 +319,15 @@ namespace md {
             try {
                 return dividend / divisor;
             } catch (...) {
-                dividend.registry->ceil_registry.push_back({dividend.registry->total_ids, {dividend, divisor}});
-                return dividend.registry->new_variable();
+                dividend.registry()->ceil_registry.push_back({dividend.registry()->total_ids, {dividend, divisor}});
+                return dividend.registry()->new_variable();
             }
         };
 
         Polynomial ceil(const Polynomial &dividend, const C divisor) {
             if (dividend.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(ceil(dividend.eval(), divisor), dividend.registry);
+                return Polynomial(ceil(dividend.eval(), divisor), dividend.registry());
 #else
                 return Polynomial(ceil(dividend.eval(), divisor));
 #endif
@@ -342,31 +342,31 @@ namespace md {
                 return dividend / divisor;
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            dividend.registry->ceil_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, Polynomial(divisor, dividend.registry)}});
+            dividend.registry()->ceil_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, Polynomial(divisor, dividend.registry())}});
 #else
-            dividend.registry->ceil_registry.push_back(
-                    {dividend.registry->total_ids, {dividend, divisor}});
+            dividend.registry()->ceil_registry.push_back(
+                    {dividend.registry()->total_ids, {dividend, divisor}});
 #endif
-            return dividend.registry->new_variable();
+            return dividend.registry()->new_variable();
         };
 
         Polynomial ceil(const C dividend, const Polynomial &divisor) {
             if (divisor.is_constant()) {
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return Polynomial(ceil(dividend, divisor.eval()), divisor.registry);
+                return Polynomial(ceil(dividend, divisor.eval()), divisor.registry());
 #else
                 return Polynomial(ceil(dividend, divisor.eval()));
 #endif
             }
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            divisor.registry->ceil_registry.push_back(
-                    {divisor.registry->total_ids, {Polynomial(dividend, divisor.registry), divisor}});
+            divisor.registry()->ceil_registry.push_back(
+                    {divisor.registry()->total_ids, {Polynomial(dividend, divisor.registry()), divisor}});
 #else
-            divisor.registry->ceil_registry.push_back(
-                    {divisor.registry->total_ids, {dividend, divisor}});
+            divisor.registry()->ceil_registry.push_back(
+                    {divisor.registry()->total_ids, {dividend, divisor}});
 #endif
-            return divisor.registry->new_variable();
+            return divisor.registry()->new_variable();
         };
     }
 }

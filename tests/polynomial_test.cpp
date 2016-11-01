@@ -10,12 +10,12 @@ using namespace md::sym;
 TEST(PolynomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto zero = Polynomial(0, registry);
-    auto two = Polynomial(2, registry);
+    auto reg = std::make_shared<Registry>();
+    auto zero = Polynomial(0, reg);
+    auto two = Polynomial(2, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto zero = Polynomial(0);
     auto two = Polynomial(2);
 #endif
@@ -24,7 +24,7 @@ TEST(PolynomialTest, Constructor) {
     EXPECT_TRUE(zero.is_constant());
 
     // Polynomial with 1 variable
-    auto x = registry->new_variable();
+    auto x = reg->new_variable();
     EXPECT_EQ(x.monomials.size(), 1);
     EXPECT_EQ(x.monomials[0].coefficient, 1);
     EXPECT_FALSE(x.is_constant());
@@ -55,12 +55,12 @@ TEST(PolynomialTest, Constructor) {
 TEST(PolynomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto two = Polynomial(2, registry);
-    auto two_2 = Polynomial(2, registry);
+    auto reg = std::make_shared<Registry>();
+    auto two = Polynomial(2, reg);
+    auto two_2 = Polynomial(2, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto two = Polynomial(2);
     auto two_2 = Polynomial(2);
 #endif
@@ -71,7 +71,7 @@ TEST(PolynomialTest, Equality) {
     EXPECT_NE(1, two);
 
     // Not equality between 'x' and a constant
-    auto x = registry->new_variable();
+    auto x = reg->new_variable();
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, x);
@@ -80,18 +80,18 @@ TEST(PolynomialTest, Equality) {
     EXPECT_NE(x, two_2);
 
     // Equality with 'x' as monomial
-    auto x_monomial = registry->specific_monomial_variable(0);
+    auto x_monomial = reg->specific_monomial_variable(0);
     EXPECT_EQ(x, x_monomial);
     EXPECT_EQ(x_monomial, x);
 
     // Non equality with 'y' as monomial
-    auto y_monomial = registry->specific_monomial_variable(1);
+    auto y_monomial = reg->specific_monomial_variable(1);
     EXPECT_NE(x, y_monomial);
     EXPECT_NE(y_monomial, x);
 
     // Equality and non equality between polynomials
-    auto x_again = registry->specific_variable(0);
-    auto y = registry->specific_variable(1);
+    auto x_again = reg->specific_variable(0);
+    auto y = reg->specific_variable(1);
     EXPECT_EQ(x, x_again);
     EXPECT_EQ(x_again, x);
     EXPECT_NE(x, y);
@@ -103,15 +103,15 @@ TEST(PolynomialTest, Equality) {
 TEST(PolynomialTest, AdditionOperators) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
+    auto reg = std::make_shared<Registry>();
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
 #endif
     // Compare x + y + 2
-    auto x_monomial = registry->new_monomial_variable();
-    auto x = registry->specific_variable(0);
-    auto y = registry->specific_variable(1);
+    auto x_monomial = reg->new_monomial_variable();
+    auto x = reg->specific_variable(0);
+    auto y = reg->specific_variable(1);
     auto xpyp1_1 = x + y + 1;
     auto xpyp1_2 = x_monomial + y + 1;
     EXPECT_FALSE(xpyp1_1.is_constant());
@@ -132,7 +132,7 @@ TEST(PolynomialTest, AdditionOperators) {
     }
 
     // Check subtraction
-    auto two = two_xpyp1 - 2 * registry->specific_variable(0) - 2 * registry->specific_variable(1);
+    auto two = two_xpyp1 - 2 * reg->specific_variable(0) - 2 * reg->specific_variable(1);
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_TRUE(two.is_constant());
@@ -141,14 +141,14 @@ TEST(PolynomialTest, AdditionOperators) {
 TEST(PolynomialTest, MultuplyOperators) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
+    auto reg = std::make_shared<Registry>();
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
 #endif
     // Values
-    auto x = registry->new_variable();
-    auto y = registry->new_variable();
+    auto x = reg->new_variable();
+    auto y = reg->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
 
@@ -186,18 +186,18 @@ TEST(PolynomialTest, MultuplyOperators) {
 TEST(PolynomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto three = Polynomial(3, registry);
-    auto five = Polynomial(5, registry);
+    auto reg = std::make_shared<Registry>();
+    auto three = Polynomial(3, reg);
+    auto five = Polynomial(5, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto three = Polynomial(3);
     auto five = Polynomial(5);
 #endif
     // Values
-    auto x = registry->new_variable();
-    auto y = registry->new_variable();
+    auto x = reg->new_variable();
+    auto y = reg->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
 
@@ -240,7 +240,7 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(floor_y.monomials[0].coefficient, 1);
     EXPECT_EQ(floor_y.monomials[0].powers.size(), 1);
     EXPECT_EQ(floor_y.monomials[0].powers[0].second, 1);
-    EXPECT_EQ(registry->floor_registry.size(), 3);
+    EXPECT_EQ(reg->floor_registry.size(), 3);
 
     // Partial ceil divisions
     auto ceil_3 = ceil(product, three);
@@ -258,17 +258,17 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(ceil_y.monomials[0].coefficient, 1);
     EXPECT_EQ(ceil_y.monomials[0].powers.size(), 1);
     EXPECT_EQ(ceil_y.monomials[0].powers[0].second, 1);
-    EXPECT_EQ(registry->ceil_registry.size(), 3);
+    EXPECT_EQ(reg->ceil_registry.size(), 3);
 }
 
 TEST(PolynomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto two = Polynomial(2, registry);
+    auto reg = std::make_shared<Registry>();
+    auto two = Polynomial(2, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto two = Polynomial(2);
 #endif
     // Values
@@ -276,8 +276,8 @@ TEST(PolynomialTest, Eval) {
     const C y_val = 5;
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
-    auto x = registry->new_variable();
-    auto y = registry->new_variable();
+    auto x = reg->new_variable();
+    auto y = reg->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;
     auto xy_plus_y_square_plus_two = x * y + y * y + 2;
 

@@ -10,12 +10,12 @@ using namespace md::sym;
 TEST(MonomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto one = Monomial(1, registry);
-    auto two = Monomial(2, registry);
+    auto reg = std::make_shared<Registry>();
+    auto one = Monomial(1, reg);
+    auto two = Monomial(2, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto one = Monomial(1);
     auto two = Monomial(2);
 #endif
@@ -25,7 +25,7 @@ TEST(MonomialTest, Constructor) {
     EXPECT_EQ(one.powers.size(), 0);
 
     // Monomial with 1 variable
-    auto a = registry->new_monomial_variable();
+    auto a = reg->new_monomial_variable();
     EXPECT_EQ(a.coefficient, 1);
     EXPECT_FALSE(a.is_constant());
     EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{0, 1}));
@@ -46,18 +46,18 @@ TEST(MonomialTest, Constructor) {
 TEST(MonomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto two = Monomial(2, registry);
-    auto two_2 = Monomial(2, registry);
-    auto ten_x = Monomial(10, registry);
-    auto x = registry->new_monomial_variable();
+    auto reg = std::make_shared<Registry>();
+    auto two = Monomial(2, reg);
+    auto two_2 = Monomial(2, reg);
+    auto ten_x = Monomial(10, reg);
+    auto x = reg->new_monomial_variable();
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto two = Monomial(2);
     auto two_2 = Monomial(2);
     auto ten_x = Monomial(10);
-    auto x = registry->new_monomial_variable();
+    auto x = reg->new_monomial_variable();
 #endif
     // Equality with integers
     EXPECT_EQ(two, 2);
@@ -88,15 +88,15 @@ TEST(MonomialTest, Equality) {
 TEST(MonomialTest, Operators) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
+    auto reg = std::make_shared<Registry>();
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
 #endif
     // Values
-    auto x = registry->new_monomial_variable();
-    auto y = registry->new_monomial_variable();
-    auto z = registry->new_monomial_variable();
+    auto x = reg->new_monomial_variable();
+    auto y = reg->new_monomial_variable();
+    auto z = reg->new_monomial_variable();
     auto composite = 2 * y * z * x;
 
     // Verify inner structure (such as ordering)
@@ -123,16 +123,16 @@ TEST(MonomialTest, Operators) {
 TEST(MonomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto five = Monomial(5, registry);
+    auto reg = std::make_shared<Registry>();
+    auto five = Monomial(5, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto five = Monomial(5);
 #endif
     // Values
-    auto x = registry->new_monomial_variable();
-    auto y = registry->new_monomial_variable();
+    auto x = reg->new_monomial_variable();
+    auto y = reg->new_monomial_variable();
     auto composite = five * x * x * y;
 
     // Testing numerical floor and ceil
@@ -209,12 +209,12 @@ TEST(MonomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
 #ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-    auto two = Monomial(2, registry);
-    auto five = Monomial(5, registry);
+    auto reg = std::make_shared<Registry>();
+    auto two = Monomial(2, reg);
+    auto five = Monomial(5, reg);
 #else
-    auto registry = Polynomial::registry;
-    registry->reset();
+    auto reg = registry();
+    reg->reset();
     auto two = Monomial(2);
     auto five = Monomial(5);
 #endif
@@ -223,9 +223,9 @@ TEST(MonomialTest, Eval) {
     const C y_val = 5;
     const C z_val = 7;
     const std::vector<C> values{x_val, y_val, z_val};
-    auto x = registry->new_monomial_variable();
-    auto y = registry->new_monomial_variable();
-    auto z = registry->new_monomial_variable();
+    auto x = reg->new_monomial_variable();
+    auto y = reg->new_monomial_variable();
+    auto z = reg->new_monomial_variable();
 
     // Constant
     EXPECT_EQ(two.eval(), 2);
