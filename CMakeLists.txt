@@ -8,17 +8,7 @@ set(SYMBOLIC_INTEGERS_VERSION 1)
 set(SYMBOLIC_INTEGERS_VERSION
         ${SYMBOLIC_INTEGERS_MAJOR_VERSION}.${SYMBOLIC_INTEGERS_MINOR_VERSION}.${SYMBOLIC_INTEGERS_PATCH_VERSION})
 
-# Include directory
-include_directories(${PROJECT_SOURCE_DIR}/include)
-# Source files
-set(SYMBOLIC_INTEGERS_SOURCES
-        ${PROJECT_SOURCE_DIR}/src/base.cpp
-        ${PROJECT_SOURCE_DIR}/src/monomial_ops.cpp
-        ${PROJECT_SOURCE_DIR}/src/polynomial_ops.cpp
-        ${PROJECT_SOURCE_DIR}/src/extra_ops.cpp)
-# Append them to ALL_SOURCES
-list(APPEND ALL_SOURCES ${SYMBOLIC_INTEGERS_SOURCES})
-
+# Build flags
 if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
     # Standalone build
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
@@ -36,6 +26,23 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
 else()
     # Build under another project umbrealla
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/symints")
+endif()
+
+# Include directory
+include_directories(${PROJECT_SOURCE_DIR}/include)
+
+# Source files
+set(SYMBOLIC_INTEGERS_SOURCES
+        ${PROJECT_SOURCE_DIR}/src/base.cpp
+        ${PROJECT_SOURCE_DIR}/src/monomial_ops.cpp
+        ${PROJECT_SOURCE_DIR}/src/polynomial_ops.cpp
+        ${PROJECT_SOURCE_DIR}/src/extra_ops.cpp)
+
+# Append them to ALL_SOURCES
+list(APPEND ALL_SOURCES ${SYMBOLIC_INTEGERS_SOURCES})
+
+if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+    # Build under another project umbrealla
     set (ALL_SOURCES ${ALL_SOURCES} PARENT_SCOPE)
 endif()
 
