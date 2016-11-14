@@ -2,8 +2,8 @@
 // Created by alex on 24/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H
-#define METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H
 
 namespace md {
     namespace sym {
@@ -296,4 +296,4 @@ namespace md {
         Polynomial max(C const  &left, Polynomial const  &right);
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H

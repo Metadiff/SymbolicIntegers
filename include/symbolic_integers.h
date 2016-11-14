@@ -2,8 +2,8 @@
 // Created by alex on 21/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_SNT_H
-#define METADIFF_SYMBOLIC_INTEGERS_SNT_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRNT_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRNT_H
 
 // External includes
 #include <cinttypes>
@@ -67,4 +67,4 @@ typedef uint8_t P;
 #include "polynomial_ops.h"
 #include "extra_ops.h"
 
-#endif //METADIFF_SYMBOLIC_INTEGERS_SNT_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_H

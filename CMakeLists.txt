@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Project name and versions
-project(SymbolicIntegers)
+project(SymbolicIntegersSRNT)
 set(SYMBOLIC_INTEGERS_MAJOR_VERSION 1)
 set(SYMBOLIC_INTEGERS_VERSION 0)
 set(SYMBOLIC_INTEGERS_VERSION 0)
@@ -51,10 +51,10 @@ endif()
 # Build libs (static by default)
 if(SYMINT_SHARED)
     # Create shared libs
-    add_library(symints_snt SHARED ${SYMBOLIC_INTEGERS_SOURCES})
+    add_library(symints_srnt SHARED ${SYMBOLIC_INTEGERS_SOURCES})
 else()
     # Create static library
-    add_library(symints_snt STATIC ${SYMBOLIC_INTEGERS_SOURCES})
+    add_library(symints_srnt STATIC ${SYMBOLIC_INTEGERS_SOURCES})
 endif()
 
 # Build tests
@@ -63,6 +63,6 @@ add_subdirectory(tests)
 # Build examples
 if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples")
-    add_executable(symints_snt_example examples/example.cpp)
-    target_link_libraries(symints_snt_example symints_snt)
+    add_executable(symints_srnt_example examples/example.cpp)
+    target_link_libraries(symints_srnt_example symints_srnt)
 endif()
