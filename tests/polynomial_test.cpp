@@ -7,12 +7,27 @@
 #include "symbolic_integers.h"
 using namespace md::sym;
 
-TEST(PolynomialTest, Constructor) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+template<typename CC, typename II, typename PP>
+struct TypeDefinitions {
+    typedef CC C;
+    typedef II I;
+    typedef PP P;
+};
+template<typename>
+class PolynomialTest : public testing::Test {};
+typedef TypeDefinitions<int16_t, uint16_t, uint8_t> Int16;
+typedef TypeDefinitions<int32_t, uint32_t, uint8_t> Int32;
+typedef TypeDefinitions<int64_t, uint64_t, uint8_t> Int64;
+typedef testing::Types<Int16, Int32, Int64> Integers;
+
+TYPED_TEST_CASE(PolynomialTest, Integers);
+
+TYPED_TEST(PolynomialTest, Constructor) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto zero = Polynomial(0);
-    auto two = Polynomial(2);
+    auto zero = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(0);
+    auto two = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
 
     // Constant comparison
     EXPECT_EQ(zero.monomials.size(), 0);
@@ -32,7 +47,7 @@ TEST(PolynomialTest, Constructor) {
     EXPECT_EQ(two.monomials[0].powers.size(), 0);
 
     // From monomial
-    x = Polynomial(x.monomials[0]);
+    x = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(x.monomials[0]);
     EXPECT_EQ(x.monomials.size(), 1);
     EXPECT_EQ(x.monomials[0].coefficient, 1);
     EXPECT_FALSE(x.is_constant());
@@ -40,19 +55,19 @@ TEST(PolynomialTest, Constructor) {
 
     x.monomials[0].coefficient = 2;
     // From another
-    auto two_x = Polynomial(x);
+    auto two_x = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(x);
     EXPECT_EQ(two_x.monomials.size(), 1);
     EXPECT_EQ(two_x.monomials[0].coefficient, 2);
     EXPECT_FALSE(two_x.is_constant());
     EXPECT_THAT(two_x.monomials[0].powers, testing::ElementsAre(entry_pair{0, 1}));
 }
 
-TEST(PolynomialTest, Equality) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, Equality) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto two = Polynomial(2);
-    auto two_2 = Polynomial(2);
+    auto two = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
+    auto two_2 = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
 
     // Equality with integers
     EXPECT_EQ(two, 2);
@@ -90,9 +105,9 @@ TEST(PolynomialTest, Equality) {
     EXPECT_EQ(y_monomial, y);
     }
 
-TEST(PolynomialTest, AdditionOperators) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, AdditionOperators) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
 
     // Compare x + y + 2
@@ -125,9 +140,9 @@ TEST(PolynomialTest, AdditionOperators) {
     EXPECT_TRUE(two.is_constant());
 }
 
-TEST(PolynomialTest, MultuplyOperators) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, MultuplyOperators) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
 
     // Values
@@ -167,12 +182,12 @@ TEST(PolynomialTest, MultuplyOperators) {
     EXPECT_THROW(product / x * x, std::runtime_error);
 }
 
-TEST(PolynomialTest, FloorCeil) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, FloorCeil) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto three = Polynomial(3);
-    auto five = Polynomial(5);
+    auto three = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(3);
+    auto five = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(5);
 
     // Values
     auto x = reg->new_variable();
@@ -240,11 +255,11 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(reg->ceil_registry.size(), 3);
 }
 
-TEST(PolynomialTest, MinMax) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, MinMax) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto five = Polynomial(5);
+    auto five = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(5);
 
     // Values
     auto x = reg->new_variable();
@@ -300,17 +315,17 @@ TEST(PolynomialTest, MinMax) {
     EXPECT_EQ(max_3.monomials[0].powers[0].second, 1);
 }
 
-TEST(PolynomialTest, Eval) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(PolynomialTest, Eval) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto two = Polynomial(2);
+    auto two = Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
 
     // Values
-    const C x_val = 3;
-    const C y_val = 5;
-    const C z_val = 7;
-    const std::vector<C> values{x_val, y_val, z_val};
+    const typename TypeParam::C x_val = 3;
+    const typename TypeParam::C y_val = 5;
+    const typename TypeParam::C z_val = 7;
+    const std::vector<typename TypeParam::C> values{x_val, y_val, z_val};
     auto x = reg->new_variable();
     auto y = reg->new_variable();
     auto xy_plus_x_square_plus_one = x * y + x * x + 1;

@@ -2,12 +2,13 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_MONOMIAL_H
-#define METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_MONOMIAL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_MONOMIAL_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_MONOMIAL_H
 
 namespace md{
     namespace sym{
         /** The class represents a symbolic monomial in the form of C * a(id_1)^p_1 * a(id_2)^p_2 * ... * a(id_n)^p_n */
+        template <typename C, typename I, typename P>
         class Monomial {
         public:
             /** A vector of pairds (id, power), which represent the var(id)^power in the monomial */
@@ -16,7 +17,7 @@ namespace md{
             C coefficient;
             
             /** Copy constructor */
-            Monomial(Monomial const &monomial):
+            Monomial(Monomial<C, I, P> const &monomial):
                     powers(monomial.powers),
                     coefficient(monomial.coefficient){}
 
@@ -59,9 +60,10 @@ namespace md{
             std::string to_string() const;
         };
 
-        inline std::ostream &operator<<(std::ostream &f, Monomial const &monomial) {
+        template <typename C, typename I, typename P>
+        std::ostream &operator<<(std::ostream &f, Monomial<C, I, P> const &monomial) {
             return f << monomial.to_string();
         }
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_MONOMIAL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_MONOMIAL_H

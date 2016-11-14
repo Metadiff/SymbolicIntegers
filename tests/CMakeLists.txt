@@ -9,5 +9,5 @@ set(test_sources run_all.cpp monomial_test.cpp polynomial_test.cpp variable_dedu
 
 # Tests
 add_executable(symints_srnt_tests ${test_sources})
-add_dependencies(symints_srnt_tests gtest gmock)
-target_link_libraries(symints_srnt_tests symints_srnt gtest gmock pthread)
+add_dependencies(gtest gmock)
+target_link_libraries(symints_srnt_tests gtest gmock pthread)

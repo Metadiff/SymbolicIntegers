@@ -2,23 +2,24 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_POLYNOMIAL_H
-#define METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_POLYNOMIAL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_H
 
 namespace md{
     namespace sym{
         /** The class represents a symbolic polynoimal in the form of a sum of n monomials - m_1 + m_2 + m_3 ... + m_n */
+        template <typename C, typename I, typename P>
         class Polynomial {
         public:
             /** A vector of all of the monomials */
-            std::vector <Monomial> monomials;
+            std::vector <Monomial<C, I, P>> monomials;
 
             /** Copy constructor */
-            Polynomial(Polynomial const &polynomial) :
+            Polynomial(Polynomial<C, I, P> const &polynomial) :
                     monomials(polynomial.monomials) {};
 
             /** Constructor from single monomial */
-            Polynomial(Monomial const &monomial) {
+            Polynomial(Monomial<C, I, P> const &monomial) {
                 if (monomial.coefficient != 0) {
                     monomials.push_back(monomial);
                 }
@@ -27,7 +28,7 @@ namespace md{
             /** Constructor from a constant varaible */
             Polynomial(C const value) {
                 if (value != 0) {
-                    monomials.push_back(Monomial(value));
+                    monomials.push_back(Monomial<C, I, P>(value));
                 }
             }
 
@@ -67,9 +68,10 @@ namespace md{
             std::string to_string() const;
         };
 
-        inline std::ostream &operator<<(std::ostream &f, Polynomial const &polynomial){
+        template <typename C, typename I, typename P>
+        std::ostream &operator<<(std::ostream &f, Polynomial<C, I, P> const &polynomial){
             return  f << polynomial.to_string();
         }
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_BASE_POLYNOMIAL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_H

@@ -2,8 +2,8 @@
 // Created by alex on 24/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H
-#define METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRT_EXTRA_OPS_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRT_EXTRA_OPS_H
 
 namespace md {
     namespace sym {
@@ -13,7 +13,10 @@ namespace md {
          * @param divisor
          * @return
          */
-        C floor(C const dividend, C const divisor);
+        template<typename C1, typename C2,
+                typename = std::enable_if<std::is_integral<C1>::value>,
+                typename = std::enable_if<std::is_integral<C2>::value>>
+        auto floor(C1 const dividend, C2 const divisor) -> decltype(dividend / divisor);
 
         /**
          * Makes a ceil division, e.g. returns the result of floor(a/b)
@@ -21,7 +24,10 @@ namespace md {
          * @param divisor
          * @return
          */
-        C ceil(C const dividend, C const divisor);
+        template<typename C1, typename C2,
+                typename = std::enable_if<std::is_integral<C1>::value>,
+                typename = std::enable_if<std::is_integral<C2>::value>>
+        auto ceil(C1 const dividend, C2 const divisor) -> decltype(dividend / divisor);
 
         /**
          * Takes the minmum of the two values
@@ -29,7 +35,10 @@ namespace md {
          * @param right
          * @return
          */
-        C min(C const left, C const right);
+        template<typename C1, typename C2,
+                typename = std::enable_if<std::is_integral<C1>::value>,
+                typename = std::enable_if<std::is_integral<C2>::value>>
+        auto min(C1 const left, C2 const right) -> decltype(left + right);
 
         /**
          * Takes the maximum of the two values
@@ -37,7 +46,10 @@ namespace md {
          * @param right
          * @return
          */
-        C max(C const left, C const right);
+        template<typename C1, typename C2,
+                typename = std::enable_if<std::is_integral<C1>::value>,
+                typename = std::enable_if<std::is_integral<C2>::value>>
+        auto max(C1 const left, C2 const right) -> decltype(left + right);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -45,7 +57,8 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial floor(Monomial const  &dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Monomial<C, I, P> floor(Monomial<C, I, P> const  &dividend, Monomial<C, I, P> const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -53,7 +66,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial floor(Monomial const  &dividend, C const divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> floor(Monomial<C, I, P> const  &dividend, T const divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -61,7 +76,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial floor(C const dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> floor(T const dividend, Monomial<C, I, P> const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -69,7 +86,8 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(Polynomial const  &dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> floor(Polynomial<C, I, P> const  &dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -77,7 +95,8 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(Polynomial const  &dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> floor(Polynomial<C, I, P> const  &dividend, Monomial<C, I, P> const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -85,7 +104,8 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(Monomial const  &dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> floor(Monomial<C, I, P> const  &dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -93,7 +113,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(Polynomial const  &dividend, C const divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> floor(Polynomial<C, I, P> const  &dividend, T const divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -101,7 +123,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(C const dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> floor(T const dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -109,7 +133,8 @@ namespace md {
           * @param divisor
           * @return
           */
-        Monomial ceil(Monomial const  &dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Monomial<C, I, P> ceil(Monomial<C, I, P> const  &dividend, Monomial<C, I, P> const  &divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -117,7 +142,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial ceil(Monomial const  &dividend, C const divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> ceil(Monomial<C, I, P> const  &dividend, T const divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -125,7 +152,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial ceil(C const dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> ceil(T const dividend, Monomial<C, I, P> const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -133,7 +162,8 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial ceil(Polynomial const  &dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> ceil(Polynomial<C, I, P> const  &dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -141,7 +171,8 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial  ceil(Polynomial const  &dividend, Monomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P>  ceil(Polynomial<C, I, P> const  &dividend, Monomial<C, I, P> const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -149,7 +180,8 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial ceil(Monomial const  &dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> ceil(Monomial<C, I, P> const  &dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -157,7 +189,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial ceil(Polynomial const  &dividend, C const divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> ceil(Polynomial<C, I, P> const  &dividend, T const divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -165,7 +199,9 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial ceil(C const dividend, Polynomial const  &divisor);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> ceil(T const dividend, Polynomial<C, I, P> const  &divisor);
 
         /**
          * Takes the minimum of the two variables
@@ -173,7 +209,8 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial min(Monomial const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P>
+        Monomial<C, I, P> min(Monomial<C, I, P> const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -181,7 +218,9 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial min(Monomial const  &left, C const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> min(Monomial<C, I, P> const  &left, T const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -189,7 +228,9 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial min(C const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> min(T const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -197,7 +238,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial min(Polynomial const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> min(Polynomial<C, I, P> const  &left, Polynomial<C, I, P> const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -205,7 +247,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial min(Polynomial const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> min(Polynomial<C, I, P> const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -213,7 +256,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial min(Monomial const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> min(Monomial<C, I, P> const  &left, Polynomial<C, I, P> const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -221,7 +265,9 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial min(Polynomial const  &left, C const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> min(Polynomial<C, I, P> const  &left, T const  &right);
 
         /**
          * Takes the minimum of the two variables
@@ -229,7 +275,9 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial min(C const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> min(T const  &left, Polynomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -237,7 +285,8 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial max(Monomial const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P>
+        Monomial<C, I, P> max(Monomial<C, I, P> const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -245,7 +294,9 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial max(Monomial const  &left, C const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> max(Monomial<C, I, P> const  &left, T const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -253,7 +304,9 @@ namespace md {
          * @param right
          * @return
          */
-        Monomial max(C const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> max(T const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -261,7 +314,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial max(Polynomial const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> max(Polynomial<C, I, P> const  &left, Polynomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -269,7 +323,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial max(Polynomial const  &left, Monomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> max(Polynomial<C, I, P> const  &left, Monomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -277,7 +332,8 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial max(Monomial const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P>
+        Polynomial<C, I, P> max(Monomial<C, I, P> const  &left, Polynomial<C, I, P> const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -285,7 +341,9 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial max(Polynomial const  &left, C const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> max(Polynomial<C, I, P> const  &left, T const  &right);
 
         /**
          * Takes the maximum of the two variables
@@ -293,7 +351,9 @@ namespace md {
          * @param right
          * @return
          */
-        Polynomial max(C const  &left, Polynomial const  &right);
+        template<typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Polynomial<C, I, P> max(T const  &left, Polynomial<C, I, P> const  &right);
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_EXTRA_OPS_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRT_EXTRA_OPS_H

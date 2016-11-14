@@ -1,4 +1,4 @@
-# Symbolic Integers - Static Registry Non Templated [SRNT]
+# Symbolic Integers - Static Registry Templated [SRT]
 A small library for manipulation and calculation of symbolic integer polynomials.
 
 ## Branches
@@ -25,22 +25,25 @@ If you want to run the tests or compile the example you will need to
 build the project. Don't forget to initialize the googletest submodule 
 via `git submodule update --init --recursive`. 
  
-## Example usage [SRNT]
+## Example usage [SRT]
 
 Below is the code for a simple example which can also
-be found in the `examples` directory for the Static Registry Non Templated branch.
+be found in the `examples` directory for the Static Registry Templated branch.
 
 ```c++
 #include "symbolic_integers.h"
 #include "iostream"
 
-typedef md::sym::Polynomial SymInt;
-typedef std::vector<std::pair<md::sym::I, md::sym::C>> VecValues;
-typedef std::vector<std::pair<SymInt, md::sym::C>> ImplicitValues;
+typedef int64_t C;
+typedef uint16_t I;
+typedef uint8_t P;
+typedef md::sym::Polynomial<C, I, P> SymInt;
+typedef std::vector<std::pair<I, C>> VecValues;
+typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
 
 int main(){
     // Make a reg
-    auto reg = md::sym::registry();
+    auto reg = md::sym::registry<C, I, P>();
 
     // Get just the individual symbolic variables
     auto a = reg->new_variable();
@@ -58,7 +61,7 @@ int main(){
     auto poly8 = max(a * b + 12, a * b + a);
 
     // Evaluate using a vector
-    std::vector<md::sym::C> vals0 {1, 7, 4};
+    std::vector<C> vals0 {1, 7, 4};
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;

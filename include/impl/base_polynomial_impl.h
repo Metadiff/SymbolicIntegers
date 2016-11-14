@@ -2,11 +2,13 @@
 // Created by alex on 12/11/16.
 //
 
-#include "symbolic_integers.h"
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_IMPL_H
 
 namespace md {
     namespace sym {
-        bool Polynomial::is_constant() const {
+        template <typename C, typename I, typename P>
+        bool Polynomial<C, I, P>::is_constant() const {
             switch (monomials.size()) {
                 case 0:
                     return true;
@@ -17,7 +19,8 @@ namespace md {
             }
         }
 
-        C Polynomial::eval(std::vector <C> const &values) const {
+        template <typename C, typename I, typename P>
+        C Polynomial<C, I, P>::eval(std::vector <C> const &values) const {
             C value = 0;
             for (auto i = 0; i < monomials.size(); ++i) {
                 value += monomials[i].eval(values);
@@ -25,7 +28,8 @@ namespace md {
             return value;
         }
 
-        C Polynomial::eval(std::vector <std::pair<I, C>> const &values) const {
+        template <typename C, typename I, typename P>
+        C Polynomial<C, I, P>::eval(std::vector <std::pair<I, C>> const &values) const {
             C value = 0;
             for (auto i = 0; i < monomials.size(); ++i) {
                 value += monomials[i].eval(values);
@@ -33,11 +37,13 @@ namespace md {
             return value;
         }
 
-        C Polynomial::eval() const {
+        template <typename C, typename I, typename P>
+        C Polynomial<C, I, P>::eval() const {
             return eval(std::vector < C > {});
         }
 
-        std::string Polynomial::to_string() const {
+        template <typename C, typename I, typename P>
+        std::string Polynomial<C, I, P>::to_string() const {
             if (monomials.size() == 0) {
                 return "0";
             }
@@ -53,3 +59,5 @@ namespace md {
         }
     }
 }
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRT_BASE_POLYNOMIAL_IMPL_H
+

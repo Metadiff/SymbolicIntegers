@@ -6,13 +6,27 @@
 #include "gmock/gmock.h"
 #include "symbolic_integers.h"
 using namespace md::sym;
+template<typename CC, typename II, typename PP>
+struct TypeDefinitions {
+    typedef CC C;
+    typedef II I;
+    typedef PP P;
+};
+template<typename>
+class MonomialTest : public testing::Test {};
+typedef TypeDefinitions<int16_t, uint16_t, uint8_t> Int16;
+typedef TypeDefinitions<int32_t, uint32_t, uint8_t> Int32;
+typedef TypeDefinitions<int64_t, uint64_t, uint8_t> Int64;
+typedef testing::Types<Int16, Int32, Int64> Integers;
 
-TEST(MonomialTest, Constructor) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST_CASE(MonomialTest, Integers);
+
+TYPED_TEST(MonomialTest, Constructor) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto one = Monomial(1);
-    auto two = Monomial(2);
+    auto one = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(1);
+    auto two = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
 
     // Constant monomial 1
     EXPECT_EQ(one.coefficient, 1);
@@ -32,19 +46,19 @@ TEST(MonomialTest, Constructor) {
 
     // From another
     two.powers.push_back(entry_pair{0, 2});
-    auto two_x2 = Monomial(two);
+    auto two_x2 = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(two);
     EXPECT_EQ(two_x2.coefficient, 2);
     EXPECT_FALSE(two_x2.is_constant());
     EXPECT_THAT(two_x2.powers, testing::ElementsAre(entry_pair{0, 2}));
 }
 
-TEST(MonomialTest, Equality) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(MonomialTest, Equality) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto two = Monomial(2);
-    auto two_2 = Monomial(2);
-    auto ten_x = Monomial(10);
+    auto two = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
+    auto two_2 = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
+    auto ten_x = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(10);
     auto x = reg->new_monomial_variable();
 
     // Equality with integers
@@ -73,9 +87,9 @@ TEST(MonomialTest, Equality) {
 }
 
 
-TEST(MonomialTest, Operators) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(MonomialTest, Operators) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
 
     // Values
@@ -105,11 +119,11 @@ TEST(MonomialTest, Operators) {
     EXPECT_THROW(composite / 0, std::runtime_error);
 }
 
-TEST(MonomialTest, FloorCeil) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(MonomialTest, FloorCeil) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto five = Monomial(5);
+    auto five = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(5);
 
     // Values
     auto x = reg->new_monomial_variable();
@@ -117,26 +131,26 @@ TEST(MonomialTest, FloorCeil) {
     auto composite = five * x * x * y;
 
     // Testing numerical floor and ceil
-    EXPECT_EQ(floor(C(1), C(2)), 0);
-    EXPECT_EQ(floor(C(-1), C(2)), -1);
-    EXPECT_EQ(floor(C(1), C(-2)), -1);
-    EXPECT_EQ(floor(C(-1), C(-2)), 0);
-    EXPECT_EQ(floor(C(2), C(2)), 1);
-    EXPECT_EQ(floor(C(-2), C(2)), -1);
-    EXPECT_EQ(floor(C(2), C(-2)), -1);
-    EXPECT_EQ(floor(C(-2), C(-2)), 1);
-    EXPECT_EQ(floor(C(0), C(2)), 0);
-    EXPECT_EQ(floor(C(0), C(-2)), 0);
-    EXPECT_EQ(ceil(C(1), C(2)), 1);
-    EXPECT_EQ(ceil(C(-1), C(2)), 0);
-    EXPECT_EQ(ceil(C(1), C(-2)), 0);
-    EXPECT_EQ(ceil(C(-1), C(-2)), 1);
-    EXPECT_EQ(ceil(C(2), C(2)), 1);
-    EXPECT_EQ(ceil(C(-2), C(2)), -1);
-    EXPECT_EQ(ceil(C(2), C(-2)), -1);
-    EXPECT_EQ(ceil(C(-2), C(-2)), 1);
-    EXPECT_EQ(ceil(C(0), C(2)), 0);
-    EXPECT_EQ(ceil(C(0), C(-2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(1), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(-1), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(floor(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(floor(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(1), typename TypeParam::C(-2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(-1), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(2)), -1);
+    EXPECT_EQ(ceil(typename TypeParam::C(2), typename TypeParam::C(-2)), -1);
+    EXPECT_EQ(ceil(typename TypeParam::C(-2), typename TypeParam::C(-2)), 1);
+    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(2)), 0);
+    EXPECT_EQ(ceil(typename TypeParam::C(0), typename TypeParam::C(-2)), 0);
 
     // Constant operations
     EXPECT_EQ(floor(five, 3), 1);
@@ -185,11 +199,11 @@ TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(ceil_y2.powers[0].second, 1);
 }
 
-TEST(MonomialTest, MinMax) {
-    typedef std::pair<I, P> entry_pair;
-    auto reg = registry();
+TYPED_TEST(MonomialTest, MinMax) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto five = Monomial(5);
+    auto five = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(5);
 
     // Values
     auto x = reg->new_monomial_variable();
@@ -197,12 +211,12 @@ TEST(MonomialTest, MinMax) {
     auto composite = five * x * x * y;
 
     // Testing numerical min and max
-    EXPECT_EQ(min(C(1), C(2)), 1);
-    EXPECT_EQ(min(C(2), C(1)), 1);
-    EXPECT_EQ(min(C(2), C(2)), 2);
-    EXPECT_EQ(max(C(1), C(2)), 2);
-    EXPECT_EQ(max(C(2), C(1)), 2);
-    EXPECT_EQ(max(C(2), C(2)), 2);
+    EXPECT_EQ(min(typename TypeParam::C(1), typename TypeParam::C(2)), 1);
+    EXPECT_EQ(min(typename TypeParam::C(2), typename TypeParam::C(1)), 1);
+    EXPECT_EQ(min(typename TypeParam::C(2), typename TypeParam::C(2)), 2);
+    EXPECT_EQ(max(typename TypeParam::C(1), typename TypeParam::C(2)), 2);
+    EXPECT_EQ(max(typename TypeParam::C(2), typename TypeParam::C(1)), 2);
+    EXPECT_EQ(max(typename TypeParam::C(2), typename TypeParam::C(2)), 2);
 
     // Constant expressions
     EXPECT_EQ(min(five, 3), 3);
@@ -244,19 +258,19 @@ TEST(MonomialTest, MinMax) {
 }
 
 
-TEST(MonomialTest, Eval) {
-    typedef std::pair<I, P> entry_pair;
-    typedef std::vector<std::pair<I, C>> value_vec;
-    auto reg = registry();
+TYPED_TEST(MonomialTest, Eval) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    typedef std::vector<std::pair<typename TypeParam::I, typename TypeParam::C>> value_vec;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
-    auto two = Monomial(2);
-    auto five = Monomial(5);
+    auto two = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(2);
+    auto five = Monomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>(5);
 
     // Values
-    const C x_val = 3;
-    const C y_val = 5;
-    const C z_val = 7;
-    const std::vector<C> values{x_val, y_val, z_val};
+    const typename TypeParam::C x_val = 3;
+    const typename TypeParam::C y_val = 5;
+    const typename TypeParam::C z_val = 7;
+    const std::vector<typename TypeParam::C> values{x_val, y_val, z_val};
     auto x = reg->new_monomial_variable();
     auto y = reg->new_monomial_variable();
     auto z = reg->new_monomial_variable();

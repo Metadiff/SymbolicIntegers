@@ -7,18 +7,19 @@
 
 namespace md{
     namespace sym{
-        class Registry:  public std::enable_shared_from_this<Registry>{
+        template <typename C, typename I, typename P>
+        class Registry:  public std::enable_shared_from_this<Registry<C, I, P>>{
         public:
             /** The total number of ids already used */
             I total_ids;
             /** A register for all variables which are result of a floor operation */
-            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> floor_registry;
+            std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>> floor_registry;
             /** A register for all variables which are result of a ceil operation */
-            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> ceil_registry;
+            std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>> ceil_registry;
             /** A register for all variables which are result of a floor operation */
-            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> min_registry;
+            std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>> min_registry;
             /** A register for all variables which are result of a ceil operation */
-            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> max_registry;
+            std::vector <std::pair<I, std::pair < Polynomial<C, I, P>, Polynomial<C, I, P>>>> max_registry;
 
             Registry(): total_ids(0){};
 
@@ -28,7 +29,7 @@ namespace md{
              * @param id
              * @return The entry in the floor registry.
              */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_floor(I id);
+            std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> get_floor(I id);
 
             /** @brief Returnst the entry of the ceil registry for that id, if it does not exists returns empty
             * entry with id 0.
@@ -36,7 +37,7 @@ namespace md{
             * @param id
             * @return The entry in the ceil registry.
             */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_ceil(I id);
+            std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> get_ceil(I id);
 
             /** @brief Returnst the entry of the min registry for that id, if it does not exists returns empty
             * entry with id 0.
@@ -44,7 +45,7 @@ namespace md{
             * @param id
             * @return The entry in the min registry.
             */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_min(I id);
+            std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> get_min(I id);
 
             /** @brief Returnst the entry of the max registry for that id, if it does not exists returns empty
             * entry with id 0.
@@ -52,7 +53,7 @@ namespace md{
             * @param id
             * @return The entry in the max registry.
             */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_max(I id);
+            std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> get_max(I id);
 
             /** Resets the registry */
             void reset();
@@ -60,24 +61,24 @@ namespace md{
             /**
              * @return A new symbolic variable as a Polynomial
              */
-            Polynomial new_variable();
+            Polynomial<C, I, P> new_variable();
 
             /**
              * @return A new symbolic variable as a Monomial
              */
-            Monomial new_monomial_variable();
+            Monomial<C, I, P> new_monomial_variable();
 
             /**
              * @param id
              * @return The symbolic variable corresponding to the id as a Polynomial
              */
-            Polynomial specific_variable(I id);
+            Polynomial<C, I, P> specific_variable(I id);
 
             /**
              * @param id
              * @return The symbolic variable corresponding to the id as a Monomial
              */
-            Monomial specific_monomial_variable(I id);
+            Monomial<C, I, P> specific_monomial_variable(I id);
 
             /**
              * The method tries to deduce the values of all individual symbolic variables
@@ -87,13 +88,14 @@ namespace md{
              * @param implicit_values - a mapping from polynomial to a value, specifing an equation
              * @return The deduced single variables' values
              */
-            std::vector<std::pair<I, C>> deduce_values(std::vector <std::pair<Polynomial, C>> const &implicit_values);
+            std::vector<std::pair<I, C>> deduce_values(std::vector <std::pair<Polynomial<C, I, P>, C>> const &implicit_values);
         };
 
-        inline std::shared_ptr<Registry> registry(){
-            static std::shared_ptr<Registry> registry;
+        template <typename C, typename I, typename P>
+        std::shared_ptr<Registry<C, I, P>> registry(){
+            static std::shared_ptr<Registry<C, I, P>> registry;
             if(not registry){
-                registry = std::make_shared<Registry>();
+                registry = std::make_shared<Registry<C, I, P>>();
             }
             return registry;
         }

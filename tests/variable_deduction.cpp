@@ -7,17 +7,32 @@
 #include "symbolic_integers.h"
 using namespace md::sym;
 
-TEST(DeductionTest, VariableDeduction) {
-    typedef std::pair<I, P> entry_pair;
-    typedef std::vector<std::pair<I, C>> value_vec;
-    auto reg = registry();
+template<typename CC, typename II, typename PP>
+struct TypeDefinitions {
+    typedef CC C;
+    typedef II I;
+    typedef PP P;
+};
+template<typename>
+class DeductionTest : public testing::Test {};
+typedef TypeDefinitions<int16_t, uint16_t, uint8_t> Int16;
+typedef TypeDefinitions<int32_t, uint32_t, uint8_t> Int32;
+typedef TypeDefinitions<int64_t, uint64_t, uint8_t> Int64;
+typedef testing::Types<Int16, Int32, Int64> Integers;
+
+TYPED_TEST_CASE(DeductionTest, Integers);
+
+TYPED_TEST(DeductionTest, VariableDeduction) {
+    typedef std::pair<typename TypeParam::I, typename TypeParam::P> entry_pair;
+    typedef std::vector<std::pair<typename TypeParam::I, typename TypeParam::C>> value_vec;
+    auto reg = registry<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>();
     reg->reset();
 
     // Base variables
     auto x = reg->new_variable();
     auto y = reg->new_variable();
     auto z = reg->new_variable();
-    typedef std::vector<std::pair<Polynomial, C>> ImplicitVec;
+    typedef std::vector<std::pair<Polynomial<typename TypeParam::C, typename TypeParam::I, typename TypeParam::P>, typename TypeParam::C>> ImplicitVec;
     ImplicitVec implicit_values;
 
     // Example 1
@@ -162,7 +177,7 @@ TEST(DeductionTest, VariableDeduction) {
     val1 = x_val * y_val * y_val;
     val2 = y_val * 2 + 1;
     val3 = z_val * z_val * x_val + z_val * y_val + 2;
-    implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
+    implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     EXPECT_THROW(reg->deduce_values(implicit_values), std::runtime_error);
 
     poly1 = x * y * y;
@@ -174,6 +189,6 @@ TEST(DeductionTest, VariableDeduction) {
     val1 = x_val * y_val * y_val;
     val2 = y_val * z_val *  2 + 1;
     val3 = z_val * z_val * x_val + 2;
-    implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
+    implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     EXPECT_THROW(reg->deduce_values(implicit_values), std::runtime_error);
 }

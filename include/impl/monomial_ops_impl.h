@@ -2,12 +2,14 @@
 // Created by alex on 29/08/16.
 //
 
-#include "symbolic_integers.h"
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SRT_MONOMIAL_OPS_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_SRT_MONOMIAL_OPS_IMPL_H
 
 namespace md {
     namespace sym {
 
-        bool operator==(Monomial const &lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        bool operator==(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
             if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                 return false;
             }
@@ -19,7 +21,8 @@ namespace md {
             return true;
         }
 
-        bool operator!=(Monomial const &lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        bool operator!=(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
             if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                 return true;
             }
@@ -31,24 +34,32 @@ namespace md {
             return false;
         }
 
-        bool operator==(Monomial const &lhs, C const rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(Monomial<C, I, P> const &lhs, T const rhs) {
             return lhs.is_constant() and (lhs.coefficient == rhs);
         }
 
-        bool operator!=(Monomial const &lhs, C const rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator!=(Monomial<C, I, P> const &lhs, T const rhs) {
             return (not lhs.is_constant()) or (lhs.coefficient != rhs);
         }
 
-
-        bool operator==(C const lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(T const lhs, Monomial<C, I, P> const &rhs) {
             return rhs.is_constant() and (rhs.coefficient == lhs);
         }
 
-        bool operator!=(C const lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator!=(T const lhs, Monomial<C, I, P> const &rhs) {
             return (not rhs.is_constant()) or (rhs.coefficient != lhs);
         }
 
-        bool up_to_coefficient(Monomial const &lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        bool up_to_coefficient(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
             if (lhs.powers.size() != rhs.powers.size()) {
                 return false;
             }
@@ -60,15 +71,20 @@ namespace md {
             return true;
         }
 
-        bool up_to_coefficient(C const lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool up_to_coefficient(T const lhs, Monomial<C, I, P> const &rhs) {
             return rhs.is_constant();
         }
 
-        bool up_to_coefficient(Monomial const &lhs, C const rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool up_to_coefficient(Monomial<C, I, P> const &lhs, T const rhs) {
             return lhs.is_constant();
         }
 
-        bool less_than_comparator(Monomial const &lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        bool less_than_comparator(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
             auto max = lhs.powers.size() > rhs.powers.size() ? rhs.powers.size()
                                                              : lhs.powers.size();
             for (auto i = 0; i < max; ++i) {
@@ -91,18 +107,21 @@ namespace md {
             }
         }
 
-        Monomial operator+(Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> operator+(Monomial<C, I, P> const &rhs) {
             return rhs;
         }
 
-        Monomial operator-(Monomial const &rhs) {
-            auto result = Monomial(rhs);
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> operator-(Monomial<C, I, P> const &rhs) {
+            auto result = Monomial<C, I, P>(rhs);
             result.coefficient = -result.coefficient;
             return result;
         }
 
-        Monomial operator*(Monomial const &lhs, Monomial const &rhs) {
-            auto result = Monomial(lhs.coefficient * rhs.coefficient);
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> operator*(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
+            auto result = Monomial<C, I, P>(lhs.coefficient * rhs.coefficient);
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
@@ -130,23 +149,28 @@ namespace md {
             return result;
         }
 
-        Monomial operator*(Monomial const &lhs, C const rhs) {
-            auto result = Monomial(lhs);
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> operator*(Monomial<C, I, P> const &lhs, T const rhs) {
+            auto result = Monomial<C, I, P>(lhs);
             result.coefficient *= rhs;
             return result;
         }
 
-        Monomial operator*(C const lhs, Monomial const &rhs) {
-            auto result = Monomial(rhs);
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> operator*(T const lhs, Monomial<C, I, P> const &rhs) {
+            auto result = Monomial<C, I, P>(rhs);
             result.coefficient *= lhs;
             return result;
         }
 
-        Monomial operator/(Monomial const &lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> operator/(Monomial<C, I, P> const &lhs, Monomial<C, I, P> const &rhs) {
             if(rhs.coefficient == 0){
                 ZERO_DIVISION()
             }
-            auto result = Monomial(1);
+            auto result = Monomial<C, I, P>(1);
             if (lhs.coefficient % rhs.coefficient != 0) {
                 NON_INTEGER_DIVISION()
             }
@@ -181,26 +205,31 @@ namespace md {
             return result;
         }
 
-        Monomial operator/(Monomial const &lhs, C const rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> operator/(Monomial<C, I, P> const &lhs, T const rhs) {
             if(rhs == 0){
                 ZERO_DIVISION()
             }
             if (lhs.coefficient % rhs != 0) {
                 NON_INTEGER_DIVISION()
             }
-            auto result = Monomial(lhs);
+            auto result = Monomial<C, I, P>(lhs);
             result.coefficient /= rhs;
             return result;
         }
 
-        Monomial operator/(C const lhs, Monomial const &rhs) {
+        template <typename C, typename I, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<C, I, P> operator/(T const lhs, Monomial<C, I, P> const &rhs) {
             if(rhs.coefficient == 0){
                 ZERO_DIVISION()
             }
             if ((not rhs.is_constant()) or lhs % rhs.coefficient != 0) {
                 NON_INTEGER_DIVISION()
             }
-            return Monomial(lhs / rhs.coefficient);
+            return Monomial<C, I, P>(lhs / rhs.coefficient);
         }
     }
 }
+#endif //METADIFF_SYMBOLIC_INTEGERS_SRT_MONOMIAL_OPS_IMPL_H

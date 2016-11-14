@@ -2,47 +2,53 @@
 // Created by alex on 12/11/16.
 //
 
-#include "symbolic_integers.h"
+#ifndef METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_REGISTRY_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_REGISTRY_IMPL_H
 
 namespace md{
     namespace sym{
-        std::pair <I, std::pair<Polynomial, Polynomial>> Registry::get_floor(I id) {
+        template <typename C, typename I, typename P>
+        std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> Registry<C, I, P>::get_floor(I id) {
             for (auto i = 0; i < floor_registry.size(); ++i) {
                 if (floor_registry[i].first == id) {
                     return floor_registry[i];
                 }
             }
-            return {0, {Polynomial(0), Polynomial(0)}};
+            return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
         };
 
-        std::pair <I, std::pair<Polynomial, Polynomial>> Registry::get_ceil(I id) {
+        template <typename C, typename I, typename P>
+        std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> Registry<C, I, P>::get_ceil(I id) {
             for (auto i = 0; i < ceil_registry.size(); ++i) {
                 if (ceil_registry[i].first == id) {
                     return ceil_registry[i];
                 }
             }
-            return {0, {Polynomial(0), Polynomial(0)}};
+            return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
         };
 
-        std::pair <I, std::pair<Polynomial, Polynomial>> Registry::get_min(I id) {
+        template <typename C, typename I, typename P>
+        std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> Registry<C, I, P>::get_min(I id) {
             for (auto i = 0; i < min_registry.size(); ++i) {
                 if (min_registry[i].first == id) {
                     return min_registry[i];
                 }
             }
-            return {0, {Polynomial(0), Polynomial(0)}};
+            return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
         };
 
-        std::pair <I, std::pair<Polynomial, Polynomial>> Registry::get_max(I id) {
+        template <typename C, typename I, typename P>
+        std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> Registry<C, I, P>::get_max(I id) {
             for (auto i = 0; i < max_registry.size(); ++i) {
                 if (max_registry[i].first == id) {
                     return max_registry[i];
                 }
             }
-            return {0, {Polynomial(0), Polynomial(0)}};
+            return {0, {Polynomial<C, I, P>(0), Polynomial<C, I, P>(0)}};
         };
 
-        void Registry::reset(){
+        template <typename C, typename I, typename P>
+        void Registry<C, I, P>::reset(){
             total_ids = 0;
             floor_registry.clear();
             ceil_registry.clear();
@@ -50,23 +56,27 @@ namespace md{
             max_registry.clear();
         }
 
-        Polynomial Registry::new_variable() {
-            return Polynomial(new_monomial_variable());
+        template <typename C, typename I, typename P>
+        Polynomial<C, I, P> Registry<C, I, P>::new_variable() {
+            return Polynomial<C, I, P>(new_monomial_variable());
         }
 
-        Monomial Registry::new_monomial_variable(){
-            auto monomial = Monomial(1);
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> Registry<C, I, P>::new_monomial_variable(){
+            auto monomial = Monomial<C, I, P>(1);
             monomial.powers.push_back({total_ids, 1});
             ++total_ids;
             return monomial;
         }
 
-        Polynomial Registry::specific_variable(I id){
-            return Polynomial(specific_monomial_variable(id));
+        template <typename C, typename I, typename P>
+        Polynomial<C, I, P> Registry<C, I, P>::specific_variable(I id){
+            return Polynomial<C, I, P>(specific_monomial_variable(id));
         }
-
-        Monomial Registry::specific_monomial_variable(I id){
-            auto monomial = Monomial(1);
+        
+        template <typename C, typename I, typename P>
+        Monomial<C, I, P> Registry<C, I, P>::specific_monomial_variable(I id){
+            auto monomial = Monomial<C, I, P>(1);
             if(total_ids <= id){
                 total_ids = id + I(1);
             }
@@ -74,8 +84,9 @@ namespace md{
             return monomial;
         }
 
-        void reduce_polynomials(std::shared_ptr<Registry> registry,
-                                std::vector <std::pair<Polynomial, C>> &polynomials,
+        template <typename C, typename I, typename P>
+        void reduce_polynomials(std::shared_ptr<Registry<C, I, P>> registry,
+                                std::vector <std::pair<Polynomial<C, I, P>, C>> &polynomials,
                                 std::vector<std::pair<I, C>> const & values,
                                 I id, C value){
             for(auto i = 0; i < polynomials.size(); ++i){
@@ -139,8 +150,9 @@ namespace md{
             }
         };
 
-        std::vector<std::pair<I, C>> Registry::deduce_values(std::vector <std::pair<Polynomial, C>> const &implicit_values){
-            std::vector<std::pair<Polynomial, C>> work = implicit_values;
+        template <typename C, typename I, typename P>
+        std::vector<std::pair<I, C>> Registry<C, I, P>::deduce_values(std::vector <std::pair<Polynomial<C, I, P>, C>> const &implicit_values){
+            std::vector<std::pair<Polynomial<C, I, P>, C>> work = implicit_values;
             std::vector<std::pair<I, C>> values;
             for(auto i = 0; i < work.size(); ++i){
                 // Remove constant polynomials
@@ -189,3 +201,5 @@ namespace md{
         }
     }
 }
+
+#endif //METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_REGISTRY_IMPL_H

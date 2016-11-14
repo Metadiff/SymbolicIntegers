@@ -31,32 +31,6 @@ endif()
 # Include directory
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
-# Source files
-set(SYMBOLIC_INTEGERS_SOURCES
-        ${PROJECT_SOURCE_DIR}/src/base_monomial.cpp
-        ${PROJECT_SOURCE_DIR}/src/base_polynomial.cpp
-        ${PROJECT_SOURCE_DIR}/src/base_registry.cpp
-        ${PROJECT_SOURCE_DIR}/src/monomial_ops.cpp
-        ${PROJECT_SOURCE_DIR}/src/polynomial_ops.cpp
-        ${PROJECT_SOURCE_DIR}/src/extra_ops.cpp)
-
-# Append them to ALL_SOURCES
-list(APPEND ALL_SOURCES ${SYMBOLIC_INTEGERS_SOURCES})
-
-if( NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
-    # Build under another project umbrealla
-    set (ALL_SOURCES ${ALL_SOURCES} PARENT_SCOPE)
-endif()
-
-# Build libs (static by default)
-if(SYMINT_SHARED)
-    # Create shared libs
-    add_library(symints_srnt SHARED ${SYMBOLIC_INTEGERS_SOURCES})
-else()
-    # Create static library
-    add_library(symints_srnt STATIC ${SYMBOLIC_INTEGERS_SOURCES})
-endif()
-
 # Build tests
 add_subdirectory(tests)
 
@@ -64,5 +38,4 @@ add_subdirectory(tests)
 if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples")
     add_executable(symints_srnt_example examples/example.cpp)
-    target_link_libraries(symints_srnt_example symints_srnt)
 endif()
