@@ -1,64 +1,65 @@
-# Symbolic Integers [non_templated]
+# Symbolic Integers - Static Registry Non Templated [SRNT]
 A small library for manipulation and calculation of symbolic 
 integer polynomials.
 
 ## Branches
-The repository contains two branches, both implement the same 
-functionality, but one uses templates and is header only, 
-while the second one uses preprocessor macros to define variable
-types. There are three main numeric types for the polynomials:
+The repository contains four branches all of which implement the same
+functionality, but in slightly different way. Half of them are fully 
+templated, thus they are header only, while the other two use 
+preprocessor macros to define variable types. 
+
+There are three main numeric types for the polynomials:
 
    1. *C* - the type of the coefficients in the polynomial
    2. *I* - the type of the ids for each symbolic variable. 
    3. *P* - the type of the powers used for monomials
 
-If you don't want static **Registry** for the symbolic variables, 
-you should define the macro `METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY`
+The second division is made by whether there is a static global 
+**Registry** or all functionality is implemented via provided dynamic one.
 
 ## Install
-If you want to use the **templated** branch than you need only to copy
-all of the header files. For the **non_templated** branch you will need to 
-build with the sources.
+If you intend to use one of the templated branches you need only to copy
+all of the header files. For the other two branches you will need to 
+build to include the header files and link with the corresponding library.
 
 If you want to run the tests or compile the example you will need to 
 build the project. Don't forget to initialize the googletest submodule 
 via `git submodule update --init --recursive`. 
  
-## Example usage
+## Example usage [SRNT]
 
 Below is the code for a simple example which can also
-be found in the `examples` directory.
+be found in the `examples` directory for the Static Registry Non Templated branch.
 
 ```c++
 #include "symbolic_integers.h"
 #include "iostream"
 
-typedef md::sym::Registry Registry;
 typedef md::sym::Polynomial SymInt;
-typedef std::vector<std::pair<I, C>> VecValues;
-typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
+typedef std::vector<std::pair<md::sym::I, md::sym::C>> VecValues;
+typedef std::vector<std::pair<SymInt, md::sym::C>> ImplicitValues;
 
 int main(){
-    // Make a registry
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto registry = std::make_shared<Registry>();
-#else
-    auto registry = SymInt::registry;
-#endif
+    // Make a reg
+    auto reg = md::sym::registry();
 
     // Get just the individual symbolic variables
-    auto a = registry->new_variable();
-    auto b = registry->new_variable();
-    auto c = registry->new_variable();
+    auto a = reg->new_variable();
+    auto b = reg->new_variable();
+    auto c = reg->new_variable();
 
     // Build polynomials
     auto poly1 = a * a - a * b + 12;
     auto poly2 = (b + c) * (a + 1);
     auto poly3 = a * b;
     auto poly4 = (a + b + 1) * (c*2 + 3);
+    auto poly5 = floor(b * b, a * a);
+    auto poly6 = ceil(b * b, a * a);
+    auto poly7 = min(a * b + 12, a * b + a);
+    auto poly8 = max(a * b + 12, a * b + a);
 
     // Evaluate using a vector
-    std::vector<int> vals0 {1, 7, 4};
+    std::vector<md::sym::C> vals0 {1, 7, 4};
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;
@@ -66,6 +67,10 @@ int main(){
               << poly2 << " = " << poly2.eval(vals0) << " [Expected " << 22 << "]" << std::endl
               << poly3 << " = " << poly3.eval(vals0) << " [Expected " << 7 << "]" << std::endl
               << poly4 << " = " << poly4.eval(vals0) << " [Expected " << 99 << "]" << std::endl
+              << poly5 << " = " << poly5.eval(vals0) << " [Expected " << 49 << "]" << std::endl
+              << poly6 << " = " << poly6.eval(vals0) << " [Expected " << 49 << "]" << std::endl
+              << poly7 << " = " << poly7.eval(vals0) << " [Expected " << 8 << "]" << std::endl
+              << poly8 << " = " << poly8.eval(vals0) << " [Expected " << 19 << "]" << std::endl
               << "==================================================" << std::endl;
 
     // Evaluating using a vector of pairs
@@ -77,6 +82,10 @@ int main(){
               << poly2 << " = " << poly2.eval(vals1) << " [Expected " << 28 << "]" << std::endl
               << poly3 << " = " << poly3.eval(vals1) << " [Expected " << 6 << "]" << std::endl
               << poly4 << " = " << poly4.eval(vals1) << " [Expected " << 78 << "]" << std::endl
+              << poly5 << " = " << poly5.eval(vals1) << " [Expected " << 0 << "]" << std::endl
+              << poly6 << " = " << poly6.eval(vals1) << " [Expected " << 1 << "]" << std::endl
+              << poly7 << " = " << poly7.eval(vals1) << " [Expected " << 9 << "]" << std::endl
+              << poly8 << " = " << poly8.eval(vals1) << " [Expected " << 18 << "]" << std::endl
               << "==================================================" << std::endl;
 
     // Deducing variable values from polynomials
@@ -84,7 +93,7 @@ int main(){
     auto b_val = 3;
     auto c_val = 8;
     ImplicitValues implicit_values{{5*b + 2, 17}, {poly3, 15}, {poly2, 66}};
-    VecValues deduced_values = registry->deduce_values(implicit_values);
+    VecValues deduced_values = reg->deduce_values(implicit_values);
     std::cout << "Deduced values: " << std::endl
               << "a = " << a.eval(deduced_values) << " [Expected: " << a_val << "]" <<  std::endl
               << "b = " << b.eval(deduced_values) << " [Expected: " << b_val << "]" <<  std::endl
@@ -95,17 +104,25 @@ int main(){
 
 Output of the program:
 ```c++
-Evaluating for a¹ = 1, b¹ = 7, c¹ = 4
-a²-a¹b¹+12 = 6 [Expected 6]
-a¹b¹+a¹c¹+b¹+c¹ = 22 [Expected 22]
-a¹b¹ = 7 [Expected 7]
-2a¹c¹+3a¹+2b¹c¹+3b¹+2c¹+3 = 99 [Expected 99]
+Evaluating for a = 1, b = 7, c = 4
+a^2-ab+12 = 6 [Expected 6]
+ab+ac+b+c = 22 [Expected 22]
+ab = 7 [Expected 7]
+2ac+3a+2bc+3b+2c+3 = 99 [Expected 99]
+floor(b^2 / a^2) = 49 [Expected 49]
+ceil(b^2 / a^2) = 49 [Expected 49]
+min(ab+12 / ab+a) = 8 [Expected 8]
+max(ab+12 / ab+a) = 19 [Expected 19]
 ==================================================
-Evaluating for a¹ = 3, b¹ = 2, c¹ = 5
-a²-a¹b¹+12 = 15 [Expected 15]
-a¹b¹+a¹c¹+b¹+c¹ = 28 [Expected 28]
-a¹b¹ = 6 [Expected 6]
-2a¹c¹+3a¹+2b¹c¹+3b¹+2c¹+3 = 78 [Expected 78]
+Evaluating for a = 3, b = 2, c = 5
+a^2-ab+12 = 15 [Expected 15]
+ab+ac+b+c = 28 [Expected 28]
+ab = 6 [Expected 6]
+2ac+3a+2bc+3b+2c+3 = 78 [Expected 78]
+floor(b^2 / a^2) = 0 [Expected 0]
+ceil(b^2 / a^2) = 1 [Expected 1]
+min(ab+12 / ab+a) = 9 [Expected 9]
+max(ab+12 / ab+a) = 18 [Expected 18]
 ==================================================
 Deduced values: 
 a = 5 [Expected: 5]

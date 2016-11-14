@@ -2,8 +2,8 @@
 // Created by alex on 24/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_EXTRA_OPS_H
-#define METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_EXTRA_OPS_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H
+#define METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H
 
 namespace md {
     namespace sym {
@@ -13,7 +13,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        C floor(C dividend, C divisor);
+        C floor(C const dividend, C const divisor);
 
         /**
          * Makes a ceil division, e.g. returns the result of floor(a/b)
@@ -21,7 +21,23 @@ namespace md {
          * @param divisor
          * @return
          */
-        C ceil(C dividend, C divisor);
+        C ceil(C const dividend, C const divisor);
+
+        /**
+         * Takes the minmum of the two values
+         * @param left
+         * @param right
+         * @return
+         */
+        C min(C const left, C const right);
+
+        /**
+         * Takes the maximum of the two values
+         * @param left
+         * @param right
+         * @return
+         */
+        C max(C const left, C const right);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -29,7 +45,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial  floor(const Monomial  &dividend, const Monomial  &divisor);
+        Monomial floor(Monomial const  &dividend, Monomial const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -37,7 +53,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial  floor(const Monomial  &dividend, const C divisor);
+        Monomial floor(Monomial const  &dividend, C const divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -45,16 +61,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial  floor(const C dividend, const Monomial  &divisor);
-
-
-        /**
-         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
-         * @param dividend
-         * @param divisor
-         * @return
-         */
-        Polynomial floor(const Polynomial  &dividend, const Polynomial  &divisor);
+        Monomial floor(C const dividend, Monomial const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -62,7 +69,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(const Polynomial  &dividend, const Monomial  &divisor);
+        Polynomial floor(Polynomial const  &dividend, Polynomial const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -70,7 +77,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial floor(const Monomial  &dividend, const Polynomial  &divisor);
+        Polynomial floor(Polynomial const  &dividend, Monomial const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -78,7 +85,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial  floor(const Polynomial  &dividend, const C divisor);
+        Polynomial floor(Monomial const  &dividend, Polynomial const  &divisor);
 
         /**
          * Makes a floor division, e.g. returns the integer representation of floor(a/b)
@@ -86,7 +93,15 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial  floor(const C dividend, const Polynomial  &divisor);
+        Polynomial floor(Polynomial const  &dividend, C const divisor);
+
+        /**
+         * Makes a floor division, e.g. returns the integer representation of floor(a/b)
+         * @param dividend
+         * @param divisor
+         * @return
+         */
+        Polynomial floor(C const dividend, Polynomial const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -94,7 +109,7 @@ namespace md {
           * @param divisor
           * @return
           */
-        Monomial  ceil(const Monomial  &dividend, const Monomial  &divisor);
+        Monomial ceil(Monomial const  &dividend, Monomial const  &divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -102,7 +117,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial  ceil(const Monomial  &dividend, const C divisor);
+        Monomial ceil(Monomial const  &dividend, C const divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -110,7 +125,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Monomial  ceil(const C dividend, const Monomial  &divisor);
+        Monomial ceil(C const dividend, Monomial const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -118,7 +133,7 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial  ceil(const Polynomial  &dividend, const Polynomial  &divisor);
+        Polynomial ceil(Polynomial const  &dividend, Polynomial const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -126,7 +141,7 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial  ceil(const Polynomial  &dividend, const Monomial  &divisor);
+        Polynomial  ceil(Polynomial const  &dividend, Monomial const  &divisor);
 
         /**
           * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -134,7 +149,7 @@ namespace md {
           * @param divisor
           * @return
           */
-        Polynomial  ceil(const Monomial  &dividend, const Polynomial  &divisor);
+        Polynomial ceil(Monomial const  &dividend, Polynomial const  &divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -142,7 +157,7 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial  ceil(const Polynomial  &dividend, const C divisor);
+        Polynomial ceil(Polynomial const  &dividend, C const divisor);
 
         /**
          * Makes a ceil division, e.g. returns the integer representation of ceil(a/b)
@@ -150,7 +165,135 @@ namespace md {
          * @param divisor
          * @return
          */
-        Polynomial  ceil(const C dividend, const Polynomial  &divisor);
+        Polynomial ceil(C const dividend, Polynomial const  &divisor);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial min(Monomial const  &left, Monomial const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial min(Monomial const  &left, C const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial min(C const  &left, Monomial const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial min(Polynomial const  &left, Polynomial const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial min(Polynomial const  &left, Monomial const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial min(Monomial const  &left, Polynomial const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial min(Polynomial const  &left, C const  &right);
+
+        /**
+         * Takes the minimum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial min(C const  &left, Polynomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial max(Monomial const  &left, Monomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial max(Monomial const  &left, C const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Monomial max(C const  &left, Monomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial max(Polynomial const  &left, Polynomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial max(Polynomial const  &left, Monomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial max(Monomial const  &left, Polynomial const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial max(Polynomial const  &left, C const  &right);
+
+        /**
+         * Takes the maximum of the two variables
+         * @param left
+         * @param right
+         * @return
+         */
+        Polynomial max(C const  &left, Polynomial const  &right);
     }
 }
-#endif //METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_EXTRA_OPS_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SNT_EXTRA_OPS_H

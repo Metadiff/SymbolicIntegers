@@ -7,12 +7,7 @@
 namespace md {
     namespace sym {
         
-        bool operator==(const Polynomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator==(Polynomial const &lhs, Polynomial const &rhs) {
             if (lhs.monomials.size() != rhs.monomials.size()) {
                 return false;
             }
@@ -24,72 +19,47 @@ namespace md {
             return true;
         }
 
-        bool operator!=(const Polynomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator!=(Polynomial const &lhs, Polynomial const &rhs) {
             return not(lhs == rhs);
         }
 
-        bool operator==(const Polynomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator==(Polynomial const &lhs, Monomial const &rhs) {
             return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
         }
 
-        bool operator!=(const Polynomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator!=(Polynomial const &lhs, Monomial const &rhs) {
             return not(lhs == rhs);
         }
 
-        bool operator==(const Monomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator==(Monomial const &lhs, Polynomial const &rhs) {
             return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
         }
 
-        bool operator!=(const Monomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator!=(Monomial const &lhs, Polynomial const &rhs) {
             return not(lhs == rhs);
         }
 
-        bool operator==(const Polynomial &lhs, const C rhs) {
+        bool operator==(Polynomial const &lhs, C const rhs) {
             return (lhs.monomials.size() == 0 and rhs == 0) or (lhs.monomials.size() == 1 and lhs.monomials[0] == rhs);
         }
 
-        bool operator!=(const Polynomial &lhs, const C rhs) {
+        bool operator!=(Polynomial const &lhs, C const rhs) {
             return not(lhs == rhs);
         }
 
-        bool operator==(const C lhs, const Polynomial &rhs) {
+        bool operator==(C const lhs, Polynomial const &rhs) {
             return (rhs.monomials.size() == 0 and lhs == 0) or (rhs.monomials.size() == 1 and rhs.monomials[0] == lhs);
         }
 
-        bool operator!=(const C lhs, const Polynomial &rhs) {
+        bool operator!=(C const lhs, Polynomial const &rhs) {
             return not(lhs == rhs);
         }
 
-        Polynomial operator+(const Polynomial &rhs) {
+        Polynomial operator+(Polynomial const &rhs) {
             return rhs;
         }
 
-        Polynomial operator-(const Polynomial &rhs) {
+        Polynomial operator-(Polynomial const &rhs) {
             Polynomial result = Polynomial(rhs);
             for (auto i = 0; i < rhs.monomials.size(); ++i) {
                 result.monomials[i].coefficient = -result.monomials[i].coefficient;
@@ -97,15 +67,8 @@ namespace md {
             return result;
         }
 
-        Polynomial operator+(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator+(Monomial const &lhs, Monomial const &rhs) {
             auto result = Polynomial(0);
-#endif
             if (up_to_coefficient(lhs, rhs)) {
                 if (lhs.coefficient != -rhs.coefficient) {
                     result.monomials.push_back(lhs);
@@ -121,12 +84,8 @@ namespace md {
             return result;
         }
 
-        Polynomial operator+(const Monomial &lhs, const C rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            auto result = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator+(Monomial const &lhs, C const rhs) {
             auto result = Polynomial(0);
-#endif
             if (lhs.is_constant()) {
                 if (lhs.coefficient != -rhs) {
                     result.monomials.push_back(lhs);
@@ -134,28 +93,17 @@ namespace md {
                 }
             } else {
                 result.monomials.push_back(lhs);
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                result.monomials.push_back(Monomial(rhs, lhs.registry()));
-#else
                 result.monomials.push_back(Monomial(rhs));
-#endif
             }
             return result;
         }
 
-        Polynomial operator+(const C lhs, const Monomial &rhs) {
+        Polynomial operator+(C const lhs, Monomial const &rhs) {
             return rhs + lhs;
         }
 
-        Polynomial operator+(const Polynomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator+(Polynomial const &lhs, Polynomial const &rhs) {
             auto result = Polynomial(0);
-#endif
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.monomials.size() and i2 < rhs.monomials.size()) {
@@ -185,99 +133,57 @@ namespace md {
             return result;
         }
 
-        Polynomial operator+(const Polynomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator+(Polynomial const &lhs, Monomial const &rhs) {
             return lhs + Polynomial(rhs);
         }
 
-        Polynomial operator+(const Monomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator+(Monomial const &lhs, Polynomial const &rhs) {
             return rhs + lhs;
         }
 
-        Polynomial operator+(const Polynomial &lhs, const C rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            return lhs + Polynomial(rhs, lhs.registry());
-#else
+        Polynomial operator+(Polynomial const &lhs, C const rhs) {
             return lhs + Polynomial(rhs);
-#endif
         }
 
-        Polynomial operator+(const C lhs, const Polynomial &rhs) {
+        Polynomial operator+(C const lhs, Polynomial const &rhs) {
             return rhs + lhs;
         }
 
-        Polynomial operator-(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator-(Monomial const &lhs, Monomial const &rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const Monomial &lhs, const C rhs) {
+        Polynomial operator-(Monomial const &lhs, C const rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const C lhs, const Monomial rhs) {
+        Polynomial operator-(C const lhs, Monomial const rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const Polynomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator-(Polynomial const &lhs, Polynomial const &rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const Polynomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator-(Polynomial const &lhs, Monomial const &rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const Monomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator-(Monomial const &lhs, Polynomial const &rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const Polynomial &lhs, const C rhs) {
+        Polynomial operator-(Polynomial const &lhs, C const rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator-(const C lhs, const Polynomial &rhs) {
+        Polynomial operator-(C const lhs, Polynomial const &rhs) {
             return lhs + (-rhs);
         }
 
-        Polynomial operator*(const Polynomial &lhs, const Polynomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-            auto partial = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator*(Polynomial const &lhs, Polynomial const &rhs) {
             auto result = Polynomial(0);
             auto partial = Polynomial(0);
-#endif
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 partial.monomials.clear();
                 for (auto j = 0; j < rhs.monomials.size(); ++j) {
@@ -288,59 +194,35 @@ namespace md {
             return result;
         }
 
-        Polynomial operator*(const Polynomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator*(Polynomial const &lhs, Monomial const &rhs) {
             auto result = Polynomial(0);
-#endif
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
             return result;
         }
 
-        Polynomial operator*(const Monomial lhs, const Polynomial rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        Polynomial operator*(Monomial const lhs, Polynomial const rhs) {
             return rhs * lhs;
         }
 
-        Polynomial operator*(const Polynomial &lhs, const C rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            auto result = Polynomial(0, lhs.registry());
-#else
+        Polynomial operator*(Polynomial const &lhs, C const rhs) {
             auto result = Polynomial(0);
-#endif
             for (int i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] * rhs);
             }
             return result;
         }
 
-        Polynomial operator*(const C lhs, const Polynomial rhs) {
+        Polynomial operator*(C const lhs, Polynomial const rhs) {
             return rhs * lhs;
         }
 
-        Polynomial operator/(const Polynomial &lhs, const Polynomial &rhs) {
+        Polynomial operator/(Polynomial const &lhs, Polynomial const &rhs) {
             if(rhs.monomials.size() == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
             auto result = Polynomial(0);
-#endif
-
             auto reminder = Polynomial(lhs);
             Monomial next_monomial;
             while (not reminder.is_constant()) {
@@ -350,75 +232,53 @@ namespace md {
                 reminder = reminder - s;
             }
             if (reminder != 0) {
-                throw NonIntegerDivision();
+                ZERO_DIVISION()
             }
             return result;
         }
 
-        Polynomial operator/(const Polynomial &lhs, const Monomial &rhs) {
+        Polynomial operator/(Polynomial const &lhs, Monomial const &rhs) {
             if(rhs.coefficient == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
             auto result = Polynomial(0);
-#endif
             for (auto i = 0; i < lhs.monomials.size(); i++) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
             return result;
         }
 
-        Polynomial operator/(const Monomial &lhs, const Polynomial &rhs) {
+        Polynomial operator/(Monomial const &lhs, Polynomial const &rhs) {
             if(rhs.monomials.size() == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
             if (rhs.monomials.size() != 1) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Polynomial(0, lhs.registry());
-#else
             auto result = Polynomial(0);
-#endif
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }
 
-        Polynomial operator/(const Polynomial &lhs, const C rhs) {
+        Polynomial operator/(Polynomial const &lhs, C const rhs) {
             if(rhs == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            auto result = Polynomial(0, lhs.registry());
-#else
             auto result = Polynomial(0);
-#endif
             for (auto i = 0; i < lhs.monomials.size(); ++i) {
                 result.monomials.push_back(lhs.monomials[i] / rhs);
             }
             return result;
         }
 
-        Polynomial operator/(const C lhs, const Polynomial rhs) {
+        Polynomial operator/(C const lhs, Polynomial const rhs) {
             if(rhs == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
             if (rhs.monomials.size() != 1) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            auto result = Polynomial(0, rhs.registry());
-#else
             auto result = Polynomial(0);
-#endif
             result.monomials.push_back(lhs / rhs.monomials[0]);
             return result;
         }

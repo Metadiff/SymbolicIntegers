@@ -7,12 +7,7 @@ add_subdirectory(external/googletest)
 
 set(test_sources run_all.cpp monomial_test.cpp polynomial_test.cpp variable_deduction.cpp)
 
-# Static registry tests
-add_executable(static_registry_tests ${test_sources})
-add_dependencies(static_registry_tests gtest gmock)
-target_link_libraries(static_registry_tests symints_s gtest gmock pthread)
-
-# Dynamic registry tests
-add_executable(dynamic_registry_tests ${test_sources})
-add_dependencies(dynamic_registry_tests gtest gmock)
-target_link_libraries(dynamic_registry_tests symints_d gtest gmock pthread)
+# Tests
+add_executable(symints_snt_tests ${test_sources})
+add_dependencies(symints_snt_tests gtest gmock)
+target_link_libraries(symints_snt_tests symints_snt gtest gmock pthread)

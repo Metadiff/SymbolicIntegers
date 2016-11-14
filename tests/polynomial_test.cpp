@@ -9,16 +9,11 @@ using namespace md::sym;
 
 TEST(PolynomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto zero = Polynomial(0, reg);
-    auto two = Polynomial(2, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto zero = Polynomial(0);
     auto two = Polynomial(2);
-#endif
+
     // Constant comparison
     EXPECT_EQ(zero.monomials.size(), 0);
     EXPECT_TRUE(zero.is_constant());
@@ -54,16 +49,11 @@ TEST(PolynomialTest, Constructor) {
 
 TEST(PolynomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto two = Polynomial(2, reg);
-    auto two_2 = Polynomial(2, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto two = Polynomial(2);
     auto two_2 = Polynomial(2);
-#endif
+
     // Equality with integers
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
@@ -102,12 +92,9 @@ TEST(PolynomialTest, Equality) {
 
 TEST(PolynomialTest, AdditionOperators) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-#else
     auto reg = registry();
     reg->reset();
-#endif
+
     // Compare x + y + 2
     auto x_monomial = reg->new_monomial_variable();
     auto x = reg->specific_variable(0);
@@ -140,12 +127,9 @@ TEST(PolynomialTest, AdditionOperators) {
 
 TEST(PolynomialTest, MultuplyOperators) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-#else
     auto reg = registry();
     reg->reset();
-#endif
+
     // Values
     auto x = reg->new_variable();
     auto y = reg->new_variable();
@@ -180,21 +164,16 @@ TEST(PolynomialTest, MultuplyOperators) {
     EXPECT_EQ(product / xy_plus_y_square_plus_two, xy_plus_x_square_plus_one);
 
     // Test for exception
-    EXPECT_THROW(product / x * x, md::sym::NonIntegerDivision);
+    EXPECT_THROW(product / x * x, std::runtime_error);
 }
 
 TEST(PolynomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto three = Polynomial(3, reg);
-    auto five = Polynomial(5, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto three = Polynomial(3);
     auto five = Polynomial(5);
-#endif
+
     // Values
     auto x = reg->new_variable();
     auto y = reg->new_variable();
@@ -224,7 +203,7 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(ceil(product * y, y), product);
     EXPECT_EQ(ceil(product, 2), xy_plus_x_square_plus_one * xy_plus_y_square_plus_two);
 
-    // Partial floor divisions
+    // Symbolic floor divisions
     auto floor_3 = floor(product, three);
     auto floor_x = floor(product, x);
     auto floor_y = floor(product, y);
@@ -242,7 +221,7 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(floor_y.monomials[0].powers[0].second, 1);
     EXPECT_EQ(reg->floor_registry.size(), 3);
 
-    // Partial ceil divisions
+    // Symbolic ceil divisions
     auto ceil_3 = ceil(product, three);
     auto ceil_x = ceil(product, x);
     auto ceil_y = ceil(product, y);
@@ -261,16 +240,72 @@ TEST(PolynomialTest, FloorCeil) {
     EXPECT_EQ(reg->ceil_registry.size(), 3);
 }
 
+TEST(PolynomialTest, MinMax) {
+    typedef std::pair<I, P> entry_pair;
+    auto reg = registry();
+    reg->reset();
+    auto five = Polynomial(5);
+
+    // Values
+    auto x = reg->new_variable();
+    auto y = reg->new_variable();
+    auto xy_plus_x_square_plus_one = x * y + x * x + 1;
+    auto xy_plus_y_square_plus_two = x * y + y * y + 2;
+
+    // x^3y  + 2x^2y^2 + 2x^2 + xy^3 + 3xy + y^2 + 2
+    auto product = 2 * xy_plus_x_square_plus_one * xy_plus_y_square_plus_two;
+
+    // Constant expressions
+    EXPECT_EQ(min(five, 3), 3);
+    EXPECT_EQ(min(3, five), 3);
+    EXPECT_EQ(min(five, 8), 5);
+    EXPECT_EQ(min(8, five), 5);
+    EXPECT_EQ(max(five, 3), 5);
+    EXPECT_EQ(max(3, five), 5);
+    EXPECT_EQ(max(five, 8), 8);
+    EXPECT_EQ(max(8, five), 8);
+
+    // Symbolic min
+    auto min_1 = min((product, xy_plus_x_square_plus_one), 2 * xy_plus_y_square_plus_two);
+    auto min_2 = min(product * x, x);
+    auto min_3 = min(product * y, y);
+    EXPECT_EQ(min_1.monomials.size(), 1);
+    EXPECT_EQ(min_1.monomials[0].coefficient, 1);
+    EXPECT_EQ(min_1.monomials[0].powers.size(), 1);
+    EXPECT_EQ(min_1.monomials[0].powers[0].second, 1);
+    EXPECT_EQ(min_2.monomials.size(), 1);
+    EXPECT_EQ(min_2.monomials[0].coefficient, 1);
+    EXPECT_EQ(min_2.monomials[0].powers.size(), 1);
+    EXPECT_EQ(min_2.monomials[0].powers[0].second, 1);
+    EXPECT_EQ(min_3.monomials.size(), 1);
+    EXPECT_EQ(min_3.monomials[0].coefficient, 1);
+    EXPECT_EQ(min_3.monomials[0].powers.size(), 1);
+    EXPECT_EQ(min_3.monomials[0].powers[0].second, 1);
+
+    // Symbolic max
+    auto max_1 = max((product, xy_plus_x_square_plus_one), 2 * xy_plus_y_square_plus_two);
+    auto max_2 = max(product * x, x);
+    auto max_3 = max(product * y, y);
+    EXPECT_EQ(max_1.monomials.size(), 1);
+    EXPECT_EQ(max_1.monomials[0].coefficient, 1);
+    EXPECT_EQ(max_1.monomials[0].powers.size(), 1);
+    EXPECT_EQ(max_1.monomials[0].powers[0].second, 1);
+    EXPECT_EQ(max_2.monomials.size(), 1);
+    EXPECT_EQ(max_2.monomials[0].coefficient, 1);
+    EXPECT_EQ(max_2.monomials[0].powers.size(), 1);
+    EXPECT_EQ(max_2.monomials[0].powers[0].second, 1);
+    EXPECT_EQ(max_3.monomials.size(), 1);
+    EXPECT_EQ(max_3.monomials[0].coefficient, 1);
+    EXPECT_EQ(max_3.monomials[0].powers.size(), 1);
+    EXPECT_EQ(max_3.monomials[0].powers[0].second, 1);
+}
+
 TEST(PolynomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto two = Polynomial(2, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto two = Polynomial(2);
-#endif
+
     // Values
     const C x_val = 3;
     const C y_val = 5;
@@ -304,6 +339,20 @@ TEST(PolynomialTest, Eval) {
     EXPECT_EQ(ceil(product, 3).eval(values), ceil(product.eval(values), 3));
     EXPECT_EQ(ceil(product, x).eval(values), ceil(product.eval(values), x.eval(values)));
     EXPECT_EQ(ceil(product, y).eval(values), ceil(product.eval(values), y.eval(values)));
+
+    // Min and Max
+    EXPECT_EQ(min(product, xy_plus_x_square_plus_one).eval(values),
+              std::min(product.eval(values), xy_plus_x_square_plus_one.eval(values)));
+    EXPECT_EQ(min(product, xy_plus_y_square_plus_two).eval(values),
+              std::min(product.eval(values), xy_plus_y_square_plus_two.eval(values)));
+    EXPECT_EQ(min(xy_plus_x_square_plus_one, xy_plus_y_square_plus_two).eval(values),
+              std::min(xy_plus_x_square_plus_one.eval(values), xy_plus_y_square_plus_two.eval(values)));
+    EXPECT_EQ(max(product, xy_plus_x_square_plus_one).eval(values),
+              std::max(product.eval(values), xy_plus_x_square_plus_one.eval(values)));
+    EXPECT_EQ(max(product, xy_plus_y_square_plus_two).eval(values),
+              std::max(product.eval(values), xy_plus_y_square_plus_two.eval(values)));
+    EXPECT_EQ(max(xy_plus_x_square_plus_one, xy_plus_y_square_plus_two).eval(values),
+              std::max(xy_plus_x_square_plus_one.eval(values), xy_plus_y_square_plus_two.eval(values)));
 }
 
 

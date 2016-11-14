@@ -9,16 +9,11 @@ using namespace md::sym;
 
 TEST(MonomialTest, Constructor) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto one = Monomial(1, reg);
-    auto two = Monomial(2, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto one = Monomial(1);
     auto two = Monomial(2);
-#endif
+
     // Constant monomial 1
     EXPECT_EQ(one.coefficient, 1);
     EXPECT_TRUE(one.is_constant());
@@ -45,20 +40,13 @@ TEST(MonomialTest, Constructor) {
 
 TEST(MonomialTest, Equality) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto two = Monomial(2, reg);
-    auto two_2 = Monomial(2, reg);
-    auto ten_x = Monomial(10, reg);
-    auto x = reg->new_monomial_variable();
-#else
     auto reg = registry();
     reg->reset();
     auto two = Monomial(2);
     auto two_2 = Monomial(2);
     auto ten_x = Monomial(10);
     auto x = reg->new_monomial_variable();
-#endif
+
     // Equality with integers
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
@@ -87,12 +75,9 @@ TEST(MonomialTest, Equality) {
 
 TEST(MonomialTest, Operators) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-#else
     auto reg = registry();
     reg->reset();
-#endif
+
     // Values
     auto x = reg->new_monomial_variable();
     auto y = reg->new_monomial_variable();
@@ -113,23 +98,19 @@ TEST(MonomialTest, Operators) {
     EXPECT_EQ(composite / z, 2 * x * y);
 
     // Check for errors on non integer division
-    EXPECT_THROW(composite / 4, md::sym::NonIntegerDivision);
-    EXPECT_THROW(composite / (x * x), md::sym::NonIntegerDivision);
-    EXPECT_THROW(composite / (y * y), md::sym::NonIntegerDivision);
-    EXPECT_THROW(composite / (z * z), md::sym::NonIntegerDivision);
-    EXPECT_THROW(composite / 0, md::sym::DivisionByZero);
+    EXPECT_THROW(composite / 4, std::runtime_error);
+    EXPECT_THROW(composite / (x * x), std::runtime_error);
+    EXPECT_THROW(composite / (y * y), std::runtime_error);
+    EXPECT_THROW(composite / (z * z), std::runtime_error);
+    EXPECT_THROW(composite / 0, std::runtime_error);
 }
 
 TEST(MonomialTest, FloorCeil) {
     typedef std::pair<I, P> entry_pair;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto five = Monomial(5, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto five = Monomial(5);
-#endif
+
     // Values
     auto x = reg->new_monomial_variable();
     auto y = reg->new_monomial_variable();
@@ -175,7 +156,7 @@ TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(ceil(composite, y), five * x * x);
     EXPECT_EQ(ceil(composite, 5), x * x * y);
 
-    // Partial floor divisions
+    // Symbolic floor divisions
     auto floor_3 = floor(composite, 3);
     auto floor_x3 = floor(composite, x * x * x);
     auto floor_y2 = floor(composite, y * y);
@@ -189,7 +170,7 @@ TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(floor_y2.powers.size(), 1);
     EXPECT_EQ(floor_y2.powers[0].second, 1);
 
-    // Partial ceil divisions
+    // Symbolic ceil divisions
     auto ceil_3 = ceil(composite, 3);
     auto ceil_x3 = ceil(composite, x * x * x);
     auto ceil_y2 = ceil(composite, y * y);
@@ -204,20 +185,73 @@ TEST(MonomialTest, FloorCeil) {
     EXPECT_EQ(ceil_y2.powers[0].second, 1);
 }
 
+TEST(MonomialTest, MinMax) {
+    typedef std::pair<I, P> entry_pair;
+    auto reg = registry();
+    reg->reset();
+    auto five = Monomial(5);
+
+    // Values
+    auto x = reg->new_monomial_variable();
+    auto y = reg->new_monomial_variable();
+    auto composite = five * x * x * y;
+
+    // Testing numerical min and max
+    EXPECT_EQ(min(C(1), C(2)), 1);
+    EXPECT_EQ(min(C(2), C(1)), 1);
+    EXPECT_EQ(min(C(2), C(2)), 2);
+    EXPECT_EQ(max(C(1), C(2)), 2);
+    EXPECT_EQ(max(C(2), C(1)), 2);
+    EXPECT_EQ(max(C(2), C(2)), 2);
+
+    // Constant expressions
+    EXPECT_EQ(min(five, 3), 3);
+    EXPECT_EQ(min(3, five), 3);
+    EXPECT_EQ(min(five, 8), 5);
+    EXPECT_EQ(min(8, five), 5);
+    EXPECT_EQ(max(five, 3), 5);
+    EXPECT_EQ(max(3, five), 5);
+    EXPECT_EQ(max(five, 8), 8);
+    EXPECT_EQ(max(8, five), 8);
+
+    // Symbolic min
+    auto min_3 = min(composite, 3);
+    auto min_x3 = min(composite, x * x * x);
+    auto min_y2 = min(composite, y * y);
+    EXPECT_EQ(min_3.coefficient, 1);
+    EXPECT_EQ(min_3.powers.size(), 1);
+    EXPECT_EQ(min_3.powers[0].second, 1);
+    EXPECT_EQ(min_x3.coefficient, 1);
+    EXPECT_EQ(min_x3.powers.size(), 1);
+    EXPECT_EQ(min_x3.powers[0].second, 1);
+    EXPECT_EQ(min_y2.coefficient, 1);
+    EXPECT_EQ(min_y2.powers.size(), 1);
+    EXPECT_EQ(min_y2.powers[0].second, 1);
+
+    // Symbolic max
+    auto max_3 = max(composite, 3);
+    auto max_x3 = max(composite, x * x * x);
+    auto max_y2 = max(composite, y * y);
+    EXPECT_EQ(max_3.coefficient, 1);
+    EXPECT_EQ(max_3.powers.size(), 1);
+    EXPECT_EQ(max_3.powers[0].second, 1);
+    EXPECT_EQ(max_x3.coefficient, 1);
+    EXPECT_EQ(max_x3.powers.size(), 1);
+    EXPECT_EQ(max_x3.powers[0].second, 1);
+    EXPECT_EQ(max_y2.coefficient, 1);
+    EXPECT_EQ(max_y2.powers.size(), 1);
+    EXPECT_EQ(max_y2.powers[0].second, 1);
+}
+
 
 TEST(MonomialTest, Eval) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-    auto two = Monomial(2, reg);
-    auto five = Monomial(5, reg);
-#else
     auto reg = registry();
     reg->reset();
     auto two = Monomial(2);
     auto five = Monomial(5);
-#endif
+
     // Values
     const C x_val = 3;
     const C y_val = 5;
@@ -264,6 +298,28 @@ TEST(MonomialTest, Eval) {
     EXPECT_EQ(ceil(two * x * y * z, 1000).eval(value_vec{{1, y_val}, {2, z_val}, {0, x_val}}), 1);
 
     // Exception for zero division on eval
-    EXPECT_THROW(floor(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), md::sym::DivisionByZero);
-    EXPECT_THROW(ceil(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), md::sym::DivisionByZero);
+    EXPECT_THROW(floor(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), std::runtime_error);
+    EXPECT_THROW(ceil(5 * x * y, x * x).eval(value_vec{{1, y_val}, {0, 0}}), std::runtime_error);
+    // Exception for not provided variables
+    EXPECT_THROW(floor(5 * x * y, x * x).eval(value_vec{{1, y_val}}), std::runtime_error);
+    EXPECT_THROW(ceil(5 * x * y, x * x).eval(value_vec{{0, x_val}}), std::runtime_error);
+
+    // Min and max
+    EXPECT_EQ(min(5 * x * x, y * y * y).eval(values), 45);
+    EXPECT_EQ(min(y * y * z, 100).eval(values), 100);
+    EXPECT_EQ(min(150, x * y * z).eval(values), 105);
+    EXPECT_EQ(max(5 * x * x, y * y * y).eval(values), 125);
+    EXPECT_EQ(max(y * y * z, 100).eval(values), 175);
+    EXPECT_EQ(max(150, x * y * z).eval(values), 150);
+    // Using second type of eval
+    EXPECT_EQ(min(5 * x * x, y * y * y).eval(value_vec{{1, y_val}, {0, x_val}}), 45);
+    EXPECT_EQ(min(y * y * z, 100).eval(value_vec{{1, y_val}, {2, z_val}}), 100);
+    EXPECT_EQ(min(150, x * y * z).eval(value_vec{{1, y_val}, {2, z_val}, {0, x_val}}), 105);
+    EXPECT_EQ(max(5 * x * x, y * y * y).eval(value_vec{{1, y_val}, {0, x_val}}), 125);
+    EXPECT_EQ(max(y * y * z, 100).eval(value_vec{{1, y_val}, {2, z_val}}), 175);
+    EXPECT_EQ(max(150, x * y * z).eval(value_vec{{1, y_val}, {2, z_val}, {0, x_val}}), 150);
+
+    // Exception for not provided variables
+    EXPECT_THROW(min(5 * x * x, x * y * y).eval(value_vec{{1, y_val}}), std::runtime_error);
+    EXPECT_THROW(max(5 * x * x, x * y * y).eval(value_vec{{0, x_val}}), std::runtime_error);
 }

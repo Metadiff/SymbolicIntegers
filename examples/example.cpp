@@ -1,19 +1,13 @@
 #include "symbolic_integers.h"
 #include "iostream"
 
-typedef md::sym::Registry Registry;
 typedef md::sym::Polynomial SymInt;
-typedef std::vector<std::pair<I, C>> VecValues;
-typedef std::vector<std::pair<SymInt, C>> ImplicitValues;
+typedef std::vector<std::pair<md::sym::I, md::sym::C>> VecValues;
+typedef std::vector<std::pair<SymInt, md::sym::C>> ImplicitValues;
 
 int main(){
     // Make a reg
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-#else
     auto reg = md::sym::registry();
-#endif
-    std::cout << reg->total_ids << std::endl;
 
     // Get just the individual symbolic variables
     auto a = reg->new_variable();
@@ -25,9 +19,13 @@ int main(){
     auto poly2 = (b + c) * (a + 1);
     auto poly3 = a * b;
     auto poly4 = (a + b + 1) * (c*2 + 3);
+    auto poly5 = floor(b * b, a * a);
+    auto poly6 = ceil(b * b, a * a);
+    auto poly7 = min(a * b + 12, a * b + a);
+    auto poly8 = max(a * b + 12, a * b + a);
 
     // Evaluate using a vector
-    std::vector<C> vals0 {1, 7, 4};
+    std::vector<md::sym::C> vals0 {1, 7, 4};
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;
@@ -35,6 +33,10 @@ int main(){
               << poly2 << " = " << poly2.eval(vals0) << " [Expected " << 22 << "]" << std::endl
               << poly3 << " = " << poly3.eval(vals0) << " [Expected " << 7 << "]" << std::endl
               << poly4 << " = " << poly4.eval(vals0) << " [Expected " << 99 << "]" << std::endl
+              << poly5 << " = " << poly5.eval(vals0) << " [Expected " << 49 << "]" << std::endl
+              << poly6 << " = " << poly6.eval(vals0) << " [Expected " << 49 << "]" << std::endl
+              << poly7 << " = " << poly7.eval(vals0) << " [Expected " << 8 << "]" << std::endl
+              << poly8 << " = " << poly8.eval(vals0) << " [Expected " << 19 << "]" << std::endl
               << "==================================================" << std::endl;
 
     // Evaluating using a vector of pairs
@@ -46,6 +48,10 @@ int main(){
               << poly2 << " = " << poly2.eval(vals1) << " [Expected " << 28 << "]" << std::endl
               << poly3 << " = " << poly3.eval(vals1) << " [Expected " << 6 << "]" << std::endl
               << poly4 << " = " << poly4.eval(vals1) << " [Expected " << 78 << "]" << std::endl
+              << poly5 << " = " << poly5.eval(vals1) << " [Expected " << 0 << "]" << std::endl
+              << poly6 << " = " << poly6.eval(vals1) << " [Expected " << 1 << "]" << std::endl
+              << poly7 << " = " << poly7.eval(vals1) << " [Expected " << 9 << "]" << std::endl
+              << poly8 << " = " << poly8.eval(vals1) << " [Expected " << 18 << "]" << std::endl
               << "==================================================" << std::endl;
 
     // Deducing variable values from polynomials

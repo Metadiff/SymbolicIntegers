@@ -15,99 +15,69 @@ namespace md{
             std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> floor_registry;
             /** A register for all variables which are result of a ceil operation */
             std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> ceil_registry;
+            /** A register for all variables which are result of a floor operation */
+            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> min_registry;
+            /** A register for all variables which are result of a ceil operation */
+            std::vector <std::pair<I, std::pair < Polynomial, Polynomial>>> max_registry;
 
             Registry(): total_ids(0){};
 
-            /**
+            /** @brief Returnst the entry of the floor registry for that id, if it does not exists returns empty
+             * entry with id 0.
+             *
              * @param id
-             * @return The entry in the floor_registry for this variable if it exists,
-             * otherwise an empty entry with id 0.
+             * @return The entry in the floor registry.
              */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_floor(I id) {
-                for (auto i = 0; i < floor_registry.size(); ++i) {
-                    if (floor_registry[i].first == id) {
-                        return floor_registry[i];
-                    }
-                }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return {0, {Polynomial(0, this->shared_from_this()), Polynomial(0, this->shared_from_this())}};
-#else
-                return {0, {Polynomial(0), Polynomial(0)}};
-#endif
-            };
+            std::pair <I, std::pair<Polynomial, Polynomial>> get_floor(I id);
 
-            /**
-             * @param id
-             * @return The entry in the ceil_registry for this variable if it exists,
-             * otherwise an empty entry with id 0.
-             */
-            std::pair <I, std::pair<Polynomial, Polynomial>> get_ceil(I id) {
-                for (auto i = 0; i < ceil_registry.size(); ++i) {
-                    if (ceil_registry[i].first == id) {
-                        return ceil_registry[i];
-                    }
-                }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                return {0, {Polynomial(0, this->shared_from_this()), Polynomial(0, this->shared_from_this())}};
-#else
-                return {0, {Polynomial(0), Polynomial(0)}};
-#endif
-              };
+            /** @brief Returnst the entry of the ceil registry for that id, if it does not exists returns empty
+            * entry with id 0.
+            *
+            * @param id
+            * @return The entry in the ceil registry.
+            */
+            std::pair <I, std::pair<Polynomial, Polynomial>> get_ceil(I id);
 
-            /**
-             * Resets the registry
-             */
-            void reset(){
-                total_ids = 0;
-                floor_registry.clear();
-                ceil_registry.clear();
-            }
+            /** @brief Returnst the entry of the min registry for that id, if it does not exists returns empty
+            * entry with id 0.
+            *
+            * @param id
+            * @return The entry in the min registry.
+            */
+            std::pair <I, std::pair<Polynomial, Polynomial>> get_min(I id);
+
+            /** @brief Returnst the entry of the max registry for that id, if it does not exists returns empty
+            * entry with id 0.
+            *
+            * @param id
+            * @return The entry in the max registry.
+            */
+            std::pair <I, std::pair<Polynomial, Polynomial>> get_max(I id);
+
+            /** Resets the registry */
+            void reset();
 
             /**
              * @return A new symbolic variable as a Polynomial
              */
-            Polynomial new_variable() {
-                return Polynomial(new_monomial_variable());
-            }
+            Polynomial new_variable();
 
             /**
              * @return A new symbolic variable as a Monomial
              */
-            Monomial new_monomial_variable(){
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                auto monomial = Monomial(1, this->shared_from_this());
-#else
-                auto monomial = Monomial(1);
-#endif
-                monomial.powers.push_back({total_ids, 1});
-                ++total_ids;
-                return monomial;
-            }
+            Monomial new_monomial_variable();
 
             /**
              * @param id
              * @return The symbolic variable corresponding to the id as a Polynomial
              */
-            Polynomial specific_variable(I id){
-                return Polynomial(specific_monomial_variable(id));
-            }
+            Polynomial specific_variable(I id);
 
             /**
              * @param id
              * @return The symbolic variable corresponding to the id as a Monomial
              */
-            Monomial specific_monomial_variable(I id){
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-                auto monomial = Monomial(1, this->shared_from_this());
-#else
-                auto monomial = Monomial(1);
-#endif
-                if(total_ids <= id){
-                    total_ids = id + 1;
-                }
-                monomial.powers.push_back({id, 1});
-                return monomial;
-            }
+            Monomial specific_monomial_variable(I id);
 
             /**
              * The method tries to deduce the values of all individual symbolic variables
@@ -117,10 +87,16 @@ namespace md{
              * @param implicit_values - a mapping from polynomial to a value, specifing an equation
              * @return The deduced single variables' values
              */
-            std::vector<std::pair<I, C>> deduce_values(
-                    const std::vector <std::pair<Polynomial, C>> &implicit_values);
-
+            std::vector<std::pair<I, C>> deduce_values(std::vector <std::pair<Polynomial, C>> const &implicit_values);
         };
+
+        inline std::shared_ptr<Registry> registry(){
+            static std::shared_ptr<Registry> registry;
+            if(not registry){
+                registry = std::make_shared<Registry>();
+            }
+            return registry;
+        }
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_NON_TEMPLATED_BASE_REGISTRY_H

@@ -3,15 +3,11 @@
 //
 
 #include "symbolic_integers.h"
+
 namespace md {
     namespace sym {
-        
-        bool operator==(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+
+        bool operator==(Monomial const &lhs, Monomial const &rhs) {
             if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                 return false;
             }
@@ -23,12 +19,7 @@ namespace md {
             return true;
         }
 
-        bool operator!=(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool operator!=(Monomial const &lhs, Monomial const &rhs) {
             if (lhs.coefficient != rhs.coefficient or lhs.powers.size() != rhs.powers.size()) {
                 return true;
             }
@@ -40,29 +31,24 @@ namespace md {
             return false;
         }
 
-        bool operator==(const Monomial &lhs, const C rhs) {
+        bool operator==(Monomial const &lhs, C const rhs) {
             return lhs.is_constant() and (lhs.coefficient == rhs);
         }
 
-        bool operator!=(const Monomial &lhs, const C rhs) {
+        bool operator!=(Monomial const &lhs, C const rhs) {
             return (not lhs.is_constant()) or (lhs.coefficient != rhs);
         }
 
-        
-        bool operator==(const C lhs, const Monomial &rhs) {
+
+        bool operator==(C const lhs, Monomial const &rhs) {
             return rhs.is_constant() and (rhs.coefficient == lhs);
         }
 
-        bool operator!=(const C lhs, const Monomial &rhs) {
+        bool operator!=(C const lhs, Monomial const &rhs) {
             return (not rhs.is_constant()) or (rhs.coefficient != lhs);
         }
 
-        bool up_to_coefficient(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool up_to_coefficient(Monomial const &lhs, Monomial const &rhs) {
             if (lhs.powers.size() != rhs.powers.size()) {
                 return false;
             }
@@ -74,20 +60,15 @@ namespace md {
             return true;
         }
 
-        bool up_to_coefficient(const C lhs, const Monomial &rhs) {
+        bool up_to_coefficient(C const lhs, Monomial const &rhs) {
             return rhs.is_constant();
         }
 
-        bool up_to_coefficient(const Monomial &lhs, const C rhs) {
+        bool up_to_coefficient(Monomial const &lhs, C const rhs) {
             return lhs.is_constant();
         }
 
-        bool less_than_comparator(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-#endif
+        bool less_than_comparator(Monomial const &lhs, Monomial const &rhs) {
             auto max = lhs.powers.size() > rhs.powers.size() ? rhs.powers.size()
                                                              : lhs.powers.size();
             for (auto i = 0; i < max; ++i) {
@@ -110,25 +91,18 @@ namespace md {
             }
         }
 
-        Monomial operator+(const Monomial &rhs) {
+        Monomial operator+(Monomial const &rhs) {
             return rhs;
         }
 
-        Monomial operator-(const Monomial &rhs) {
+        Monomial operator-(Monomial const &rhs) {
             auto result = Monomial(rhs);
             result.coefficient = -result.coefficient;
             return result;
         }
 
-        Monomial operator*(const Monomial &lhs, const Monomial &rhs) {
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Monomial(lhs.coefficient * rhs.coefficient, lhs.registry());
-#else
+        Monomial operator*(Monomial const &lhs, Monomial const &rhs) {
             auto result = Monomial(lhs.coefficient * rhs.coefficient);
-#endif
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
@@ -156,32 +130,25 @@ namespace md {
             return result;
         }
 
-        Monomial operator*(const Monomial &lhs, const C rhs) {
+        Monomial operator*(Monomial const &lhs, C const rhs) {
             auto result = Monomial(lhs);
             result.coefficient *= rhs;
             return result;
         }
 
-        Monomial operator*(const C lhs, const Monomial &rhs) {
+        Monomial operator*(C const lhs, Monomial const &rhs) {
             auto result = Monomial(rhs);
             result.coefficient *= lhs;
             return result;
         }
 
-        Monomial operator/(const Monomial &lhs, const Monomial &rhs) {
+        Monomial operator/(Monomial const &lhs, Monomial const &rhs) {
             if(rhs.coefficient == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            if(lhs.registry() != rhs.registry()){
-                throw DifferentRegistries();
-            }
-            auto result = Monomial(1, lhs.registry());
-#else
             auto result = Monomial(1);
-#endif
             if (lhs.coefficient % rhs.coefficient != 0) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
             result.coefficient = lhs.coefficient / rhs.coefficient;
             auto i1 = 0;
@@ -191,10 +158,10 @@ namespace md {
                     result.powers.push_back(lhs.powers[i1]);
                     ++i1;
                 } else if (lhs.powers[i1].first > rhs.powers[i2].first) {
-                    throw NonIntegerDivision();
+                    NON_INTEGER_DIVISION()
                 } else {
                     if (lhs.powers[i1].second < rhs.powers[i2].second) {
-                        throw NonIntegerDivision();
+                        NON_INTEGER_DIVISION()
                     } else if (lhs.powers[i1].second > rhs.powers[i2].second) {
                         result.powers.push_back(
                                 std::pair < I, P > {lhs.powers[i1].first,
@@ -205,7 +172,7 @@ namespace md {
                 }
             }
             if (i2 < rhs.powers.size()) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
             while (i1 < lhs.powers.size()) {
                 result.powers.push_back(lhs.powers[i1]);
@@ -214,30 +181,26 @@ namespace md {
             return result;
         }
 
-        Monomial operator/(const Monomial &lhs, const C rhs) {
+        Monomial operator/(Monomial const &lhs, C const rhs) {
             if(rhs == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
             if (lhs.coefficient % rhs != 0) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
             auto result = Monomial(lhs);
             result.coefficient /= rhs;
             return result;
         }
 
-        Monomial operator/(const C lhs, const Monomial &rhs) {
+        Monomial operator/(C const lhs, Monomial const &rhs) {
             if(rhs.coefficient == 0){
-                throw DivisionByZero();
+                ZERO_DIVISION()
             }
             if ((not rhs.is_constant()) or lhs % rhs.coefficient != 0) {
-                throw NonIntegerDivision();
+                NON_INTEGER_DIVISION()
             }
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-            return Monomial(lhs / rhs.coefficient, rhs.registry());
-#else
             return Monomial(lhs / rhs.coefficient);
-#endif
         }
     }
 }

@@ -10,12 +10,8 @@ using namespace md::sym;
 TEST(DeductionTest, VariableDeduction) {
     typedef std::pair<I, P> entry_pair;
     typedef std::vector<std::pair<I, C>> value_vec;
-#ifdef METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY
-    auto reg = std::make_shared<Registry>();
-#else
     auto reg = registry();
     reg->reset();
-#endif
 
     // Base variables
     auto x = reg->new_variable();
@@ -88,16 +84,17 @@ TEST(DeductionTest, VariableDeduction) {
     EXPECT_EQ(poly2.eval(values), val2);
     EXPECT_EQ(poly3.eval(values), val3);
 
-    // Example with floor
+    // Example with floor and min
     poly1 = x;
     poly2 = x * y * 2 + 1;
-    poly3 = x*x*y*y*z*z*5 + floor(x*y*y, 2)  + 3;
+    poly3 = x*x*y*y*z*z*5 + floor(x*y*y, 2) + min(x*x, y*y) + 3;
     x_val = 1;
     y_val = 3;
     z_val = 7;
     val1 = x_val;
     val2 = x_val * y_val * 2 + 1;
-    val3 = 5 * x_val * x_val * y_val * y_val * z_val * z_val + floor(float(x_val * y_val * y_val) / 2.0) + 3;
+    val3 = 5 * x_val * x_val * y_val * y_val * z_val * z_val + int(floor(float(x_val * y_val * y_val) / 2.0))
+           + std::min(x_val*x_val, y_val*y_val) + 3;
 
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     values = reg->deduce_values(implicit_values);
@@ -110,15 +107,16 @@ TEST(DeductionTest, VariableDeduction) {
     EXPECT_EQ(poly2.eval(values), val2);
     EXPECT_EQ(poly3.eval(values), val3);
 
-    // Example with ceil
+    // Example with ceil and max
     poly1 = x * y * z + x * z * z * y + 1;
-    poly2 = x * x + ceil(z * z, 6) + 2;
+    poly2 = x * x + ceil(z * z, 6) + max(z * z, 12) + 2;
     poly3 = 5 * z;
     x_val = 2;
     y_val = 3;
     z_val = 5;
     val1 = x_val * y_val * z_val + x_val * z_val * z_val * y_val + 1;
-    val2 = x_val * x_val + ceil(float(z_val * z_val) / 6.0) + 2;
+    val2 = x_val * x_val + int(ceil(float(z_val * z_val) / 6.0))
+           + std::max(z_val*z_val, 12) + 2;
     val3 = 5 * z_val;
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     values = reg->deduce_values(implicit_values);
@@ -131,16 +129,18 @@ TEST(DeductionTest, VariableDeduction) {
     EXPECT_EQ(poly2.eval(values), val2);
     EXPECT_EQ(poly3.eval(values), val3);
 
-    // Example with both floor and ceil
+    // Example with both floor, ceil and min, max
     poly1 = 3 * y * y;
-    poly2 = floor(y * y * y, 3) + x * x * x - 10;
-    poly3 = ceil(x * y * 7, 5)  + x * z  + y * z + 3;
+    poly2 = floor(y * y * y, 3) + x * x * x - 10 - min(y * y, 17);
+    poly3 = ceil(x * y * 7, 5)  + x * z  + y * z + 3 + max(x * y - 5, x + 2*y);
     x_val = 1;
     y_val = 2;
     z_val = 3;
     val1 = 3 * y_val * y_val;
-    val2 = floor(float(y_val * y_val * y_val) / 3.0) + x_val * x_val * x_val - 10;
-    val3 = ceil(float(x_val * y_val * 7) / 5.0) + x_val * z_val + y_val * z_val + 3;
+    val2 = int(floor(float(y_val * y_val * y_val) / 3.0)) + x_val * x_val * x_val - 10
+            - std::min(y_val * y_val, 17);
+    val3 = int(ceil(float(x_val * y_val * 7) / 5.0)) + x_val * z_val + y_val * z_val + 3
+            + std::max(x_val * y_val - 5, x_val + 2 * y_val);
     implicit_values = ImplicitVec{{poly1, val1}, {poly2, val2}, {poly3, val3}};
     values = reg->deduce_values(implicit_values);
     // Simple checks
@@ -163,7 +163,7 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = y_val * 2 + 1;
     val3 = z_val * z_val * x_val + z_val * y_val + 2;
     implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    EXPECT_THROW(reg->deduce_values(implicit_values), EvaluationFailure);
+    EXPECT_THROW(reg->deduce_values(implicit_values), std::runtime_error);
 
     poly1 = x * y * y;
     poly2 = y * z * 2 + 1;
@@ -175,5 +175,5 @@ TEST(DeductionTest, VariableDeduction) {
     val2 = y_val * z_val *  2 + 1;
     val3 = z_val * z_val * x_val + 2;
     implicit_values = std::vector<std::pair<Polynomial, C>>{{poly1, val1}, {poly2, val2}, {poly3, val3}};
-    EXPECT_THROW(reg->deduce_values(implicit_values), EvaluationFailure);
+    EXPECT_THROW(reg->deduce_values(implicit_values), std::runtime_error);
 }

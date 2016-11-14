@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 # Project name and versions
 project(SymbolicIntegers)
-set(SYMBOLIC_INTEGERS_MAJOR_VERSION 0)
-set(SYMBOLIC_INTEGERS_VERSION 9)
-set(SYMBOLIC_INTEGERS_VERSION 1)
+set(SYMBOLIC_INTEGERS_MAJOR_VERSION 1)
+set(SYMBOLIC_INTEGERS_VERSION 0)
+set(SYMBOLIC_INTEGERS_VERSION 0)
 set(SYMBOLIC_INTEGERS_VERSION
         ${SYMBOLIC_INTEGERS_MAJOR_VERSION}.${SYMBOLIC_INTEGERS_MINOR_VERSION}.${SYMBOLIC_INTEGERS_PATCH_VERSION})
 
@@ -33,7 +33,9 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # Source files
 set(SYMBOLIC_INTEGERS_SOURCES
-        ${PROJECT_SOURCE_DIR}/src/base.cpp
+        ${PROJECT_SOURCE_DIR}/src/base_monomial.cpp
+        ${PROJECT_SOURCE_DIR}/src/base_polynomial.cpp
+        ${PROJECT_SOURCE_DIR}/src/base_registry.cpp
         ${PROJECT_SOURCE_DIR}/src/monomial_ops.cpp
         ${PROJECT_SOURCE_DIR}/src/polynomial_ops.cpp
         ${PROJECT_SOURCE_DIR}/src/extra_ops.cpp)
@@ -49,14 +51,10 @@ endif()
 # Build libs (static by default)
 if(SYMINT_SHARED)
     # Create shared libs
-    add_library(symints_s SHARED ${SYMBOLIC_INTEGERS_SOURCES})
-    add_library(symints_d SHARED ${SYMBOLIC_INTEGERS_SOURCES})
-    target_compile_definitions(symints_d PUBLIC METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY)
+    add_library(symints_snt SHARED ${SYMBOLIC_INTEGERS_SOURCES})
 else()
     # Create static library
-    add_library(symints_s STATIC ${SYMBOLIC_INTEGERS_SOURCES})
-    add_library(symints_d STATIC ${SYMBOLIC_INTEGERS_SOURCES})
-    target_compile_definitions(symints_d PUBLIC METADIFF_SYMBOLIC_INTEGERS_DYNAMIC_REGISTRY)
+    add_library(symints_snt STATIC ${SYMBOLIC_INTEGERS_SOURCES})
 endif()
 
 # Build tests
@@ -65,10 +63,6 @@ add_subdirectory(tests)
 # Build examples
 if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples")
-    # Static registry example
-    add_executable(example_static_registry examples/example.cpp)
-    target_link_libraries(example_static_registry symints_s)
-    # Dynamic registry example
-    add_executable(example_dynamic_registry examples/example.cpp)
-    target_link_libraries(example_dynamic_registry symints_d)
+    add_executable(symints_snt_example examples/example.cpp)
+    target_link_libraries(symints_snt_example symints_snt)
 endif()
