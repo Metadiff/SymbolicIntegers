@@ -18,14 +18,14 @@ namespace md{
                     monomials(polynomial.monomials) {};
 
             /** Constructor from single monomial */
-            Polynomial(const Monomial &monomial) {
+            Polynomial(Monomial const &monomial) {
                 if (monomial.coefficient != 0) {
                     monomials.push_back(monomial);
                 }
             };
 
             /** Constructor from a constant varaible */
-            Polynomial(const C value) {
+            Polynomial(C const value) {
                 if (value != 0) {
                     monomials.push_back(Monomial(value));
                 }
@@ -45,7 +45,7 @@ namespace md{
              * @param values
              * @return The value of the polynomial evaluted at the provided values.
              */
-            C eval(const std::vector <C> &values) const;
+            C eval(std::vector <C> const &values) const;
 
             /** @brief Evaluates the polynomial assuming that the vector provided contains pairs
              * of <i, value> which specify the value of the variable with id 'i'.
@@ -53,7 +53,7 @@ namespace md{
              * @param values
              * @return The value of the polynomial evaluted at the provided values.
              */
-            C eval(const std::vector <std::pair<I, C>> &values) const;
+            C eval(std::vector <std::pair<I, C>> const &values) const;
 
             /** @brief  Evaluates the polynomial assuming it is constant.
              *

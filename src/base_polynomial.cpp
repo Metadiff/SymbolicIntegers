@@ -17,7 +17,7 @@ namespace md {
             }
         }
 
-        C Polynomial::eval(const std::vector <C> &values) const {
+        C Polynomial::eval(std::vector <C> const &values) const {
             C value = 0;
             for (auto i = 0; i < monomials.size(); ++i) {
                 value += monomials[i].eval(values);
@@ -25,7 +25,7 @@ namespace md {
             return value;
         }
 
-        C Polynomial::eval(const std::vector <std::pair<I, C>> &values) const {
+        C Polynomial::eval(std::vector <std::pair<I, C>> const &values) const {
             C value = 0;
             for (auto i = 0; i < monomials.size(); ++i) {
                 value += monomials[i].eval(values);

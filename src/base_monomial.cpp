@@ -10,7 +10,7 @@ namespace md{
             return powers.size() == 0;
         }
 
-        C Monomial::eval(const std::vector <C> &values) const {
+        C Monomial::eval(std::vector<C> const &values) const {
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> var;
             for (auto i = 0; i < powers.size(); ++i) {
@@ -40,7 +40,7 @@ namespace md{
             return value;
         }
 
-        C Monomial::eval(const std::vector <std::pair<I, C>> &values) const {
+        C Monomial::eval(std::vector <std::pair<I, C>> const &values) const {
             C value = coefficient, cur_value;
             std::pair <I, std::pair<Polynomial, Polynomial>> var;
             for (auto i = 0; i < powers.size(); ++i) {

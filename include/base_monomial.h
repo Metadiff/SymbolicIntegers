@@ -37,7 +37,7 @@ namespace md{
              * @param values
              * @return The value of the monomial evaluted at the provided values.
              */
-            C eval(const std::vector <C> &values) const;
+            C eval(std::vector <C> const &values) const;
 
             /** @brief Evaluates the monomial assuming that the vector provided contains pairs
              * of <i, value> which specify the value of the variable with id 'i'.
@@ -45,7 +45,7 @@ namespace md{
              * @param values
              * @return The value of the monomial evaluted at the provided values.
              */
-            C eval(const std::vector <std::pair<I, C>> &values) const;
+            C eval(std::vector <std::pair<I, C>> const &values) const;
 
             /** @brief  Evaluates the monomial assuming it is constant.
              *
