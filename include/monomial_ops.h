@@ -7,23 +7,23 @@
 
 namespace md {
     namespace sym {
-        bool operator==(const Monomial  &lhs, const Monomial  &rhs);
+        bool operator==(Monomial const &lhs, Monomial const &rhs);
 
-        bool operator!=(const Monomial  &lhs, const Monomial  &rhs);
+        bool operator!=(Monomial const &lhs, Monomial const &rhs);
 
-        bool operator==(const Monomial  &lhs, const C rhs);
+        bool operator==(Monomial const &lhs, C const rhs);
 
-        bool operator!=(const Monomial  &lhs, const C rhs);
+        bool operator!=(Monomial const &lhs, C const rhs);
 
-        bool operator==(const C lhs, const Monomial  &rhs);
+        bool operator==(C const lhs, Monomial const &rhs);
 
-        bool operator!=(const C lhs, const Monomial  &rhs);
+        bool operator!=(C const lhs, Monomial const &rhs);
 
-        bool up_to_coefficient(const Monomial  &lhs, const Monomial  &rhs);
+        bool up_to_coefficient(Monomial const &lhs, Monomial const &rhs);
 
-        bool up_to_coefficient(const C lhs, const Monomial  &rhs);
+        bool up_to_coefficient(C const lhs, Monomial const &rhs);
 
-        bool up_to_coefficient(const Monomial  &lhs, const C rhs);
+        bool up_to_coefficient(Monomial const &lhs, C const rhs);
 
         /**
          * A monomial m1 is compared to monomial m2 in the following order of precedence:
@@ -36,23 +36,23 @@ namespace md {
          *
          * For instance a^2b^1 is "before" 100ab^300, since a^2 <-> a.
          */
-        bool less_than_comparator(const Monomial  &lhs, const Monomial  &rhs);
+        bool less_than_comparator(Monomial const &lhs, Monomial const &rhs);
 
-        Monomial  operator+(const Monomial  &rhs);
+        Monomial  operator+(Monomial const &rhs);
 
-        Monomial  operator-(const Monomial  &rhs);
+        Monomial  operator-(Monomial const &rhs);
 
-        Monomial  operator*(const Monomial  &lhs, const Monomial  &rhs);
+        Monomial  operator*(Monomial const &lhs, Monomial const &rhs);
 
-        Monomial  operator*(const Monomial  &lhs, const C rhs);
+        Monomial  operator*(Monomial const &lhs, C const rhs);
 
-        Monomial  operator*(const C lhs, const Monomial  &rhs);
+        Monomial  operator*(C const lhs, Monomial const &rhs);
 
-        Monomial  operator/(const Monomial  &lhs, const Monomial  &rhs);
+        Monomial  operator/(Monomial const &lhs, Monomial const &rhs);
 
-        Monomial  operator/(const Monomial  &lhs, const C rhs);
+        Monomial  operator/(Monomial const &lhs, C const rhs);
 
-        Monomial  operator/(const C lhs, const Monomial  &rhs);
+        Monomial  operator/(C const lhs, Monomial const &rhs);
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_SRNT_MONOMIAL_OPS_H

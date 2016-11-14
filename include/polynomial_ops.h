@@ -7,81 +7,81 @@
 
 namespace md {
     namespace sym {
-        bool operator==(const Polynomial  &lhs, const Polynomial  &rhs);
+        bool operator==(Polynomial const &lhs, Polynomial const &rhs);
 
-        bool operator!=(const Polynomial  &lhs, const Polynomial  &rhs);
+        bool operator!=(Polynomial const &lhs, Polynomial const &rhs);
 
-        bool operator==(const Polynomial  &lhs, const Monomial  &rhs);
+        bool operator==(Polynomial const &lhs, Monomial const &rhs);
 
-        bool operator!=(const Polynomial  &lhs, const Monomial  &rhs);
+        bool operator!=(Polynomial const &lhs, Monomial const &rhs);
 
-        bool operator==(const Monomial  &lhs, const Polynomial  &rhs);
+        bool operator==(Monomial const &lhs, Polynomial const &rhs);
 
-        bool operator!=(const Monomial  &lhs, const Polynomial  &rhs);
+        bool operator!=(Monomial const &lhs, Polynomial const &rhs);
 
-        bool operator==(const Polynomial  &lhs, const C rhs);
+        bool operator==(Polynomial const &lhs, C const rhs);
 
-        bool operator!=(const Polynomial  &lhs, const C rhs);
+        bool operator!=(Polynomial const &lhs, C const rhs);
 
-        bool operator==(const C lhs, const Polynomial  &rhs);
+        bool operator==(C const lhs, Polynomial const &rhs);
 
-        bool operator!=(const C lhs, const Polynomial  &rhs);
+        bool operator!=(C const lhs, Polynomial const &rhs);
 
-        Polynomial  operator+(const Polynomial  &rhs);
+        Polynomial  operator+(Polynomial const &rhs);
 
-        Polynomial  operator-(const Polynomial  &rhs);
+        Polynomial  operator-(Polynomial const &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator+(Monomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const C rhs);
+        Polynomial  operator+(Monomial const &lhs, C const rhs);
 
-        Polynomial  operator+(const C lhs, const Monomial  &rhs);
+        Polynomial  operator+(C const lhs, Monomial const &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator+(Polynomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator+(Polynomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator+(const Monomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator+(Monomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator+(const Polynomial  &lhs, const C rhs);
+        Polynomial  operator+(Polynomial const &lhs, C const rhs);
 
-        Polynomial  operator+(const C lhs, const Polynomial  &rhs);
+        Polynomial  operator+(C const lhs, Polynomial const &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator-(Monomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const C rhs);
+        Polynomial  operator-(Monomial const &lhs, C const rhs);
 
-        Polynomial  operator-(const C lhs, const Monomial  rhs);
+        Polynomial  operator-(C const lhs, Monomial const rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator-(Polynomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator-(Polynomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator-(const Monomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator-(Monomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator-(const Polynomial  &lhs, const C rhs);
+        Polynomial  operator-(Polynomial const &lhs, C const rhs);
 
-        Polynomial  operator-(const C lhs, const Polynomial  &rhs);
+        Polynomial  operator-(C const lhs, Polynomial const &rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator*(Polynomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator*(Polynomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator*(const Monomial  lhs, const Polynomial  rhs);
+        Polynomial  operator*(Monomial const lhs, Polynomial const rhs);
 
-        Polynomial  operator*(const Polynomial  &lhs, const C rhs);
+        Polynomial  operator*(Polynomial const &lhs, C const rhs);
 
-        Polynomial  operator*(const C lhs, const Polynomial  rhs);
+        Polynomial  operator*(C const lhs, Polynomial const rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator/(Polynomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const Monomial  &rhs);
+        Polynomial  operator/(Polynomial const &lhs, Monomial const &rhs);
 
-        Polynomial  operator/(const Monomial  &lhs, const Polynomial  &rhs);
+        Polynomial  operator/(Monomial const &lhs, Polynomial const &rhs);
 
-        Polynomial  operator/(const Polynomial  &lhs, const C rhs);
+        Polynomial  operator/(Polynomial const &lhs, C const rhs);
 
-        Polynomial  operator/(const C lhs, const Polynomial  rhs);
+        Polynomial  operator/(C const lhs, Polynomial const rhs);
     }
 }
 
