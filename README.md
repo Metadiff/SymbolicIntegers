@@ -1,6 +1,5 @@
 # Symbolic Integers - Static Registry Non Templated [SRNT]
-A small library for manipulation and calculation of symbolic 
-integer polynomials.
+A small library for manipulation and calculation of symbolic integer polynomials.
 
 ## Branches
 The repository contains four branches all of which implement the same
