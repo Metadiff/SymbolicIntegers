@@ -8,6 +8,6 @@ add_subdirectory(external/googletest)
 set(test_sources run_all.cpp monomial_test.cpp polynomial_test.cpp variable_deduction.cpp)
 
 # Tests
-add_executable(symints_srnt_tests ${test_sources})
+add_executable(symints_srt_tests ${test_sources})
 add_dependencies(gtest gmock)
-target_link_libraries(symints_srnt_tests gtest gmock pthread)
+target_link_libraries(symints_srt_tests gtest gmock pthread)
