@@ -92,39 +92,75 @@ namespace md{
         }
 
         template <typename C, typename I, typename P>
-        std::string Monomial<C, I, P>::to_string() const {
-            if (powers.size() == 0) {
-                return std::to_string(coefficient);
+        std::string to_string(Monomial<C, I, P> const & monomial) {
+            if (monomial.powers.size() == 0) {
+                return std::to_string(monomial.coefficient);
             }
 
             std::string result;
-            if (coefficient != 1) {
-                if (coefficient == -1) {
-                    result += "-";
+            if (monomial.coefficient != 1) {
+                if (monomial.coefficient == -1) {
+                    result += " - ";
                 } else {
-                    result += std::to_string(coefficient);
+                    result += std::to_string(monomial.coefficient);
                 }
             }
             std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> var;
-            for (auto i = 0; i < powers.size(); ++i) {
-                if ((var = registry<C, I, P>()->get_floor(powers[i].first)).first != 0) {
-                    result += "floor(" + var.second.first.to_string() + " / " +
-                              var.second.second.to_string() + ")";
-                } else if ((var = registry<C, I, P>()->get_ceil(powers[i].first)).first != 0) {
-                    result += "ceil(" + var.second.first.to_string() + " / " +
-                              var.second.second.to_string() + ")";
-                } else if ((var = registry<C, I, P>()->get_min(powers[i].first)).first != 0) {
-                    result += "min(" + var.second.first.to_string() + " / " +
-                              var.second.second.to_string() + ")";
-                } else if ((var = registry<C, I, P>()->get_max(powers[i].first)).first != 0) {
-                    result += "max(" + var.second.first.to_string() + " / " +
-                              var.second.second.to_string() + ")";
+            for (auto i = 0; i < monomial.powers.size(); ++i) {
+                if ((var = registry<C, I, P>()->get_floor(monomial.powers[i].first)).first != 0) {
+                    result += "floor(" + to_string(var.second.first) + " / " +
+                              to_string(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_ceil(monomial.powers[i].first)).first != 0) {
+                    result += "ceil(" + to_string(var.second.first) + " / " +
+                              to_string(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_min(monomial.powers[i].first)).first != 0) {
+                    result += "min(" + to_string(var.second.first) + ", " +
+                              to_string(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_max(monomial.powers[i].first)).first != 0) {
+                    result += "max(" + to_string(var.second.first) + ", " +
+                              to_string(var.second.second) + ")";
                 } else {
-                    result += ('a' + powers[i].first);
-                    auto n = powers[i].second;
+                    result += ('a' + monomial.powers[i].first);
+                    auto n = monomial.powers[i].second;
                     if (n > 1) {
                         result += '^';
                         result += std::to_string(n);
+                    }
+                }
+            }
+            return result;
+        }
+
+        template <typename C, typename I, typename P>
+        std::string to_code(Monomial<C, I, P> const & monomial) {
+            if (monomial.powers.size() == 0) {
+                return std::to_string(monomial.coefficient);
+            }
+
+            std::string result;
+            if (monomial.coefficient < 0) {
+                result += " - " + std::to_string(- monomial.coefficient);
+            } else {
+                result += std::to_string(monomial.coefficient);
+            }
+            std::pair <I, std::pair<Polynomial<C, I, P>, Polynomial<C, I, P>>> var;
+            for (auto i = 0; i < monomial.powers.size(); ++i) {
+                if ((var = registry<C, I, P>()->get_floor(monomial.powers[i].first)).first != 0) {
+                    result += " * floor(" + to_code(var.second.first) + ", " +
+                              to_code(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_ceil(monomial.powers[i].first)).first != 0) {
+                    result += " * ceil(" + to_code(var.second.first) + ", " +
+                              to_code(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_min(monomial.powers[i].first)).first != 0) {
+                    result += " * min(" + to_code(var.second.first) + ", " +
+                              to_code(var.second.second) + ")";
+                } else if ((var = registry<C, I, P>()->get_max(monomial.powers[i].first)).first != 0) {
+                    result += " * max(" + to_code(var.second.first) + ", " +
+                              to_code(var.second.second) + ")";
+                } else {
+                    for(auto j = 0; j < monomial.powers[i].second; ++j) {
+                        result += " * ";
+                        result += ('a' + monomial.powers[i].first);
                     }
                 }
             }

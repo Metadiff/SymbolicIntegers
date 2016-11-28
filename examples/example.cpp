@@ -29,6 +29,15 @@ int main(){
 
     // Evaluate using a vector
     std::vector<C> vals0 {1, 7, 4};
+    std::cout << "Human readable vs code representation:" << std::endl
+              << poly1 << " = " << to_code(poly1) << std::endl
+              << poly2 << " = " << to_code(poly2) << std::endl
+              << poly3 << " = " << to_code(poly3) << std::endl
+              << poly4 << " = " << to_code(poly4) << std::endl
+              << poly5 << " = " << to_code(poly5) << std::endl
+              << poly6 << " = " << to_code(poly6) << std::endl
+              << poly7 << " = " << to_code(poly7) << std::endl
+              << poly8 << " = " << to_code(poly8) << std::endl;
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;

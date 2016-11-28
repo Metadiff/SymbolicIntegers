@@ -60,9 +60,25 @@ namespace md{
             std::string to_string() const;
         };
 
+        /** @brief Returns a humanly presentable string representation of the Monomial
+        *
+        * @param monomial
+        * @return
+        */
+        template <typename C, typename I, typename P>
+        std::string to_string(Monomial<C, I, P> const & monomial);
+
+        /** @brief Returns a code equivalent string representation of the Monomial
+         *
+         * @param monomial
+         * @return
+         */
+        template <typename C, typename I, typename P>
+        std::string to_code(Monomial<C, I, P> const & monomial);
+
         template <typename C, typename I, typename P>
         std::ostream &operator<<(std::ostream &f, Monomial<C, I, P> const &monomial) {
-            return f << monomial.to_string();
+            return f << to_string(monomial);
         }
     }
 }

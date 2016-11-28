@@ -43,16 +43,32 @@ namespace md {
         }
 
         template <typename C, typename I, typename P>
-        std::string Polynomial<C, I, P>::to_string() const {
-            if (monomials.size() == 0) {
+        std::string to_string(Polynomial<C, I, P> const & polynomial) {
+            if (polynomial.monomials.size() == 0) {
                 return "0";
             }
-            std::string result = monomials[0].to_string();
-            for (auto i = 1; i < monomials.size(); ++i) {
-                if (monomials[i].coefficient > 0) {
-                    result += "+" + monomials[i].to_string();
+            std::string result = to_string(polynomial.monomials[0]);
+            for (auto i = 1; i < polynomial.monomials.size(); ++i) {
+                if (polynomial.monomials[i].coefficient > 0) {
+                    result += " + " + to_string(polynomial.monomials[i]);
                 } else {
-                    result += monomials[i].to_string();
+                    result += to_string(polynomial.monomials[i]);
+                }
+            }
+            return result;
+        }
+
+        template <typename C, typename I, typename P>
+        std::string to_code(Polynomial<C, I, P> const & polynomial) {
+            if (polynomial.monomials.size() == 0) {
+                return "0";
+            }
+            std::string result = to_code(polynomial.monomials[0]);
+            for (auto i = 1; i < polynomial.monomials.size(); ++i) {
+                if (polynomial.monomials[i].coefficient > 0) {
+                    result += " + " + to_code(polynomial.monomials[i]);
+                } else {
+                    result += to_code(polynomial.monomials[i]);
                 }
             }
             return result;

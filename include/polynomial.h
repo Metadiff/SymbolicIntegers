@@ -68,9 +68,25 @@ namespace md{
             std::string to_string() const;
         };
 
+        /** @brief Returns a humanly presentable string representation of the Polynomial
+         *
+         * @param polynomial
+         * @return
+         */
+        template <typename C, typename I, typename P>
+        std::string to_string(Polynomial<C, I, P> const & polynomial);
+
+        /** @brief Returns a code equivalent string representation of the Polynomial
+         *
+         * @param polynomial
+         * @return
+         */
+        template <typename C, typename I, typename P>
+        std::string to_code(Polynomial<C, I, P> const & polynomial);
+
         template <typename C, typename I, typename P>
         std::ostream &operator<<(std::ostream &f, Polynomial<C, I, P> const &polynomial){
-            return  f << polynomial.to_string();
+            return  f << to_string(polynomial);
         }
     }
 }

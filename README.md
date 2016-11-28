@@ -62,6 +62,15 @@ int main(){
 
     // Evaluate using a vector
     std::vector<C> vals0 {1, 7, 4};
+    std::cout << "Human readable vs code representation:" << std::endl
+                  << poly1 << " = " << to_code(poly1) << std::endl
+                  << poly2 << " = " << to_code(poly2) << std::endl
+                  << poly3 << " = " << to_code(poly3) << std::endl
+                  << poly4 << " = " << to_code(poly4) << std::endl
+                  << poly5 << " = " << to_code(poly5) << std::endl
+                  << poly6 << " = " << to_code(poly6) << std::endl
+                  << poly7 << " = " << to_code(poly7) << std::endl
+                  << poly8 << " = " << to_code(poly8) << std::endl;
     std::cout << "Evaluating for " << a << " = " << a.eval(vals0)
               << ", " << b << " = " << b.eval(vals0)
               << ", " << c << " = " << c.eval(vals0) << std::endl;
@@ -106,6 +115,15 @@ int main(){
 
 Output of the program:
 ```c++
+Human readable vs code representation:
+a^2 - ab + 12 = 1 * a * a - 1 * a * b + 12
+ab + ac + b + c = 1 * a * b + 1 * a * c + 1 * b + 1 * c
+ab = 1 * a * b
+2ac + 3a + 2bc + 3b + 2c + 3 = 2 * a * c + 3 * a + 2 * b * c + 3 * b + 2 * c + 3
+floor(b^2 / a^2) = 1 * floor(1 * b * b, 1 * a * a)
+ceil(b^2 / a^2) = 1 * ceil(1 * b * b, 1 * a * a)
+min(ab + 12, ab + a) = 1 * min(1 * a * b + 12, 1 * a * b + 1 * a)
+max(ab + 12, ab + a) = 1 * max(1 * a * b + 12, 1 * a * b + 1 * a)
 Evaluating for a = 1, b = 7, c = 4
 a^2-ab+12 = 6 [Expected 6]
 ab+ac+b+c = 22 [Expected 22]
