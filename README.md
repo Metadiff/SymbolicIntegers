@@ -160,7 +160,7 @@ Otherwise a more complicated and functional algorithm would probably use
 something like [Grobner basis](https://en.wikipedia.org/wiki/Gr%C3%B6bner_basis).
 
 ## License
-The project is distrusted under the MIT License.
+The project is distrusted under the Apache 2.0 License.
 
 ## Contributing
 If you want to contribute in any way please make an Issue or submit a PR
