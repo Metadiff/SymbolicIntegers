@@ -1,0 +1,73 @@
+//
+// Created by alex on 16/12/16.
+//
+
+#ifndef METADIFF_SYMBOLIC_INTEGERS_COMPOSITE_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_COMPOSITE_IMPL_H
+
+namespace md {
+    namespace sym {
+
+        template <typename I, typename C, typename P>
+        C Composite<I, C, P>::eval(std::unordered_map<I, C> const &values) const {
+            if(type == Id) {
+                auto provided = values.find(id);
+                if (provided == values.end()) {
+                    MISSING_VALUE()
+                } else {
+                    return provided->second;
+                }
+            }
+            else{
+                auto first_val = compound.first->eval(values);
+                auto second_val = compound.second->eval(values);
+                if(type == Max) {
+                    return std::max(first_val, second_val);
+                } else if(type == Min) {
+                    return std::min(first_val, second_val);
+                } else if(type == Ceil) {
+                    return ceil(first_val, second_val);
+                } else if(type == Floor){
+                    return floor(first_val, second_val);
+                } else {
+                    return 0;
+                }
+            }
+        }
+
+        template <typename I, typename C, typename P>
+        std::string to_string(Composite<I, C, P> const & composite, id_print<I> print){
+            switch (composite.type) {
+                case Max: return "max(" + to_string(*composite.compound.first, print) + ", "
+                                 + to_string(*composite.compound.second, print) + ")";
+                case Min: return "min(" + to_string(*composite.compound.first, print) + ", "
+                                 + to_string(*composite.compound.second, print) + ")";
+                case Ceil: return "ceil(" + to_string(*composite.compound.first, print) + ", "
+                                  + to_string(*composite.compound.second, print) + ")";
+                case Floor: return "floor(" + to_string(*composite.compound.first, print) + ", "
+                                   + to_string(*composite.compound.second, print) + ")";
+                default: {
+                    return print(composite.id);
+                }
+            }
+        }
+
+        template <typename I, typename C, typename P>
+        std::string to_code(Composite<I, C, P> const & composite, id_print<I> print){
+            switch (composite.type) {
+                case Max: return "max(" + to_code(*composite.compound.first, print) + ", "
+                                 + to_code(*composite.compound.second, print) + ")";
+                case Min: return "min(" + to_code(*composite.compound.first, print) + ", "
+                                 + to_code(*composite.compound.second, print) + ")";
+                case Ceil: return "ceil(" + to_code(*composite.compound.first, print) + ", "
+                                  + to_code(*composite.compound.second, print) + ")";
+                case Floor: return "floor(" + to_code(*composite.compound.first, print) + ", "
+                                   + to_code(*composite.compound.second, print) + ")";
+                default: {
+                    return print(composite.id);
+                }
+            }
+        }
+    }
+}
+#endif //METADIFF_SYMBOLIC_INTEGERS_COMPOSITE_IMPL_H

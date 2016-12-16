@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Project name and versions
 project(SymbolicIntegers_SRT)
 set(SYMBOLIC_INTEGERS_MAJOR_VERSION 1)
-set(SYMBOLIC_INTEGERS_VERSION 0)
+set(SYMBOLIC_INTEGERS_VERSION 1)
 set(SYMBOLIC_INTEGERS_VERSION 0)
 set(SYMBOLIC_INTEGERS_VERSION
         ${SYMBOLIC_INTEGERS_MAJOR_VERSION}.${SYMBOLIC_INTEGERS_MINOR_VERSION}.${SYMBOLIC_INTEGERS_PATCH_VERSION})
@@ -37,5 +37,5 @@ add_subdirectory(tests)
 # Build examples
 if(BUILD_EXAMPLES)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples")
-    add_executable(symints_srt_example examples/example.cpp)
+    add_executable(symbolic_integers_example examples/example.cpp)
 endif()
