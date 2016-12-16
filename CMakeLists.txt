@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # Project name and versions
-project(SymbolicIntegers_SRT)
+project(SymbolicIntegers)
 set(SYMBOLIC_INTEGERS_MAJOR_VERSION 0)
 set(SYMBOLIC_INTEGERS_VERSION 2)
 set(SYMBOLIC_INTEGERS_VERSION 0)
