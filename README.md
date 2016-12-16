@@ -1,4 +1,4 @@
-# Symbolic Integers
+# Symbolic Integers 0.2.0
 A small header only library for manipulation, calculation 
 and evaluation of symbolic integer polynomials.
 
