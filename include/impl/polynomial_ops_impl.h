@@ -91,7 +91,7 @@ namespace md {
                     result.monomials.push_back(lhs);
                     result.monomials[0].coefficient += rhs.coefficient;
                 }
-            } else if (less_than_comparator(lhs, rhs)) {
+            } else if (grevlex_gt(lhs, rhs)) {
                 result.monomials.push_back(lhs);
                 result.monomials.push_back(rhs);
             } else {
@@ -136,7 +136,7 @@ namespace md {
                     }
                     ++i1;
                     ++i2;
-                } else if (less_than_comparator(lhs.monomials[i1], rhs.monomials[i2])) {
+                } else if (grevlex_gt(lhs.monomials[i1], rhs.monomials[i2])) {
                     result.monomials.push_back(lhs.monomials[i1]);
                     ++i1;
                 } else {

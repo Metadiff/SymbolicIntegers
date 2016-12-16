@@ -2,16 +2,26 @@
 A small header only library for manipulation, calculation 
 and evaluation of symbolic integer polynomials.
 
-# Templated arguments
+## Templated arguments
 The main class which you should be using is `Polynomial<I, C, P>`. 
 The three template types are used as follows:
 
-   1. *I* - the type for uniquely identifying a primitive variable. 
+   1. *I* - the type for uniquely identifying a primitive variable 
    2. *C* - the type of the free coefficient in every monomial
    3. *P* - the type of the power used in every monomial
 
 As an example if we have `2*a^3`, then `type(a) = I`, `type(2) = C` 
 and `type(3) = P`. The choice of these three arguments are left to the user.
+
+### Ordering
+The polynomials and monomials are ordered using `grevlex`, assuming that 
+the monomials are reversely ordered with respect to the type `I`. This is 
+done as for many common types (string, numbers) we want monomials which 
+are small in the type to be first (e.g. `a > b`).
+
+### Converting to string
+The function `to_string` and `to_code` take an extra function parameter,
+which should give the string representation for the type `I`.
 
 ## Install
 Since this is only a header only library with template you just need to copy

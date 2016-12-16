@@ -64,6 +64,9 @@ namespace md {
                 std::function<std::string(std::string)> identity = [](std::string id) { return id; };
                 return  f << to_string(composite,  identity);
         }
+
+        template <typename I, typename C, typename P>
+        bool operator==(Composite<I, C, P> const &lhs, Composite<I, C, P> const &rhs);
     }
 }
 

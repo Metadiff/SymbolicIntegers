@@ -7,17 +7,6 @@
 
 namespace md {
     namespace sym {
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> primitive(I id);
-
-        template <typename I, typename C, typename P>
-        void reduce_polynomials(std::vector <std::pair<Polynomial<I, C, P>, C>> &implicit_values,
-                                std::unordered_map<I, C> const & values);
-
-        template <typename I, typename C, typename P>
-        std::unordered_map<I, C> deduce_values(std::vector <std::pair<Polynomial<I, C, P>, C>> implicit_values);
-
         /**
          * Makes a floor division, e.g. returns the result of floor(a/b)
          * @param dividend

@@ -83,29 +83,25 @@ namespace md {
             return lhs.is_constant();
         }
 
-        template <typename I, typename C, typename P>
-        bool less_than_comparator(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs) {
-            auto max = lhs.powers.size() > rhs.powers.size() ? rhs.powers.size()
-                                                             : lhs.powers.size();
-            for (auto i = 0; i < max; ++i) {
-                if (lhs.powers[i].first < rhs.powers[i].first) {
-                    return true;
-                } else if (lhs.powers[i].first > rhs.powers[i].first) {
-                    return false;
-                } else if (lhs.powers[i].second > rhs.powers[i].second) {
-                    return true;
-                } else if (lhs.powers[i].second < rhs.powers[i].second) {
-                    return false;
-                }
-            }
-            if (lhs.powers.size() < rhs.powers.size()) {
-                return false;
-            } else if (lhs.powers.size() > rhs.powers.size()) {
-                return true;
-            } else {
-                return lhs.coefficient > rhs.coefficient;
-            }
-        }
+//        template <typename I, typename C, typename P>
+//        bool less_than_comparator(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs) {
+//            auto max = lhs.powers.size() > rhs.powers.size() ? rhs.powers.size()
+//                                                             : lhs.powers.size();
+//            for (auto i = 0; i < max; ++i) {
+//                if (lhs.powers[i].first == rhs.powers[i].first) {
+//                    if(lhs.powers[i].second != rhs.powers[i].second){
+//                        return lhs.powers[i].second > rhs.powers[i].second;
+//                    }
+//                } else {
+//                    return not grevlex_gt(lhs.powers[i].first, rhs.powers[i].first);
+//                }
+//            }
+//            if (lhs.powers.size() != rhs.powers.size()){
+//                return lhs.powers.size() > rhs.powers.size();
+//            } else {
+//                return lhs.coefficient > rhs.coefficient;
+//            }
+//        }
 
         template <typename I, typename C, typename P>
         Monomial<I, C, P> operator+(Monomial<I, C, P> const &rhs) {
@@ -125,17 +121,28 @@ namespace md {
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
-                if (lhs.powers[i1].first < rhs.powers[i2].first) {
-                    result.powers.push_back(lhs.powers[i1]);
-                    ++i1;
-                } else if (lhs.powers[i1].first > rhs.powers[i2].first) {
-                    result.powers.push_back(rhs.powers[i2]);
-                    ++i2;
-                } else {
+                if (lhs.powers[i1].first == rhs.powers[i2].first ) {
                     result.powers.push_back({lhs.powers[i1].first, lhs.powers[i1].second + rhs.powers[i2].second});
                     ++i1;
                     ++i2;
+                } else if (grevlex_gt(lhs.powers[i1].first, rhs.powers[i2].first)) {
+                    result.powers.push_back(lhs.powers[i1]);
+                    ++i1;
+                } else {
+                    result.powers.push_back(rhs.powers[i2]);
+                    ++i2;
                 }
+//                if (lhs.powers[i1].first < rhs.powers[i2].first) {
+//                    result.powers.push_back(lhs.powers[i1]);
+//                    ++i1;
+//                } else if (lhs.powers[i1].first > rhs.powers[i2].first) {
+//                    result.powers.push_back(rhs.powers[i2]);
+//                    ++i2;
+//                } else {
+//                    result.powers.push_back({lhs.powers[i1].first, lhs.powers[i1].second + rhs.powers[i2].second});
+//                    ++i1;
+//                    ++i2;
+//                }
             }
             while (i1 < lhs.powers.size()) {
                 result.powers.push_back(lhs.powers[i1]);
@@ -177,12 +184,7 @@ namespace md {
             auto i1 = 0;
             auto i2 = 0;
             while (i1 < lhs.powers.size() and i2 < rhs.powers.size()) {
-                if (lhs.powers[i1].first < rhs.powers[i2].first) {
-                    result.powers.push_back(lhs.powers[i1]);
-                    ++i1;
-                } else if (lhs.powers[i1].first > rhs.powers[i2].first) {
-                    NON_INTEGER_DIVISION()
-                } else {
+                if (lhs.powers[i1].first == rhs.powers[i2].first) {
                     if (lhs.powers[i1].second < rhs.powers[i2].second) {
                         NON_INTEGER_DIVISION()
                     } else if (lhs.powers[i1].second > rhs.powers[i2].second) {
@@ -191,7 +193,27 @@ namespace md {
                     }
                     ++i1;
                     ++i2;
+                } else if (grevlex_gt(lhs.powers[i1].first, rhs.powers[i2].first)) {
+                    result.powers.push_back(lhs.powers[i1]);
+                    ++i1;
+                } else {
+                    NON_INTEGER_DIVISION()
                 }
+//                if (lhs.powers[i1].first < rhs.powers[i2].first) {
+//                    result.powers.push_back(lhs.powers[i1]);
+//                    ++i1;
+//                } else if (lhs.powers[i1].first > rhs.powers[i2].first) {
+//                    NON_INTEGER_DIVISION()
+//                } else {
+//                    if (lhs.powers[i1].second < rhs.powers[i2].second) {
+//                        NON_INTEGER_DIVISION()
+//                    } else if (lhs.powers[i1].second > rhs.powers[i2].second) {
+//                        result.powers.push_back({lhs.powers[i1].first,
+//                                                 lhs.powers[i1].second - rhs.powers[i2].second});
+//                    }
+//                    ++i1;
+//                    ++i2;
+//                }
             }
             if (i2 < rhs.powers.size()) {
                 NON_INTEGER_DIVISION()

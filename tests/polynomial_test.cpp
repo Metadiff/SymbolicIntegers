@@ -159,7 +159,7 @@ TYPED_TEST(PolynomialTest, MultuplyOperators) {
     auto ab_plus_a_square_plus_one = a * b + a * a + 1;
     auto ab_plus_b_square_plus_two = a * b + b * b + 2;
 
-    // a^3y  + 2a^2b^2 + 2a^2 + ab^3 + 3ab + b^2 + 2
+    // a^3y + 2a^2b^2 + 2a^2 + ab^3 + 3ab + b^2 + 2
     auto product = ab_plus_a_square_plus_one * ab_plus_b_square_plus_two;
     EXPECT_EQ(product.monomials.size(), 7);
     EXPECT_EQ(product.monomials[0].coefficient, 1);

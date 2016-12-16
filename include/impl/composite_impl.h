@@ -68,6 +68,18 @@ namespace md {
                 }
             }
         }
+
+        template <typename I, typename C, typename P>
+        bool operator==(Composite<I, C, P> const &lhs, Composite<I, C, P> const &rhs){
+            if(lhs.type != rhs.type) {
+                return false;
+            }
+            switch (lhs.type) {
+                case Id: return lhs.id == rhs.id;
+                default: return *lhs.compound.first == *rhs.compound.first &&
+                                *lhs.compound.second == *rhs.compound.second;
+            }
+        }
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_COMPOSITE_IMPL_H

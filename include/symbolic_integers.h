@@ -31,17 +31,17 @@ namespace md{
 #include "composite.h"
 #include "monomial.h"
 #include "polynomial.h"
-#include "composite_ops.h"
 #include "monomial_ops.h"
 #include "polynomial_ops.h"
 #include "extra_ops.h"
+#include "special.h"
 
 #include "impl/composite_impl.h"
 #include "impl/monomial_impl.h"
 #include "impl/polynomial_impl.h"
-#include "impl/composite_ops_impl.h"
 #include "impl/monomial_ops_impl.h"
 #include "impl/polynomial_ops_impl.h"
 #include "impl/extra_ops_impl.h"
+#include "impl/special_impl.h"
 
 #endif //METADIFF_SYMBOLIC_INTEGERS_H
