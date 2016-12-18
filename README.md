@@ -14,10 +14,9 @@ As an example if we have `2*a^3`, then `type(a) = I`, `type(2) = C`
 and `type(3) = P`. The choice of these three arguments are left to the user.
 
 ### Ordering
-The polynomials and monomials are ordered using `grevlex`, assuming that 
-the monomials are reversely ordered with respect to the type `I`. This is 
-done as for many common types (string, numbers) we want monomials which 
-are small in the type to be first (e.g. `a > b`).
+The polynomials use [Graded reverse lexicographic order] 
+(https://en.wikipedia.org/wiki/Monomial_order#Graded_reverse_lexicographic_order)
+which is based on the ordering of type *I*.
 
 ### Converting to string
 The function `to_string` and `to_code` take an extra function parameter,

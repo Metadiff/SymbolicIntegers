@@ -17,14 +17,16 @@ namespace md {
         bool grevlex_gt(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> primitive(I id);
+        Polynomial<I, C, P> primitive(I const id);
 
         template <typename I, typename C, typename P>
-        void reduce_polynomials(std::vector <std::pair<Polynomial<I, C, P>, C>> &implicit_values,
-        std::unordered_map<I, C> const & values);
+        Monomial<I, C, P> reduce(Monomial<I, C, P> const & monomial, std::unordered_map<I, C> const & values);
 
         template <typename I, typename C, typename P>
-        std::unordered_map<I, C> deduce_values(std::vector <std::pair<Polynomial<I, C, P>, C>> implicit_values);
+        Polynomial<I, C, P> reduce(Polynomial<I, C, P> const & polynomial, std::unordered_map<I, C> const & values);
+
+        template <typename I, typename C, typename P>
+        std::unordered_map<I, C> deduce_values(ImplicitValues <I, C, P> & implicit_values);
     }
 }
 #endif //SYMBOLICINTEGERS_SRT_SPECIAL_H

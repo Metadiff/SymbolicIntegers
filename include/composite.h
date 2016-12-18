@@ -31,8 +31,8 @@ namespace md {
             Composite(CompositeType type, I id):
                     type(type), id(id) {}
 
-            Composite(CompositeType type, std::shared_ptr<Polynomial<I, C, P>> left,
-                      std::shared_ptr<Polynomial<I, C, P>> right):
+            Composite(CompositeType type, std::shared_ptr<Polynomial<I, C, P>> const left,
+                      std::shared_ptr<Polynomial<I, C, P>> const right):
                     type(type), compound({left, right}) {}
 
             Composite(Composite const & composite):

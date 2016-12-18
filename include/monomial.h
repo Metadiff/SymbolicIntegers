@@ -15,19 +15,24 @@ namespace md{
             std::vector <std::pair<Composite<I, C, P>, P>> powers;
             /** The constant coefficient */
             C coefficient;
-            
-            /** Copy constructor */
-            Monomial(Monomial<I, C, P> const &monomial):
-                    powers(monomial.powers),
-                    coefficient(monomial.coefficient){}
+
+            /** Constructor from a constant value */
+            Monomial(C const & value): coefficient(value){}
 
             /** From composite */
             Monomial(Composite<I, C, P> const &composite):
                     powers({{composite, 1}}),
                     coefficient(1){}
 
-            /** Constructor from a constant varaible */
-            Monomial(C const value): coefficient(value){}
+            /** From composite and power */
+            Monomial(Composite<I, C, P> const &composite, P const power):
+                    powers({{composite, power}}),
+                    coefficient(1){}
+
+            /** Copy constructor */
+            Monomial(Monomial<I, C, P> const &monomial):
+                    powers(monomial.powers),
+                    coefficient(monomial.coefficient){}
 
             /** Default constructor returns 0 */
             Monomial(): Monomial(0) {}
@@ -44,6 +49,10 @@ namespace md{
              * @return The value of the monomial evaluted at the provided values.
              */
             C eval(std::unordered_map<I, C> const &values) const;
+
+            Monomial<I, C, P>& operator*=(Monomial<I, C, P> const & rhs);
+
+            Monomial<I, C, P>& operator/=(Monomial<I, C, P> const & rhs);
         };
 
         /** @brief Returns a humanly presentable string representation of the Monomial

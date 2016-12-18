@@ -12,7 +12,7 @@ namespace md {
                 typename = std::enable_if<std::is_integral<C2>::value>>
         auto floor(C1 const dividend, C2 const divisor) -> decltype(dividend / divisor) {
             if(divisor == 0){
-                ZERO_DIVISION()
+                throw exceptions::division_by_zero();
             }
             if((dividend >= 0 and divisor > 0)
                or (dividend <= 0 and divisor < 0)
@@ -27,7 +27,7 @@ namespace md {
                 typename = std::enable_if<std::is_integral<C2>::value>>
         auto ceil(C1 const dividend, C2 const divisor) -> decltype(dividend / divisor) {
             if(divisor == 0){
-                ZERO_DIVISION()
+                throw exceptions::division_by_zero();
             }
             if((dividend >= 0 and divisor < 0) or (dividend <= 0 and divisor > 0)){
                 return dividend / divisor;

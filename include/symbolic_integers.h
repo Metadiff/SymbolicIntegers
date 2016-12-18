@@ -14,20 +14,28 @@
 #include "math.h"
 #include "exception"
 
-namespace md{
-    namespace sym{
+// Forward declarations and types
+namespace md {
+    namespace sym {
+        template <typename I, typename C, typename P>
+        class Composite;
+        template <typename I, typename C, typename P>
+        class Monomial;
+        template <typename I, typename C, typename P>
+        class Polynomial;
+
+        template <typename I, typename C, typename P>
+        using ImplicitValues = std::vector <std::pair<Polynomial<I, C, P>, C>>;
+
+        template <typename I, typename C, typename P>
+        using EntryPair = std::pair<Composite<I, C, P>, P>;
+
         template <typename I>
         using id_print = std::function<std::string(I id)>;
-
-#define ZERO_DIVISION() {throw std::runtime_error("Attempted division by zero.");}
-#define NON_INTEGER_DIVISION() {throw std::runtime_error("The division leads to a non integer monomial/polynomial.");}
-#define MISSING_VALUE() {throw std::runtime_error("Not enough values provided to evaluate the monomial/polynomial.");}
-#define INCOMPATIBLE_VALUES(VAL1, VAL2) {throw std::runtime_error("Automatic value deduction reached to "\
-         + std::to_string(VAL1) + " = " + std::to_string(VAL2) + ".");}
-
     }
 }
 
+// Headers
 #include "composite.h"
 #include "monomial.h"
 #include "polynomial.h"
@@ -35,7 +43,8 @@ namespace md{
 #include "polynomial_ops.h"
 #include "extra_ops.h"
 #include "special.h"
-
+#include "exceptions.h"
+// Implementations
 #include "impl/composite_impl.h"
 #include "impl/monomial_impl.h"
 #include "impl/polynomial_impl.h"

@@ -30,6 +30,11 @@ namespace md{
                 monomials.push_back(Monomial<I, C, P>(composite));
             };
 
+            /** Constructor from single Composite and a power*/
+            Polynomial(Composite<I, C, P> const &composite, P const power) {
+                monomials.push_back(Monomial<I, C, P>(composite, power));
+            };
+
             /** Constructor from a constant variable */
             Polynomial(C const value) {
                 if (value != 0) {
@@ -52,6 +57,14 @@ namespace md{
              * @return The value of the polynomial evaluted at the provided values.
              */
             C eval(std::unordered_map<I, C> const &values) const;
+
+            Polynomial<I, C, P>& operator+=(Polynomial<I, C, P> const & rhs);
+
+//            operator-=(const Polynomial<I, C, P> const & rhs);
+//
+//            operator*=(const Polynomial<I, C, P> const & rhs);
+//
+//            operator/=(const Polynomial<I, C, P> const & rhs);
         };
 
         /** @brief Returns a humanly presentable string representation of the Polynomial

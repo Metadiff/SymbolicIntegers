@@ -11,24 +11,24 @@ namespace md {
         template <typename I, typename C, typename P>
         C Composite<I, C, P>::eval(std::unordered_map<I, C> const &values) const {
             if(type == Id) {
-                auto provided = values.find(id);
+                auto const provided = values.find(id);
                 if (provided == values.end()) {
-                    MISSING_VALUE()
+                    throw exceptions::missing_value();
                 } else {
                     return provided->second;
                 }
             }
             else{
-                auto first_val = compound.first->eval(values);
-                auto second_val = compound.second->eval(values);
+                auto const first_val = compound.first->eval(values);
+                auto const second_val = compound.second->eval(values);
                 if(type == Max) {
-                    return std::max(first_val, second_val);
+                    return std::max(std::move(first_val), std::move(second_val));
                 } else if(type == Min) {
-                    return std::min(first_val, second_val);
+                    return std::min(std::move(first_val), std::move(second_val));
                 } else if(type == Ceil) {
-                    return ceil(first_val, second_val);
+                    return ceil(std::move(first_val), std::move(second_val));
                 } else if(type == Floor){
-                    return floor(first_val, second_val);
+                    return floor(std::move(first_val), std::move(second_val));
                 } else {
                     return 0;
                 }

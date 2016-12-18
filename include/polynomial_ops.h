@@ -7,27 +7,22 @@
 
 namespace md {
     namespace sym {
-        template <typename I, typename C, typename P>
-        bool operator==(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(Polynomial<I, C, P> const &lhs, T const rhs);
 
-        template <typename I, typename C, typename P>
-        bool operator!=(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(T const lhs, Polynomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P>
         bool operator==(Polynomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P>
-        bool operator!=(Polynomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
-
-        template <typename I, typename C, typename P>
         bool operator==(Monomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P>
-        bool operator!=(Monomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
-
-        template <typename I, typename C, typename P,
-                typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator==(Polynomial<I, C, P> const &lhs, T const rhs);
+        bool operator==(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
@@ -35,11 +30,16 @@ namespace md {
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
-        bool operator==(T const lhs, Polynomial<I, C, P> const &rhs);
-
-        template <typename I, typename C, typename P,
-                typename T, typename = std::enable_if<std::is_integral<T>::value>>
         bool operator!=(T const lhs, Polynomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        bool operator!=(Polynomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        bool operator!=(Monomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        bool operator!=(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
 
         template <typename I, typename C, typename P>
         Polynomial<I, C, P> operator+(Polynomial<I, C, P> const &rhs);
