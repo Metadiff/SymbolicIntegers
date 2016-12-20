@@ -13,7 +13,7 @@ namespace md{
         public:
             /** A vector of the pairs (a_i, p_i), where a_i is a Composite expression. */
             std::vector <std::pair<Composite<I, C, P>, P>> powers;
-            /** The constant coefficient C. */
+            /** The constant coefficient C */
             C coefficient;
 
             /** Constructor from a constant value */

@@ -24,11 +24,11 @@ namespace md {
         template <typename I, typename C, typename P>
         bool grevlex_gt(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs);
 
-        /** Reduces the monomial, given the variable assignements provided (see README). */
+        /** Reduces the monomial, given the variable assignments provided. */
         template <typename I, typename C, typename P>
         Monomial<I, C, P> reduce(Monomial<I, C, P> const & monomial, std::unordered_map<I, C> const & values);
 
-        /** Reduces the monomial, given the variable assignements provided (see README). */
+        /** Reduces the polynomial, given the variable assignments provided. */
         template <typename I, typename C, typename P>
         Polynomial<I, C, P> reduce(Polynomial<I, C, P> const & polynomial, std::unordered_map<I, C> const & values);
 
