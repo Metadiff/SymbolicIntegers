@@ -31,9 +31,9 @@ TYPED_TEST(DeductionTest, VariableDeduction) {
     typedef std::vector<std::pair<TestPolynomial, typename TypeParam::C>> ImplicitVec;
 
     // Base variables
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
-    auto c = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("c");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto c = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("c");
     ImplicitVec implicit_values;
 
     // Example 1

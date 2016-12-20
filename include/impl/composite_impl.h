@@ -10,7 +10,7 @@ namespace md {
 
         template <typename I, typename C, typename P>
         C Composite<I, C, P>::eval(std::unordered_map<I, C> const &values) const {
-            if(type == Id) {
+            if(type == Variable) {
                 auto const provided = values.find(id);
                 if (provided == values.end()) {
                     throw exceptions::missing_value();
@@ -75,7 +75,7 @@ namespace md {
                 return false;
             }
             switch (lhs.type) {
-                case Id: return lhs.id == rhs.id;
+                case Variable: return lhs.id == rhs.id;
                 default: return *lhs.compound.first == *rhs.compound.first &&
                                 *lhs.compound.second == *rhs.compound.second;
             }

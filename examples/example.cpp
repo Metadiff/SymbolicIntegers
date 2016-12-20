@@ -11,9 +11,9 @@ std::function<std::string(std::string)> const print = [](I id) {return id;};
 
 int main(){
     // Get just the individual symbolic variables
-    auto a = md::sym::primitive<I, C, P>("a");
-    auto b = md::sym::primitive<I, C, P>("b");
-    auto c = md::sym::primitive<I, C, P>("c");
+    auto a = md::sym::variable<I, C, P>("a");
+    auto b = md::sym::variable<I, C, P>("b");
+    auto c = md::sym::variable<I, C, P>("c");
 
     // Build polynomials
     auto poly1 = a * a - a * b + 12;

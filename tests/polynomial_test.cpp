@@ -36,11 +36,11 @@ TYPED_TEST(PolynomialTest, Constructor) {
     EXPECT_TRUE(zero.is_constant());
 
     // Polynomial with 1 variable
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
     EXPECT_EQ(a.monomials.size(), 1);
     EXPECT_EQ(a.monomials[0].coefficient, 1);
     EXPECT_FALSE(a.is_constant());
-    EXPECT_THAT(a.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1}));
+    EXPECT_THAT(a.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1}));
 
     // From constant
     EXPECT_EQ(two.monomials.size(), 1);
@@ -53,7 +53,7 @@ TYPED_TEST(PolynomialTest, Constructor) {
     EXPECT_EQ(a.monomials.size(), 1);
     EXPECT_EQ(a.monomials[0].coefficient, 1);
     EXPECT_FALSE(a.is_constant());
-    EXPECT_THAT(a.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1}));
+    EXPECT_THAT(a.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1}));
 
     a.monomials[0].coefficient = 2;
     // From another
@@ -61,7 +61,7 @@ TYPED_TEST(PolynomialTest, Constructor) {
     EXPECT_EQ(two_x.monomials.size(), 1);
     EXPECT_EQ(two_x.monomials[0].coefficient, 2);
     EXPECT_FALSE(two_x.is_constant());
-    EXPECT_THAT(two_x.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1}));
+    EXPECT_THAT(two_x.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1}));
 }
 
 TYPED_TEST(PolynomialTest, Equality) {
@@ -80,7 +80,7 @@ TYPED_TEST(PolynomialTest, Equality) {
     EXPECT_NE(1, two);
 
     // Not equality between 'a' and a constant
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
     EXPECT_EQ(two, two_2);
     EXPECT_EQ(two_2, two);
     EXPECT_NE(two, a);
@@ -89,18 +89,18 @@ TYPED_TEST(PolynomialTest, Equality) {
     EXPECT_NE(a, two_2);
 
     // Equality with 'a' as monomial
-    auto a_monomial = TestMonomial(TestComposite(Id, "a"));
+    auto a_monomial = TestMonomial(TestComposite("a"));
     EXPECT_EQ(a, a_monomial);
     EXPECT_EQ(a_monomial, a);
 
     // Non equality with 'b' as monomial
-    auto b_monomial = TestMonomial(TestComposite(Id, "b"));
+    auto b_monomial = TestMonomial(TestComposite("b"));
     EXPECT_NE(a, b_monomial);
     EXPECT_NE(b_monomial, a);
 
     // Equality and non equality between polynomials
-    auto a_again = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto a_again = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     EXPECT_EQ(a, a_again);
     EXPECT_EQ(a_again, a);
     EXPECT_NE(a, b);
@@ -116,9 +116,9 @@ TYPED_TEST(PolynomialTest, AdditionOperators) {
     typedef std::pair<TestComposite, typename TypeParam::P> entry_pair;
 
     // Compare a + b + 2
-    auto a_monomial = TestMonomial(TestComposite(Id, "a"));
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto a_monomial = TestMonomial(TestComposite("a"));
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     auto a_plus_b_plus_1 = a + b + 1;
     auto a_plus_b_plus_1_v2 = a_monomial + b + 1;
     EXPECT_FALSE(a_plus_b_plus_1.is_constant());
@@ -140,8 +140,8 @@ TYPED_TEST(PolynomialTest, AdditionOperators) {
 
     // Check subtraction
     auto two = two_a_plus_b_plus_1 -
-            2 * primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a") -
-            2 * primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+            2 * variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a") -
+            2 * variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     EXPECT_EQ(two, 2);
     EXPECT_EQ(2, two);
     EXPECT_TRUE(two.is_constant());
@@ -154,8 +154,8 @@ TYPED_TEST(PolynomialTest, MultuplyOperators) {
     typedef std::pair<TestComposite, typename TypeParam::P> entry_pair;
 
     // Values
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     auto ab_plus_a_square_plus_one = a * b + a * a + 1;
     auto ab_plus_b_square_plus_two = a * b + b * b + 2;
 
@@ -163,21 +163,21 @@ TYPED_TEST(PolynomialTest, MultuplyOperators) {
     auto product = ab_plus_a_square_plus_one * ab_plus_b_square_plus_two;
     EXPECT_EQ(product.monomials.size(), 7);
     EXPECT_EQ(product.monomials[0].coefficient, 1);
-    EXPECT_THAT(product.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 3},
-                                                                  entry_pair{TestComposite(Id, "b"), 1}));
+    EXPECT_THAT(product.monomials[0].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 3},
+                                                                  entry_pair{TestComposite("b"), 1}));
     EXPECT_EQ(product.monomials[1].coefficient, 2);
-    EXPECT_THAT(product.monomials[1].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 2},
-                                                                  entry_pair{TestComposite(Id, "b"), 2}));
+    EXPECT_THAT(product.monomials[1].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 2},
+                                                                  entry_pair{TestComposite("b"), 2}));
     EXPECT_EQ(product.monomials[2].coefficient, 2);
-    EXPECT_THAT(product.monomials[2].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 2}));
+    EXPECT_THAT(product.monomials[2].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 2}));
     EXPECT_EQ(product.monomials[3].coefficient, 1);
-    EXPECT_THAT(product.monomials[3].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1},
-                                                                  entry_pair{TestComposite(Id, "b"), 3}));
+    EXPECT_THAT(product.monomials[3].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1},
+                                                                  entry_pair{TestComposite("b"), 3}));
     EXPECT_EQ(product.monomials[4].coefficient, 3);
-    EXPECT_THAT(product.monomials[4].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1},
-                                                                  entry_pair{TestComposite(Id, "b"), 1}));
+    EXPECT_THAT(product.monomials[4].powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1},
+                                                                  entry_pair{TestComposite("b"), 1}));
     EXPECT_EQ(product.monomials[5].coefficient, 1);
-    EXPECT_THAT(product.monomials[5].powers, testing::ElementsAre(entry_pair{TestComposite(Id, "b"), 2}));
+    EXPECT_THAT(product.monomials[5].powers, testing::ElementsAre(entry_pair{TestComposite("b"), 2}));
 
     EXPECT_EQ(product.monomials[6].coefficient, 2);
     EXPECT_EQ(product.monomials[6].powers.size(), 0);
@@ -200,8 +200,8 @@ TYPED_TEST(PolynomialTest, FloorCeil) {
     auto five = TestPolynomial(5);
 
     // Values
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     auto ab_plus_a_square_plus_one = a * b + a * a + 1;
     auto ab_plus_b_square_plus_two = a * b + b * b + 2;
 
@@ -272,8 +272,8 @@ TYPED_TEST(PolynomialTest, MinMax) {
     auto five = TestPolynomial(5);
 
     // Values
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
     auto ab_plus_a_square_plus_one = a * b + a * a + 1;
     auto ab_plus_b_square_plus_two = a * b + b * b + 2;
 
@@ -338,9 +338,9 @@ TYPED_TEST(PolynomialTest, Eval) {
     const typename TypeParam::C a_val = 3;
     const typename TypeParam::C b_val = 5;
     const typename TypeParam::C c_val = 7;
-    auto a = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
-    auto b = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
-    auto c = primitive<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("c");
+    auto a = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("a");
+    auto b = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("b");
+    auto c = variable<typename TypeParam::I, typename TypeParam::C, typename TypeParam::P>("c");
     auto ab_plus_a_square_plus_one = a * b + a * a + 1;
     auto ab_plus_b_square_plus_two = a * b + b * b + 2;
     ValueVec values = {{"a", a_val}, {"b", b_val}, {"c", c_val}};

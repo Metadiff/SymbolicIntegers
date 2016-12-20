@@ -2,17 +2,22 @@
 // Created by alex on 16/12/16.
 //
 
-#ifndef SYMBOLICINTEGERS_SRT_SPECIAL_IMPL_H
-#define SYMBOLICINTEGERS_SRT_SPECIAL_IMPL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_SPECIAL_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_SPECIAL_IMPL_H
 
 namespace md {
     namespace sym {
         template <typename I, typename C, typename P>
+        Polynomial<I, C, P> variable(I id){
+            return Polynomial<I, C, P>(Monomial<I, C, P>(Composite<I, C, P>(id)));
+        };
+
+        template <typename I, typename C, typename P>
         bool grevlex_gt(Composite<I, C, P> const &lhs, Composite<I, C, P> const &rhs) {
             switch (lhs.type) {
-                case Id:
+                case Variable:
                     switch (rhs.type) {
-                        case Id:
+                        case Variable:
                             return lhs.id < rhs.id;
                         default:
                             return true;
@@ -26,7 +31,7 @@ namespace md {
                                 return grevlex_gt(*lhs.compound.first, *rhs.compound.first);
                             }
                         }
-                        case Id:
+                        case Variable:
                             return false;
                         default:
                             return true;
@@ -40,7 +45,7 @@ namespace md {
                                 return grevlex_gt(*lhs.compound.first, *rhs.compound.first);
                             }
                         };
-                        case Id:
+                        case Variable:
                             return false;
                         case Max:
                             return false;
@@ -74,19 +79,17 @@ namespace md {
                             return false;
                     }
             }
-            return false;
         };
 
         template <typename I, typename C, typename P>
         bool grevlex_gt(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs) {
-            auto m = std::min(lhs.powers.size(), rhs.powers.size());
+            auto const m = std::min(lhs.powers.size(), rhs.powers.size());
             for (auto i = 0; i < m; ++i) {
                 if (lhs.powers[i].first == rhs.powers[i].first) {
                     if(lhs.powers[i].second != rhs.powers[i].second){
                         return lhs.powers[i].second > rhs.powers[i].second;
                     }
                 } else {
-                    auto c =  grevlex_gt(lhs.powers[i].first, rhs.powers[i].first) ? ">" : "<";
                     return grevlex_gt(lhs.powers[i].first, rhs.powers[i].first);
                 }
             }
@@ -99,7 +102,7 @@ namespace md {
 
         template <typename I, typename C, typename P>
         bool grevlex_gt(Polynomial<I, C, P> const &lhs, Polynomial<I, C, P> const &rhs) {
-            auto m = std::min(lhs.monomials.size(), rhs.monomials.size());
+            auto const m = std::min(lhs.monomials.size(), rhs.monomials.size());
             for (auto i = 0; i < m; ++i) {
                 if (lhs.monomials[i] != rhs.monomials[i]) {
                     return grevlex_gt(lhs.monomials[i], rhs.monomials[i]);
@@ -109,11 +112,6 @@ namespace md {
         }
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> primitive(I id){
-            return Polynomial<I, C, P>(Monomial<I, C, P>(Composite<I, C, P>(Id, id)));
-        };
-
-        template <typename I, typename C, typename P>
         Monomial<I, C, P> reduce(Monomial<I, C, P> const & monomial, std::unordered_map<I, C> const & values) {
             if(monomial.is_constant()){
                 return monomial;
@@ -121,7 +119,7 @@ namespace md {
             auto result = Monomial<I, C, P>(monomial.coefficient);
             for(auto i = 0; i < monomial.powers.size(); ++i){
                 Composite<I, C, P> const & c = monomial.powers[i].first;
-                if(c.type == Id){
+                if(c.type == Variable){
                     auto const provided = values.find(c.id);
                     if(provided == values.end()){
                         result.powers.push_back(monomial.powers[i]);
@@ -156,7 +154,7 @@ namespace md {
         };
 
         template <typename I, typename C, typename P>
-        std::unordered_map<I, C> deduce_values(ImplicitValues <I, C, P> & original_values) {
+        std::unordered_map<I, C> deduce_values(ImplicitValues <I, C, P> const & original_values) {
             auto implicit_values = original_values;
             auto indexes = std::vector<int>(original_values.size());
             for(auto i = 0; i < implicit_values.size(); ++i){
@@ -181,24 +179,24 @@ namespace md {
                 }
                 // If the polynomial is in the form a * x^n + b deduce value of 'x'
                 if((poly.monomials.size() == 1 || (poly.monomials.size() == 2 and poly.monomials[1].is_constant()))
-                   and poly.monomials[0].powers.size() == 1 and poly.monomials[0].powers[0].first.type == Id) {
+                   and poly.monomials[0].powers.size() == 1 and poly.monomials[0].powers[0].first.type == Variable) {
                     // b
-                    C additive = poly.monomials.size() == 1 ? 0 : poly.monomials[1].eval({});
+                    C const b = poly.monomials.size() == 1 ? 0 : poly.monomials[1].eval({});
                     // a
-                    C multiplicative = poly.monomials[0].coefficient;
+                    C const & a = poly.monomials[0].coefficient;
                     // x
-                    I id = poly.monomials[0].powers[0].first.id;
+                    I const & x = poly.monomials[0].powers[0].first.id;
                     // n
-                    P power = poly.monomials[0].powers[0].second;
-                    C value = C(pow((implicit_values[i].second - additive) / multiplicative, 1.0 / power));
-                    C reconstructed = pow(value, power) * multiplicative + additive;
+                    P const & power = poly.monomials[0].powers[0].second;
+                    C const value = C(pow((implicit_values[i].second - b) / a, 1.0 / power));
+                    C reconstructed = a * pow(value, power) + b;
                     // Verify this gives back correctly the value, as 'C' is integer
                     if(reconstructed != implicit_values[i].second){
                         throw exceptions::incompatible_values<I, C, P>(original_values[indexes[i]].first,
                                                                        reconstructed, implicit_values[i].second);
                     }
                     // Add to the values
-                    values[id] = value;
+                    values[x] = value;
                     // Remove current polynomial from list
                     implicit_values.erase(implicit_values.begin() + i);
                     indexes.erase(indexes.begin() + i);
@@ -217,4 +215,4 @@ namespace md {
         }
     }
 }
-#endif //SYMBOLICINTEGERS_SRT_SPECIAL_IMPL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_SPECIAL_IMPL_H

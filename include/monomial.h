@@ -7,24 +7,24 @@
 
 namespace md{
     namespace sym{
-        /** The class represents a symbolic monomial in the form of C * a(id_1)^p_1 * a(id_2)^p_2 * ... * a(id_n)^p_n */
+        /** A symbolic monomial represented as  C * a_1^p_1 * a_2^p_2 * ... * a_n^p_n. */
         template <typename I, typename C, typename P>
         class Monomial {
         public:
-            /** A vector of pairds (id, power), which represent the var(id)^power in the monomial */
+            /** A vector of the pairs (a_i, p_i), where a_i is a Composite expression. */
             std::vector <std::pair<Composite<I, C, P>, P>> powers;
-            /** The constant coefficient */
+            /** The constant coefficient C. */
             C coefficient;
 
             /** Constructor from a constant value */
             Monomial(C const & value): coefficient(value){}
 
-            /** From composite */
+            /** Constructor from a Composite */
             Monomial(Composite<I, C, P> const &composite):
                     powers({{composite, 1}}),
                     coefficient(1){}
 
-            /** From composite and power */
+            /** Constructor for a composite raised to a power */
             Monomial(Composite<I, C, P> const &composite, P const power):
                     powers({{composite, power}}),
                     coefficient(1){}
@@ -37,17 +37,10 @@ namespace md{
             /** Default constructor returns 0 */
             Monomial(): Monomial(0) {}
 
-            /**
-             * @return True only if the monomial is constant and does not depend on any symbolic integers.
-             */
+            /** True only if the monomial is constant and does not depend on any symbolic variables. */
             bool is_constant() const;
 
-            /** @brief Evaluates the monomial assuming that the vector provided contains pairs
-             * of <i, value> which specify the value of the variable with id 'i'.
-             *
-             * @param values
-             * @return The value of the monomial evaluted at the provided values.
-             */
+            /** Evaluates the Monomial given the provided mapping of identifier to value assignment. */
             C eval(std::unordered_map<I, C> const &values) const;
 
             Monomial<I, C, P>& operator*=(Monomial<I, C, P> const & rhs);
@@ -57,7 +50,8 @@ namespace md{
 
         /** @brief Returns a humanly presentable string representation of the Monomial
          *
-         * @param monomial
+         * @param composite
+         * @param print - print function for how to convert the identifier of type `I` to string
          * @return
          */
         template <typename I, typename C, typename P>
@@ -65,7 +59,8 @@ namespace md{
 
         /** @brief Returns a code equivalent string representation of the Monomial
          *
-         * @param monomial
+         * @param composite
+         * @param print - print function for how to convert the identifier of type `I` to string
          * @return
          */
         template <typename I, typename C, typename P>
@@ -76,6 +71,67 @@ namespace md{
             std::function<std::string(std::string)> identity = [](std::string id) { return id; };
             return  f << to_string(monomial,  identity);
         }
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(Monomial<I, C, P> const &lhs, T const rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator==(T const lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        bool operator==(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator!=(Monomial<I, C, P> const &lhs, T const rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool operator!=(T const lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        bool operator!=(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        Monomial<I, C, P> operator+(Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        Monomial<I, C, P> operator-(Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool up_to_coefficient(T const lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        bool up_to_coefficient(Monomial<I, C, P> const &lhs, T const rhs);
+
+        template <typename I, typename C, typename P>
+        bool up_to_coefficient(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<I, C, P>  operator*(Monomial<I, C, P> const &lhs, T const rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<I, C, P>  operator*(T const lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        Monomial<I, C, P>  operator*(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<I, C, P>  operator/(Monomial<I, C, P> const &lhs, T const rhs);
+
+        template <typename I, typename C, typename P,
+                typename T, typename = std::enable_if<std::is_integral<T>::value>>
+        Monomial<I, C, P>  operator/(T const lhs, Monomial<I, C, P> const &rhs);
+
+        template <typename I, typename C, typename P>
+        Monomial<I, C, P>  operator/(Monomial<I, C, P> const &lhs, Monomial<I, C, P> const &rhs);
     }
 }
 #endif //METADIFF_SYMBOLIC_INTEGERS_MONOMIAL_H

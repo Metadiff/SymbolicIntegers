@@ -2,11 +2,13 @@
 // Created by alex on 29/08/16.
 //
 
-#ifndef METADIFF_SYMBOLIC_INTEGERS_EXTRA_OPS_IMPL_H
-#define METADIFF_SYMBOLIC_INTEGERS_EXTRA_OPS_IMPL_H
+#ifndef METADIFF_SYMBOLIC_INTEGERS_FUNCTIONS_IMPL_H
+#define METADIFF_SYMBOLIC_INTEGERS_FUNCTIONS_IMPL_H
 
 namespace md {
     namespace sym {
+        // Constant
+
         template<typename C1, typename C2,
                 typename = std::enable_if<std::is_integral<C1>::value>,
                 typename = std::enable_if<std::is_integral<C2>::value>>
@@ -52,20 +54,7 @@ namespace md {
             return left > right ? left : right;
         };
 
-        template <typename I, typename C, typename P>
-        Monomial<I, C, P> floor(Monomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
-            if (dividend.is_constant() and divisor.is_constant()) {
-                auto dividend_value = dividend.eval({});
-                auto divisor_value = divisor.eval({});
-                return Monomial<I, C, P>(floor(dividend_value, divisor_value));
-            }
-            try {
-                return dividend / divisor;
-            } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
-                                          std::make_shared<Polynomial<I, C, P>>(divisor));
-            }
-        };
+        // Floor
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
@@ -91,35 +80,11 @@ namespace md {
         };
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> floor(Polynomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+        Monomial<I, C, P> floor(Monomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(dividend.eval({}) / divisor.eval({}));
-            }
-            try {
-                return dividend / divisor;
-            } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
-                                          std::make_shared<Polynomial<I, C, P>>(divisor));
-            }
-        };
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> floor(Polynomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
-            if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(floor(dividend.eval({}), divisor.eval({})));
-            }
-            try {
-                return dividend / divisor;
-            } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
-                                          std::make_shared<Polynomial<I, C, P>>(divisor));
-            }
-        };
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> floor(Monomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
-            if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(floor(dividend.eval({}), divisor.eval({})));
+                auto dividend_value = dividend.eval({});
+                auto divisor_value = divisor.eval({});
+                return Monomial<I, C, P>(floor(dividend_value, divisor_value));
             }
             try {
                 return dividend / divisor;
@@ -159,17 +124,45 @@ namespace md {
         };
 
         template <typename I, typename C, typename P>
-        Monomial<I, C, P> ceil(Monomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
+        Polynomial<I, C, P> floor(Polynomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Monomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
+                return Polynomial<I, C, P>(floor(dividend.eval({}), divisor.eval({})));
             }
             try {
                 return dividend / divisor;
             } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
+                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
                                           std::make_shared<Polynomial<I, C, P>>(divisor));
             }
         };
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> floor(Monomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+            if (dividend.is_constant() and divisor.is_constant()) {
+                return Polynomial<I, C, P>(floor(dividend.eval({}), divisor.eval({})));
+            }
+            try {
+                return dividend / divisor;
+            } catch (const std::runtime_error& e) {
+                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
+                                          std::make_shared<Polynomial<I, C, P>>(divisor));
+            }
+        };
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> floor(Polynomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+            if (dividend.is_constant() and divisor.is_constant()) {
+                return Polynomial<I, C, P>(dividend.eval({}) / divisor.eval({}));
+            }
+            try {
+                return dividend / divisor;
+            } catch (const std::runtime_error& e) {
+                return Composite<I, C, P>(Floor, std::make_shared<Polynomial<I, C, P>>(dividend),
+                                          std::make_shared<Polynomial<I, C, P>>(divisor));
+            }
+        };
+
+        // Ceil
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
@@ -195,35 +188,9 @@ namespace md {
         };
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> ceil(Polynomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+        Monomial<I, C, P> ceil(Monomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
             if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
-            }
-            try {
-                return dividend / divisor;
-            } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
-                                          std::make_shared<Polynomial<I, C, P>>(divisor));
-            }
-        };
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> ceil(Polynomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
-            if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
-            }
-            try {
-                return dividend / divisor;
-            } catch (const std::runtime_error& e) {
-                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
-                                          std::make_shared<Polynomial<I, C, P>>(divisor));
-            }
-        };
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> ceil(Monomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
-            if (dividend.is_constant() and divisor.is_constant()) {
-                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
+                return Monomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
             }
             try {
                 return dividend / divisor;
@@ -263,14 +230,45 @@ namespace md {
         };
 
         template <typename I, typename C, typename P>
-        Monomial<I, C, P> min(Monomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
-            if (left.is_constant() and right.is_constant()) {
-                return Monomial<I, C, P>(min(left.coefficient, right.coefficient));
-            } else {
-                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
-                                          std::make_shared<Polynomial<I, C, P>>(right));
+        Polynomial<I, C, P> ceil(Polynomial<I, C, P> const &dividend, Monomial<I, C, P> const &divisor) {
+            if (dividend.is_constant() and divisor.is_constant()) {
+                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
             }
-        }
+            try {
+                return dividend / divisor;
+            } catch (const std::runtime_error& e) {
+                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
+                                          std::make_shared<Polynomial<I, C, P>>(divisor));
+            }
+        };
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> ceil(Monomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+            if (dividend.is_constant() and divisor.is_constant()) {
+                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
+            }
+            try {
+                return dividend / divisor;
+            } catch (const std::runtime_error& e) {
+                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
+                                          std::make_shared<Polynomial<I, C, P>>(divisor));
+            }
+        };
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> ceil(Polynomial<I, C, P> const &dividend, Polynomial<I, C, P> const &divisor) {
+            if (dividend.is_constant() and divisor.is_constant()) {
+                return Polynomial<I, C, P>(ceil(dividend.eval({}), divisor.eval({})));
+            }
+            try {
+                return dividend / divisor;
+            } catch (const std::runtime_error& e) {
+                return Composite<I, C, P>(Ceil, std::make_shared<Polynomial<I, C, P>>(dividend),
+                                          std::make_shared<Polynomial<I, C, P>>(divisor));
+            }
+        };
+
+        // Min
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
@@ -295,29 +293,9 @@ namespace md {
         }
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> min(Polynomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+        Monomial<I, C, P> min(Monomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
             if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(min(left.eval({}), right.eval({})));
-            } else {
-                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
-                                          std::make_shared<Polynomial<I, C, P>>(right));
-            }
-        }
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> min(Polynomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
-            if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(min(left.eval({}), right.coefficient));
-            } else {
-                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
-                                          std::make_shared<Polynomial<I, C, P>>(right));
-            }
-        }
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> min(Monomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
-            if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(min(left.coefficient, right.eval({})));
+                return Monomial<I, C, P>(min(left.coefficient, right.coefficient));
             } else {
                 return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
                                           std::make_shared<Polynomial<I, C, P>>(right));
@@ -347,14 +325,36 @@ namespace md {
         }
 
         template <typename I, typename C, typename P>
-        Monomial<I, C, P> max(Monomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
+        Polynomial<I, C, P> min(Polynomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
             if (left.is_constant() and right.is_constant()) {
-                return Monomial<I, C, P>(max(left.coefficient, right.coefficient));
+                return Polynomial<I, C, P>(min(left.eval({}), right.coefficient));
             } else {
-                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
+                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
                                           std::make_shared<Polynomial<I, C, P>>(right));
             }
         }
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> min(Monomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+            if (left.is_constant() and right.is_constant()) {
+                return Polynomial<I, C, P>(min(left.coefficient, right.eval({})));
+            } else {
+                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
+                                          std::make_shared<Polynomial<I, C, P>>(right));
+            }
+        }
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> min(Polynomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+            if (left.is_constant() and right.is_constant()) {
+                return Polynomial<I, C, P>(min(left.eval({}), right.eval({})));
+            } else {
+                return Composite<I, C, P>(Min, std::make_shared<Polynomial<I, C, P>>(left),
+                                          std::make_shared<Polynomial<I, C, P>>(right));
+            }
+        }
+
+        // Max
 
         template <typename I, typename C, typename P,
                 typename T, typename = std::enable_if<std::is_integral<T>::value>>
@@ -379,29 +379,9 @@ namespace md {
         }
 
         template <typename I, typename C, typename P>
-        Polynomial<I, C, P> max(Polynomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+        Monomial<I, C, P> max(Monomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
             if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(max(left.eval({}), right.eval({})));
-            } else {
-                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
-                                          std::make_shared<Polynomial<I, C, P>>(right));
-            }
-        }
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> max(Polynomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
-            if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(max(left.eval({}), right.coefficient));
-            } else {
-                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
-                                          std::make_shared<Polynomial<I, C, P>>(right));
-            }
-        }
-
-        template <typename I, typename C, typename P>
-        Polynomial<I, C, P> max(Monomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
-            if (left.is_constant() and right.is_constant()) {
-                return Polynomial<I, C, P>(max(left.coefficient, right.eval({})));
+                return Monomial<I, C, P>(max(left.coefficient, right.coefficient));
             } else {
                 return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
                                           std::make_shared<Polynomial<I, C, P>>(right));
@@ -429,7 +409,37 @@ namespace md {
                         std::make_shared<Polynomial<I, C, P>>(right));
             }
         }
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> max(Polynomial<I, C, P> const  &left, Monomial<I, C, P> const  &right){
+            if (left.is_constant() and right.is_constant()) {
+                return Polynomial<I, C, P>(max(left.eval({}), right.coefficient));
+            } else {
+                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
+                                          std::make_shared<Polynomial<I, C, P>>(right));
+            }
+        }
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> max(Monomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+            if (left.is_constant() and right.is_constant()) {
+                return Polynomial<I, C, P>(max(left.coefficient, right.eval({})));
+            } else {
+                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
+                                          std::make_shared<Polynomial<I, C, P>>(right));
+            }
+        }
+
+        template <typename I, typename C, typename P>
+        Polynomial<I, C, P> max(Polynomial<I, C, P> const  &left, Polynomial<I, C, P> const  &right){
+            if (left.is_constant() and right.is_constant()) {
+                return Polynomial<I, C, P>(max(left.eval({}), right.eval({})));
+            } else {
+                return Composite<I, C, P>(Max, std::make_shared<Polynomial<I, C, P>>(left),
+                                          std::make_shared<Polynomial<I, C, P>>(right));
+            }
+        }
     }
 }
 
-#endif //METADIFF_SYMBOLIC_INTEGERS_EXTRA_OPS_IMPL_H
+#endif //METADIFF_SYMBOLIC_INTEGERS_FUNCTIONS_IMPL_H

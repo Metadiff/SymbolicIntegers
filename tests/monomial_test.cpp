@@ -36,10 +36,10 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_EQ(one.powers.size(), 0);
 
     // Monomial with 1 variable
-    auto a = TestMonomial(TestComposite(Id, "a"));
+    auto a = TestMonomial(TestComposite("a"));
     EXPECT_EQ(a.coefficient, 1);
     EXPECT_FALSE(a.is_constant());
-    EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 1}));
+    EXPECT_THAT(a.powers, testing::ElementsAre(entry_pair{TestComposite("a"), 1}));
 
     // From constant
     EXPECT_EQ(two.coefficient, 2);
@@ -47,11 +47,11 @@ TYPED_TEST(MonomialTest, Constructor) {
     EXPECT_EQ(two.powers.size(), 0);
 
     // From another
-    two.powers.push_back(entry_pair{TestComposite(Id, "a"), 2});
+    two.powers.push_back(entry_pair{TestComposite("a"), 2});
     auto two_x2 = TestMonomial(two);
     EXPECT_EQ(two_x2.coefficient, 2);
     EXPECT_FALSE(two_x2.is_constant());
-    EXPECT_THAT(two_x2.powers, testing::ElementsAre(entry_pair{TestComposite(Id, "a"), 2}));
+    EXPECT_THAT(two_x2.powers, testing::ElementsAre(entry_pair{TestComposite("a"), 2}));
 }
 
 TYPED_TEST(MonomialTest, Equality) {
@@ -63,7 +63,7 @@ TYPED_TEST(MonomialTest, Equality) {
     auto two = TestMonomial(2);
     auto two_2 = TestMonomial(2);
     auto ten_a = TestMonomial(10);
-    auto a = TestMonomial(TestComposite(Id, "a"));
+    auto a = TestMonomial(TestComposite("a"));
 
     // Equality with integers
     EXPECT_EQ(two, 2);
@@ -98,9 +98,9 @@ TYPED_TEST(MonomialTest, Operators) {
     typedef std::pair<TestComposite, typename TypeParam::P> entry_pair;
 
     // Values
-    auto a = TestMonomial(TestComposite(Id, "a"));
-    auto b = TestMonomial(TestComposite(Id, "b"));
-    auto c = TestMonomial(TestComposite(Id, "c"));
+    auto a = TestMonomial(TestComposite("a"));
+    auto b = TestMonomial(TestComposite("b"));
+    auto c = TestMonomial(TestComposite("c"));
     auto composite = 2 * b * c * a;
 
     // Verify inner structure (such as ordering)
@@ -133,8 +133,8 @@ TYPED_TEST(MonomialTest, FloorCeil) {
     auto five = TestMonomial(5);
 
     // Values
-    auto a = TestMonomial(TestComposite(Id, "a"));
-    auto b = TestMonomial(TestComposite(Id, "b"));
+    auto a = TestMonomial(TestComposite("a"));
+    auto b = TestMonomial(TestComposite("b"));
     auto composite = five * a * a * b;
 
     // Testing numerical floor and ceil
@@ -215,8 +215,8 @@ TYPED_TEST(MonomialTest, MinMax) {
     auto five = TestMonomial(5);
 
     // Values
-    auto a = TestMonomial(TestComposite(Id, "a"));
-    auto b = TestMonomial(TestComposite(Id, "b"));
+    auto a = TestMonomial(TestComposite("a"));
+    auto b = TestMonomial(TestComposite("b"));
     auto composite = five * a * a * b;
 
     // Testing numerical min and max
@@ -281,9 +281,9 @@ TYPED_TEST(MonomialTest, Eval) {
     const typename TypeParam::C a_val = 3;
     const typename TypeParam::C b_val = 5;
     const typename TypeParam::C c_val = 7;
-    auto a = TestMonomial(TestComposite(Id, "a"));
-    auto b = TestMonomial(TestComposite(Id, "b"));
-    auto c = TestMonomial(TestComposite(Id, "c"));
+    auto a = TestMonomial(TestComposite("a"));
+    auto b = TestMonomial(TestComposite("b"));
+    auto c = TestMonomial(TestComposite("c"));
     const ValueVec values = {{"a", a_val}, {"b", b_val}, {"c", c_val}};
 
     // Constant
