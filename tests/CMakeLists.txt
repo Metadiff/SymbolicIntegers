@@ -11,5 +11,6 @@ set(test_sources run_all.cpp monomial_test.cpp polynomial_test.cpp variable_dedu
 
 # Tests
 add_executable(symbolic_integer_tests ${test_sources})
-add_dependencies(gtest gmock)
+add_dependencies(symbolic_integer_tests gtest gmock)
 target_link_libraries(symbolic_integer_tests gtest gmock pthread)
+add_test(symbolic_integer_tests symbolic_integer_tests)

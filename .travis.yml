@@ -18,6 +18,9 @@ script:
   - mkdir build
   - cd build
   - cmake .. && make
+  - ./tests/symbolic_integer_tests
+  - make test
+  - ./examples/symbolic_integers_example
 
 env:
   global:
