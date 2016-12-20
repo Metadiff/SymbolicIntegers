@@ -1,4 +1,4 @@
-# Symbolic Integers 0.2.0
+# Symbolic Integers 0.2.0 [![Build Status](https://travis-ci.org/Metadiff/symbolic-integers.svg?branch=master)](https://travis-ci.org/Metadiff/symints)
 A small header only library for manipulation and evaluation 
 of symbolic integer polynomials.
 
