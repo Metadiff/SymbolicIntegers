@@ -1,6 +1,10 @@
-# Symbolic Integers 0.2.0 [![Build Status](https://travis-ci.org/Metadiff/symbolic-integers.svg?branch=master)](https://travis-ci.org/Metadiff/symints)
-A small header only library for manipulation and evaluation 
-of symbolic integer polynomials.
+# Symbolic Integers
+
+[![Build Status](https://travis-ci.org/Metadiff/symbolic-integers.svg?branch=master)](https://travis-ci.org/Metadiff/symints)
+[![Apache 2.0 licensed](https://img.shields.io/badge/Licence-Apache2.0-blue.svg)](./LICENSE)
+[![GitHub version](https://badge.fury.io/gh/Metadiff%2Fsymbolic-integers.svg)](https://badge.fury.io/gh/Metadiff%2Fsymbolic-integers)
+
+A header only library for manipulation and evaluation of symbolic integer polynomials.
 
 ## Template types arguments
 All of the symbolic expressions have three template types associated with them. 
