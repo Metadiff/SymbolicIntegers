@@ -41,8 +41,7 @@ via `git submodule update --init --recursive`.
  
 ## Example usage
 
-Below is the code for a simple example which can also
-be found in the `examples` directory.
+Below is the code for a the example found in the `examples` directory.
 
 ```c++
 #include "symbolic_integers.h"
