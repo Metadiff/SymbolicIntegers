@@ -1,7 +1,6 @@
 language: c++
 
 compiler:
-  - clang
   - gcc
 
 install:
@@ -13,7 +12,6 @@ addons:
     packages:
       - gcc-4.8
       - g++-4.8
-      - clang
 
 script:
   - git submodule update --init --recursive

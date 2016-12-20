@@ -4,6 +4,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests")
 
 # Add GTest and GMock
 add_subdirectory(external/googletest)
+include_directories(external/googletest/googletest/include/)
+include_directories(external/googletest/googlemock/include/)
 
 set(test_sources run_all.cpp monomial_test.cpp polynomial_test.cpp variable_deduction.cpp)
 
