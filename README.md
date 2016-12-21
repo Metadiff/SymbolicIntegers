@@ -119,6 +119,7 @@ int main(){
 
 The output of the program:
 ```c++
+==================================================
 Displaying polynomials (string representation = code representation):
 5b + 2 = 5 * b + 2
 ab = a * b
