@@ -55,6 +55,7 @@ typedef std::string I;
 typedef int64_t C;
 typedef uint8_t P;
 std::function<std::string(std::string)> const print = [](I id) {return id;};
+typedef md::sym::ImplicitValues<std::string, int64_t, uint8_t> ImplicitValues;
 
 int main(){
     // Create symbolic variables
@@ -103,9 +104,9 @@ int main(){
               << "==================================================" << std::endl;
 
     values = {{"a", 5}, {"b", 3}, {"c", 8}};
-    md::sym::ImplicitValues<std::string, int64_t, uint8_t> implicit_values = {{poly1, poly1.eval(values)},
-                                                                              {poly2, poly2.eval(values)},
-                                                                              {poly3, poly3.eval(values)}};
+    ImplicitValues implicit_values = {{poly1, poly1.eval(values)},
+                                      {poly2, poly2.eval(values)},
+                                      {poly3, poly3.eval(values)}};
     std::unordered_map<std::string, int64_t > deduced_values = md::sym::deduce_values(implicit_values);
     std::cout << "Deduced values: " << std::endl
               << "a = " << deduced_values["a"] << " [Expected: 5]" << std::endl
@@ -118,37 +119,6 @@ int main(){
 
 The output of the program:
 ```c++
-
-==================================================
-Displaying polynomials (string representation = code representation):
-5b + 2 = 5 * b + 2
-ab = a * b
-ab + ac + b + c = a * b + a * c + b + c
-a^2 - ab + 12 = a * a - a * b + 12
-2ac + 3a + 2bc + 3b + 2c + 3 = 2 * a * c + 3 * a + 2 * b * c + 3 * b + 2 * c + 3
-floor(b^2, a^2) = floor(b * b, a * a)
-ceil(b^2, a^2) = ceil(b * b, a * a)
-min(ab + 12, ab + a) = min(a * b + 12, a * b + a)
-max(ab + 12, ab + a) = ceil(b * b, a * a)
-max(floor(a^2, b) - 4, ceil(c, b) + 1) = min(a * b + 12, a * b + a)
-==================================================
-Evaluating for a = 3, b = 2, c = 5.
-5b + 2 = 12 [Expected 12]
-ab = 6 [Expected 6]
-ab + ac + b + c = 28 [Expected 28]
-a^2 - ab + 12 = 15 [Expected 15]
-2ac + 3a + 2bc + 3b + 2c + 3 = 78 [Expected 78]
-floor(b^2, a^2) = 0 [Expected 0]
-ceil(b^2, a^2) = 1 [Expected 1]
-min(ab + 12, ab + a) = 9 [Expected 9]
-max(ab + 12, ab + a) = 18 [Expected 18]
-max(floor(a^2, b) - 4, ceil(c, b) + 1) = 4 [Expected 4]
-==================================================
-Deduced values: 
-a = 5 [Expected: 5]
-b = 3 [Expected: 3]
-c = 8 [Expected: 8]
-==================================================
 Displaying polynomials (string representation = code representation):
 5b + 2 = 5 * b + 2
 ab = a * b
