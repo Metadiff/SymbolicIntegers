@@ -5,6 +5,7 @@ typedef std::string I;
 typedef int64_t C;
 typedef uint8_t P;
 std::function<std::string(std::string)> const print = [](I id) {return id;};
+typedef md::sym::ImplicitValues<std::string, int64_t, uint8_t> ImplicitValues;
 
 int main(){
     // Create symbolic variables
@@ -56,9 +57,9 @@ int main(){
 
     // Variable deduction
     values = {{"a", 5}, {"b", 3}, {"c", 8}};
-    md::sym::ImplicitValues<std::string, int64_t, uint8_t> implicit_values = {{poly1, poly1.eval(values)},
-                                                                              {poly2, poly2.eval(values)},
-                                                                              {poly3, poly3.eval(values)}};
+    ImplicitValues implicit_values = {{poly1, poly1.eval(values)},
+                                      {poly2, poly2.eval(values)},
+                                      {poly3, poly3.eval(values)}};
     std::unordered_map<std::string, int64_t > deduced_values = md::sym::deduce_values(implicit_values);
     std::cout << "Deduced values: " << std::endl
               << "a = " << deduced_values["a"] << " [Expected: 5]" << std::endl
